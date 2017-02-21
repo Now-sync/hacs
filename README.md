@@ -1,2 +1,4 @@
 # hacs
 HACs
+
+testmod

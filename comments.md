@@ -1,0 +1,3 @@
+As I said in class, anything that you have learned in the first part of the semester is not a challenge. Making the app secure is not a challenge considering that your features are no different that what we have done so far. Making it look good is a requirement, not a challenge.
+
+I strongly recommend you to include more technical challenges in your application. Otherwise, I doubt you can expect higher than a C grade for this project. 

@@ -1,22 +1,22 @@
 # Team HAC
-- Project Title: NowServe
+- Project Title: NowSync
 - Members: Terrence Hung, Victor Cao, Zain Amir
-- Description: Hotel service management app that allows guests to order services, then generates an invoice detailing everything they used
-
+- Description: Video playing website that synchronizes the video in the room.
+  
 # Beta features:
-- User login
-- Pick different services to order
-- Admin dashboards for each service which displays all incoming orders/requests
-- Admin can add different services on the app
-- Generate credentials when a guest checks in
+- Create room & generate invite link with password
+- Join room link with password
+- Play chosen video in room (embedded video)
+- Integrate Youtube API
+- Sync play
+- Sync pause
+
 
 # Final features:
-- Re-ordering items on the main menu
-- Admin can create more specific admin accounts for individual services eg. kitchen, dining staff
-- Create an invoice for the guest once they want to check out
-- Progress bar which displays the status of your current order
-- Display guest balance on dashboard
-- HTTPS
+- More support for different video stream formats (e.g putlocker, vimeo)
+- Sync Scrubbing
+- Detect buffering and pause everyone else.
+- Realtime timestamped chat
 
 # Technology: 
 - MongoDB
@@ -24,6 +24,7 @@
 - Redux
 - Bootstrap
 - NodeJS/Express
+- SocketIO
 - Webpack
 - Gulp
 - Mocha
@@ -31,5 +32,5 @@
 
 # Challenges:
 - learning all of those frameworks and tools
-- making the app secure
-- making it look good
+- Web Sockets for realtime synchronization
+- Integrate multiple video platform APIs

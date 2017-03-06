@@ -17,6 +17,7 @@
 - Sync Scrubbing
 - Detect buffering and pause everyone else.
 - Realtime timestamped chat
+- Deploy webapp
 
 # Technology: 
 - MongoDB

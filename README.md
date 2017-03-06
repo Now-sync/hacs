@@ -20,7 +20,6 @@
 - Deploy webapp (get domain name, valid SSL Cert., and host)
 
 # Technology: 
-- MongoDB
 - React
 - Redux
 - Bootstrap

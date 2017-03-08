@@ -77,7 +77,7 @@ app.use(function (req, res, next){
 });
 
 /* http://stackoverflow.com/questions/35408729/express-js-prevent-get-favicon-ico */
-app.get("/favicon.ico", function (req, res, next) {
+app.get("/favicon.ico/", function (req, res, next) {
     /* Remove this GET method if necessary.
     Only here to prevent favicon error console spam */
     res.status(200).end();
@@ -169,13 +169,13 @@ app.get("/room/:room_id/", function (req, res, next) {
 //     next(new Error("No Authentic Session Error"));
 // });
 
-io.on("connection", function(client) {
+io.on("connection", function (client) {
     console.log("NEW CONNECTION");
 
     var clientInRoom = null;
     var screenName = null;
 
-    client.on("join", function(data) {
+    client.on("join", function (data) {
         var roomname = data.roomname;
         var username = data.username;
 
@@ -188,12 +188,12 @@ io.on("connection", function(client) {
         screenName = username;
 
         if (clientInRoom) {
-            client.leave(clientInRoom, function() {
+            client.leave(clientInRoom, function () {
                 io.to(clientInRoom).emit("userLeft", {username:screenName});
             });
         }
 
-        client.join(roomname, function(err) {
+        client.join(roomname, function (err) {
             clientInRoom = roomname;
             io.to(clientInRoom).emit("userJoined", {username:screenName});
         });
@@ -201,21 +201,21 @@ io.on("connection", function(client) {
         console.log(client.rooms);
     });
 
-    client.on("pause", function(pausedtime) {
+    client.on("pause", function (pausedtime) {
         console.log("Socket signal pause");
 
         if (clientInRoom) io.to(clientInRoom).emit("pause", {pausedtime:pausedtime, username:screenName});
     });
 
-    client.on("play", function(){
+    client.on("play", function () {
         console.log("Socket signal play");
 
         if (clientInRoom) io.to(clientInRoom).emit("play", {username:screenName});    
     });
 
-    client.on("disconnect", function() {
+    client.on("disconnect", function () {
         console.log("DISCONNECTED");
-        client.leave(clientInRoom, function() {
+        client.leave(clientInRoom, function () {
             io.to(clientInRoom).emit("userLeft", {username:screenName});
         });
     });

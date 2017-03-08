@@ -4,7 +4,7 @@ var model = (function(){
 	var socket = io("https://localhost:3000");
 	var model = {};
 
-	var doAjax = function (method, url, body, json, callback){
+	var doAjax = function (method, url, body, json, callback) {
 		// --- This following function is by Thierry Sans from lab 5
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function(e){
@@ -31,37 +31,37 @@ var model = (function(){
 
 
 	/* Socket listener */
-	socket.on("connect", function(){
+	socket.on("connect", function () {
 		document.dispatchEvent(new CustomEvent("serverConnectSuccess"));
 	});
 
-	socket.on("play", function(data){
+	socket.on("play", function (data) {
 		document.dispatchEvent(new CustomEvent("eventPlay", {detail:data}));
 	});
-	socket.on("pause", function(data){
+	socket.on("pause", function (data) {
 		document.dispatchEvent(new CustomEvent("eventPause", {
 			detail:data
 		}));
 	});
 
-	socket.on("userJoined", function(data) {
+	socket.on("userJoined", function (data) {
 		document.dispatchEvent(new CustomEvent("eventUserJoinedRoom", {
 			detail:data
 		}));
 	});
 
-	socket.on("disconnect", function(){
+	socket.on("disconnect", function () {
 		document.dispatchEvent(new CustomEvent("socketDisconnected"));
 	});
 
 
 	/* Socket signal */
-	model.connect = function(callback){
+	model.connect = function (callback) {
 		socket = io("https://localhost:3000");
 		callback();
 	};
 
-	model.joinRoom = function(room, user){
+	model.joinRoom = function (room, user) {
 		if (typeof user === "undefined") user = null;
 		var data = {};
 		data.roomname = room;
@@ -69,11 +69,11 @@ var model = (function(){
 		socket.emit("join", data);
 	};
 
-	model.signalPlay = function(){
+	model.signalPlay = function () {
 		socket.emit("play");
 	};
 
-	model.signalPause = function(pauseTime){
+	model.signalPause = function (pauseTime) {
 		socket.emit("pause", pauseTime);
 	};
 

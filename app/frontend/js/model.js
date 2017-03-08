@@ -7,7 +7,7 @@ var model = (function(){
 	var doAjax = function (method, url, body, json, callback) {
 		// --- This following function is by Thierry Sans from lab 5
         var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function(e){
+        xhttp.onreadystatechange = function (e) {
             switch(this.readyState){
                  case (XMLHttpRequest.DONE):
                     if (this.status === 200) {

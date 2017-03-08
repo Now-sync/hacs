@@ -46,7 +46,7 @@ var verifyRoomAndPassword = function (roomname, roompass, callback) {
 
     if (found) {
         var roomData = activeRooms[roomname];
-        if (roomData.roomPassword === roompass){
+        if (roomData.roomPassword === roompass) {
             callback(null, roomData);
         } else {
             callback("Password Does Not match", null);

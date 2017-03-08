@@ -15,17 +15,12 @@ describe("All server testing", function () {
 				.send({roomPassword: "password", videoUrl: "random", screenName: "Mallory"})
 				.end(function (res) {
 					res.should.have.status(200);
-					// res.should.be.json;
-					// res.body.should.be.a("object");
 					res.body.should.have.property("roomname");
 					chai.request(server)
 						.get("/api/session/")
 						.send({roomname: res.body.roomname, password: "password"})
 						.end(function (res2) {
 							res2.should.have.status(200);
-							// res2.should.be.json;
-							// res2.body.should.be.a("object");
-							// res2.body.should.have.property("roomname");
 							res2.body.roomname.should.equal(res.body.roomname);
 							done();
 					});

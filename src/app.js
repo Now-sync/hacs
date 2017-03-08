@@ -69,7 +69,7 @@ var refreshRoomActivity = function (roomname) {
 var destroyInactiveRooms = function () {
     /* as function name */
     /* this will probably called in a setTimer() */
-}
+};
 
 app.use(function (req, res, next) {
     console.log("HTTP request", req.method, req.url, req.body);

@@ -57,7 +57,7 @@ var verifyRoomAndPassword = function (roomname, roompass, callback) {
 };
 
 var addNewRoom = function (roomname, roompass, videoUrl, callback) {
-    activeRooms.roomname = {roomPassword: roompass, activeUsers:[], videoUrl:videoUrl, lastActive:null};
+    activeRooms[roomname] = {roomPassword: roompass, activeUsers:[], videoUrl:videoUrl, lastActive:null};
 
     callback(null, activeRooms.roomname);
 };
@@ -228,6 +228,7 @@ app.use(function (req, res, next) {
     console.log("HTTP Response", res.statusCode);
 });
 
-server.listen(3000, function () {
+/* Expose server for testing */
+module.exports = server.listen(3000, function () {
     console.log("HTTPS on port 3000");
 });

@@ -1,24 +1,21 @@
-var crypto =require("crypto");
-
+var crypto = require("crypto");
 var fs = require("fs");
-
-// var Redis = require('ioredis');
-// var redis = new Redis();
-
+var https = require("https");
 var express = require("express");
+var bodyParser = require("body-parser");
+var session = require("express-session");
+var IO = require("socket.io");
+
 var app = express();
 
-var bodyParser = require("body-parser");
 app.use(bodyParser.json());
 
-var session = require("express-session");
 app.use(session({
     secret: "its dat boii",
     resave: false,
     saveUninitialized: true,
     cookie: { secure: true, sameSite: true }
 }));
-
 
 var privateKey = fs.readFileSync( "server.key" );
 var certificate = fs.readFileSync( "server.crt" );
@@ -28,10 +25,8 @@ var config = {
         NPNProtocols: ['http/2.0', 'spdy', 'http/1.1', 'http/1.0']
 };
 
-/* New HTTPS server */
-var https = require("https");
 var server = https.createServer(config, app);
-var io = require("socket.io")(server); 
+var io = IO(server); 
 
 /* -----------  -------------*/
 
@@ -82,11 +77,10 @@ app.use(function (req, res, next){
 });
 
 /* http://stackoverflow.com/questions/35408729/express-js-prevent-get-favicon-ico */
-app.get("/favicon.ico", function(req, res, next) {
+app.get("/favicon.ico", function (req, res, next) {
     /* Remove this GET method if necessary.
     Only here to prevent favicon error console spam */
     res.status(200).end();
-    return next();
 });
 
 app.get("/", function (req, res, next) {
@@ -95,7 +89,7 @@ app.get("/", function (req, res, next) {
 });
 
 /* Create Room */
-app.put("/api/createroom/", function (req, res, next){
+app.put("/api/createroom/", function (req, res, next) {
     var roomPassword = req.body.roomPassword;
     var videoUrl = req.body.videoUrl;
     if (!roomPassword) {
@@ -142,25 +136,19 @@ app.get("/api/session/", function (req, res, next) {
     }
 
     verifyRoomAndPassword(roomname, roompass, function (err, entry) {
-        if (err) {
-            res.status(401).end("");
-            return next();
+        if (!err) {
+            var sessData = {};
+            sessData.roomname = roomname;  
+            req.session.datum = sessData;
+            res.json({roomname: roomname});
+        } else {
+            res.status(401).end("401 Unauthorized");
         }
+        return next();
     });
-
-    if (true) {
-        var sessData = {};
-        sessData.roomname = roomname;  
-        req.session.datum = sessData;
-        res.json({roomname: roomname});
-    } else {
-        res.status(401).end("401 Unauthorized");
-    }
-
-    return next();
 });
 
-app.get("/room/:room_id", function (req, res, next) {
+app.get("/room/:room_id/", function (req, res, next) {
     /* User has arrived on site with direct link to a room */
     var roomId = req.params.room_id;
 
@@ -169,7 +157,6 @@ app.get("/room/:room_id", function (req, res, next) {
     } else {
         /* IF room does NOT exists, do something else */
     }
-
     return next();
 });
 
@@ -182,13 +169,13 @@ app.get("/room/:room_id", function (req, res, next) {
 //     next(new Error("No Authentic Session Error"));
 // });
 
-io.on("connection", function(client){
+io.on("connection", function(client) {
     console.log("NEW CONNECTION");
 
     var clientInRoom = null;
     var screenName = null;
 
-    client.on("join", function(data){
+    client.on("join", function(data) {
         var roomname = data.roomname;
         var username = data.username;
 
@@ -206,7 +193,7 @@ io.on("connection", function(client){
             });
         }
 
-        client.join(roomname, function(err){
+        client.join(roomname, function(err) {
             clientInRoom = roomname;
             io.to(clientInRoom).emit("userJoined", {username:screenName});
         });
@@ -214,7 +201,7 @@ io.on("connection", function(client){
         console.log(client.rooms);
     });
 
-    client.on("pause", function(pausedtime){
+    client.on("pause", function(pausedtime) {
         console.log("Socket signal pause");
 
         if (clientInRoom) io.to(clientInRoom).emit("pause", {pausedtime:pausedtime, username:screenName});
@@ -226,7 +213,7 @@ io.on("connection", function(client){
         if (clientInRoom) io.to(clientInRoom).emit("play", {username:screenName});    
     });
 
-    client.on("disconnect", function(){
+    client.on("disconnect", function() {
         console.log("DISCONNECTED");
         client.leave(clientInRoom, function() {
             io.to(clientInRoom).emit("userLeft", {username:screenName});
@@ -236,8 +223,7 @@ io.on("connection", function(client){
 
 app.use(express.static("frontend"));  // This probably not be needed. Remove if see fit.
 
-
-app.use(function (req, res, next){
+app.use(function (req, res, next) {
     console.log("HTTP Response", res.statusCode);
 });
 

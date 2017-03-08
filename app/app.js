@@ -36,7 +36,45 @@ var io = require("socket.io")(server);
 /* -----------  -------------*/
 
 var ROOM_NAME_LENGTH = 32;
+/* Use dictionary for now until more research is done on databases */
 var activeRooms = {};
+var verifyRoomAndPassword = function (roomname, roompass, callback) {
+    var err = null;
+
+    var found = false;
+    for (var key in activeRooms) {
+        if (key === roomname) {
+            found = true;
+            break;
+        } 
+    }
+
+    if (found) {
+        var roomData = activeRooms[roomname];
+        if (roomData.roomPassword === roompass){
+            callback(null, roomData);
+        } else {
+            callback("Password Does Not match", null);
+        }
+    } else {
+        callback("No such room", null);
+    }
+};
+
+var addNewRoom = function (roomname, roompass, videoUrl, callback) {
+    activeRooms.roomname = {roomPassword: roomPassword, activeUsers:[], videoUrl:videoUrl, lastActive:null};
+
+    callback(null, activeRooms.roomname);
+};
+
+var refreshRoomActivity = function (roomname) {
+    /* Refresh room activity */
+};
+
+var destroyInactiveRooms = function () {
+    /* as function name */
+    /* this will probably called in a setTimer() */
+}
 
 app.use(function (req, res, next){
     console.log("HTTP request", req.method, req.url, req.body);
@@ -71,13 +109,18 @@ app.put("/api/createroom/", function (req, res, next){
     var new_room_name = crypto.randomBytes(ROOM_NAME_LENGTH).toString("base64");
 
     /* Add new room to db and set room password HERE*/
+    addNewRoom(new_room_name, roomPassword, function (err, entry) {
+        if (err) {
+            res.status(500).end("Database Error");
+            return next();
+        }
+        var sessData = {};
+        sessData.roomname = new_room_name;  
+        req.session.datum = sessData;  // Give room creator the session
 
-    var sessData = {};
-    sessData.roomname = new_room_name;  
-    req.session.datum = sessData;  // Give room creator the session
-
-    res.json({roomname: new_room_name});  // respond with roomname
-    return next();
+        res.json({roomname: new_room_name});  // respond with roomname
+        return next();
+    });
 });
 
 /* Get Session */
@@ -89,6 +132,12 @@ app.get("/api/session/", function (req, res, next) {
         res.status(400).end("400 No room name or room password");
         return next();
     }
+
+    verifyRoomAndPassword(roomname, roompass, function (err, entry) {
+        if (err) {
+            res.status(401).end("");
+        }
+    });
 
     if (true) {
         var sessData = {};

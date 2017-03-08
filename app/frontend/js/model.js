@@ -4,6 +4,32 @@ var model = (function(){
 	var socket = io("https://localhost:3000");
 	var model = {};
 
+	var doAjax = function (method, url, body, json, callback){
+		// --- This following function is by Thierry Sans from lab 5
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function(e){
+            switch(this.readyState){
+                 case (XMLHttpRequest.DONE):
+                    if (this.status === 200) {
+                        if (json) return callback(null, JSON.parse(this.responseText));
+                        return callback(null, this.responseText);
+                    }else{
+                        return callback(this.responseText, null);
+                    }
+            }
+        };
+        xhttp.open(method, url, true);
+        if (json) xhttp.setRequestHeader('Content-Type', 'application/json');
+
+        if (json) {
+        	xhttp.send((body)? JSON.stringify(body) : null);  
+        } else {
+        	xhttp.send(body);
+        }
+        
+    };
+
+
 	/* Socket listener */
 	socket.on("connect", function(){
 		document.dispatchEvent(new CustomEvent("serverConnectSuccess"));

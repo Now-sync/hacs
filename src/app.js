@@ -57,7 +57,7 @@ var verifyRoomAndPassword = function (roomname, roompass, callback) {
 };
 
 var addNewRoom = function (roomname, roompass, videoUrl, callback) {
-    activeRooms.roomname = {roomPassword: roomPassword, activeUsers:[], videoUrl:videoUrl, lastActive:null};
+    activeRooms.roomname = {roomPassword: roompass, activeUsers:[], videoUrl:videoUrl, lastActive:null};
 
     callback(null, activeRooms.roomname);
 };
@@ -97,7 +97,6 @@ app.put("/api/createroom/", function (req, res, next) {
         res.status(400).end("No Room Password Given");
         return next();
     }
-
 
     if (!screenName) {
         screenName = "user_" + crypto.randomBytes(8).toString("base64");

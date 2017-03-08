@@ -71,7 +71,7 @@ var destroyInactiveRooms = function () {
     /* this will probably called in a setTimer() */
 }
 
-app.use(function (req, res, next){
+app.use(function (req, res, next) {
     console.log("HTTP request", req.method, req.url, req.body);
     return next();
 });

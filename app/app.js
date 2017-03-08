@@ -97,14 +97,15 @@ app.get("/", function (req, res, next) {
 /* Create Room */
 app.put("/api/createroom/", function (req, res, next){
     var roomPassword = req.body.roomPassword;
+    var videoUrl = req.body.videoUrl;
     if (!roomPassword) {
         res.status(400).end("No Room Password Give");
         return next();
     }
 
-    if (!screenName) {
-        screenName = "user_" + crypto.randomBytes(8).toString("base64");
-    }
+    // if (!screenName) {
+    //     screenName = "user_" + crypto.randomBytes(8).toString("base64");
+    // }
 
     var new_room_name = crypto.randomBytes(ROOM_NAME_LENGTH).toString("base64");
 
@@ -121,6 +122,13 @@ app.put("/api/createroom/", function (req, res, next){
         res.json({roomname: new_room_name});  // respond with roomname
         return next();
     });
+});
+
+/* Set Screen Name*/
+app.post("/api/screenname", function (req, res, next) {
+    if (!req.session.datum) {
+        res.status(401).end("No Authorization");
+    } 
 });
 
 /* Get Session */
@@ -208,8 +216,7 @@ io.on("connection", function(client){
     client.on("pause", function(pausedtime){
         console.log("Socket signal pause");
 
-        if (clientInRoom) io.to(clientInRoom).emit("pause", {pausedtime:pausedtime, username:screenName});    
-    
+        if (clientInRoom) io.to(clientInRoom).emit("pause", {pausedtime:pausedtime, username:screenName});
     });
 
     client.on("play", function(){

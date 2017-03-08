@@ -1,18 +1,19 @@
-var _test_ = (function(model){
+(function(model){
 	"use strict";
 
-	var _test_ = {};
-
 	document.addEventListener("eventPlay", function(e){
-		console.log("Event play recieved");
+		console.log("User:", e.detail.username, "has signaled Play.");
 	});
 
 	document.addEventListener("eventPause", function(e){
-		console.log(e.detail.pauseTime);
+		var pausedtime = e.detail.pausedtime;
+		var username = e.detail.username;
+		console.log("User:", username, "has signaled paused at time", pausedtime);
 	});
 
 	document.addEventListener("eventUserJoinedRoom", function(e){
-		console.log(e.detail.message);
+		var username = e.detail.username;
+		console.log("User:", username, "has joined the room.");
 	});
 
 	window.onload = function(){
@@ -23,6 +24,4 @@ var _test_ = (function(model){
 	};
 
 
-
-	return _test_;
 }(model));

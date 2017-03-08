@@ -10,17 +10,17 @@ var model = (function(){
 	});
 
 	socket.on("play", function(data){
-		document.dispatchEvent(new CustomEvent("eventPlay", {}));
+		document.dispatchEvent(new CustomEvent("eventPlay", {detail:data}));
 	});
 	socket.on("pause", function(data){
 		document.dispatchEvent(new CustomEvent("eventPause", {
-			detail:{pauseTime:data}
+			detail:data
 		}));
 	});
 
-	socket.on("userJoined", function(msg) {
+	socket.on("userJoined", function(data) {
 		document.dispatchEvent(new CustomEvent("eventUserJoinedRoom", {
-			detail:{message:msg}
+			detail:data
 		}));
 	});
 
@@ -35,8 +35,12 @@ var model = (function(){
 		callback();
 	};
 
-	model.joinRoom = function(roomname){
-		socket.emit("join", roomname);
+	model.joinRoom = function(room, user){
+		if (typeof user === "undefined") user = null;
+		var data = {};
+		data.roomname = room;
+		data.username = user;
+		socket.emit("join", data);
 	};
 
 	model.signalPlay = function(){

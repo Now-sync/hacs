@@ -120,9 +120,8 @@ app.put("/api/createroom/", function (req, res, next) {
 
 /* Set Screen Name*/
 app.post("/api/screenname/", function (req, res, next) {
-    if (!req.session.datum) {
-        res.status(401).end("No Authorization");
-    } 
+    if (!req.session.datum) res.status(401).end("No Authorization");
+	return next();
 });
 
 /* Get Session */

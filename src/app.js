@@ -30,7 +30,7 @@ var io = IO(server);
 
 /* -----------  -------------*/
 
-var ROOM_NAME_LENGTH = 32;
+var ROOM_NAME_LENGTH = 16;
 /* Use dictionary for now until more research is done on databases */
 var activeRooms = {};
 var verifyRoomAndPassword = function (roomname, roompass, callback) {
@@ -57,7 +57,7 @@ var verifyRoomAndPassword = function (roomname, roompass, callback) {
 };
 
 var addNewRoom = function (roomname, roompass, videoUrl, callback) {
-    activeRooms.roomname = {roomPassword: roomPassword, activeUsers:[], videoUrl:videoUrl, lastActive:null};
+    activeRooms[roomname] = {roomPassword: roompass, activeUsers:[], videoUrl:videoUrl, lastActive:null};
 
     callback(null, activeRooms.roomname);
 };
@@ -69,7 +69,7 @@ var refreshRoomActivity = function (roomname) {
 var destroyInactiveRooms = function () {
     /* as function name */
     /* this will probably called in a setTimer() */
-}
+};
 
 app.use(function (req, res, next) {
     console.log("HTTP request", req.method, req.url, req.body);
@@ -92,25 +92,27 @@ app.get("/", function (req, res, next) {
 app.put("/api/createroom/", function (req, res, next) {
     var roomPassword = req.body.roomPassword;
     var videoUrl = req.body.videoUrl;
+    var screenName = req.body.screenName;
     if (!roomPassword) {
-        res.status(400).end("No Room Password Give");
+        res.status(400).end("No Room Password Given");
         return next();
     }
 
-    // if (!screenName) {
-    //     screenName = "user_" + crypto.randomBytes(8).toString("base64");
-    // }
+    if (!screenName) {
+        screenName = "user_" + crypto.randomBytes(8).toString("base64");
+    }
 
     var new_room_name = crypto.randomBytes(ROOM_NAME_LENGTH).toString("base64");
 
     /* Add new room to db and set room password HERE*/
-    addNewRoom(new_room_name, roomPassword, function (err, entry) {
+    addNewRoom(new_room_name, roomPassword, videoUrl, function (err, entry) {
         if (err) {
             res.status(500).end("Database Error");
             return next();
         }
         var sessData = {};
-        sessData.roomname = new_room_name;  
+        sessData.roomname = new_room_name;
+        sessData.screenName = screenName;
         req.session.datum = sessData;  // Give room creator the session
 
         res.json({roomname: new_room_name});  // respond with roomname
@@ -226,6 +228,7 @@ app.use(function (req, res, next) {
     console.log("HTTP Response", res.statusCode);
 });
 
-server.listen(3000, function () {
+/* Expose server for testing */
+module.exports = server.listen(3000, function () {
     console.log("HTTPS on port 3000");
 });

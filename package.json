@@ -21,13 +21,11 @@
     "fs": "0.0.1-security",
     "https": "^1.0.0",
     "ioredis": "^2.5.0",
-<<<<<<< HEAD:package.json
     "socket.io": "^1.7.3"
   },
   "devDependencies": {
     "chai": "^3.2.0",
-    "chai-http": "^1.0.0"
-=======
+    "chai-http": "^1.0.0",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
     "react-redux": "^5.0.3",
@@ -38,6 +36,5 @@
   "devDependencies": {
     "babel-cli": "^6.23.0",
     "babel-preset-react": "^6.23.0"
->>>>>>> 9a090229945384b67b24cd8b96eb2ab5b563305a:src/package.json
   }
 }

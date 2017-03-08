@@ -29,6 +29,11 @@ var model = (function(){
         
     };
 
+    var dispatchResponseError = function (err) {
+    	document.dispatchEvent(new CustomEvent("responseError", {
+    		detail:err
+    	}));
+    };
 
 	/* Socket listener */
 	socket.on("connect", function () {
@@ -76,6 +81,24 @@ var model = (function(){
 	model.signalPause = function (pauseTime) {
 		socket.emit("pause", pauseTime);
 	};
+
+	/* API Calls */
+	model.createRoom = function (roompassword, videoUrl, screenName) {
+		if (typeof screenName === "undefined") screenName = null;
+		var body = {roomPassword: roompassword, videoUrl: videoUrl, screenName: screenName};
+		doAjax("PUT", "/api/createroom/", body, true, function (err, data) {
+			if (!err) {
+				dispatchResponseError(err);
+				return;
+			}
+			var roomname = data.roomname;
+			model.joinRoom(roomname);
+			document.dispatchEvent(new CustomEvent("onRoomCreated", {
+				detail:{roomName:roomname}
+			}));
+		});
+	};
+
 
 	return model;
 }());

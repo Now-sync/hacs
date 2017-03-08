@@ -17,5 +17,9 @@
     "https": "^1.0.0",
     "ioredis": "^2.5.0",
     "socket.io": "^1.7.3"
+  },
+  "devDependencies": {
+    "chai": "^3.2.0",
+    "chai-http": "^1.0.0"
   }
 }

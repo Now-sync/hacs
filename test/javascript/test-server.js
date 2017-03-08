@@ -9,7 +9,29 @@ chai.use(chaiHttp);
 
 describe("All server testing", function () {
 	describe("Create room", function() {
-	  	it("should return a string as room name and create room on /api/createroom/ PUT", function (done) {
+		it("should return a status code 200 /api/createroom/ PUT", function (done) {
+			chai.request(server)
+				.put("/api/createroom/")
+				.send({roomPassword: "password", videoUrl: "random", screenName: "Mallory"})
+				.end(function (res) {
+					res.should.have.status(200);
+					done();
+				});
+		});
+
+		it("should have a return with property roomname /api/createroom/ PUT", function (done) {
+			chai.request(server)
+				.put("/api/createroom/")
+				.send({roomPassword: "password", videoUrl: "random", screenName: "Mallory"})
+				.end(function (res) {
+					res.should.have.status(200);
+					res.body.should.have.property("roomname");
+					done();
+				});
+		});
+
+		/* Comprehensive test */
+	  	it("should return a string as room name and create room on /api/createroom/ PUT then check if room exists", function (done) {
 			chai.request(server)
 				.put("/api/createroom/")
 				.send({roomPassword: "password", videoUrl: "random", screenName: "Mallory"})

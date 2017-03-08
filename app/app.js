@@ -125,7 +125,7 @@ app.put("/api/createroom/", function (req, res, next){
 });
 
 /* Set Screen Name*/
-app.post("/api/screenname", function (req, res, next) {
+app.post("/api/screenname/", function (req, res, next) {
     if (!req.session.datum) {
         res.status(401).end("No Authorization");
     } 
@@ -144,6 +144,7 @@ app.get("/api/session/", function (req, res, next) {
     verifyRoomAndPassword(roomname, roompass, function (err, entry) {
         if (err) {
             res.status(401).end("");
+            return next();
         }
     });
 

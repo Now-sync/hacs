@@ -186,23 +186,6 @@ io.use(function(socket, next) {
     }
 });
 
-// var connect = require("connect");
-// var parseCookie = require("connect").utils.parseCookie;
-// io.set("authorization", function (hdshData, accept) {
-//     if (hdshData.headers.cookie) {
-//         hdshData.cookie = parseCookie(hdshData.headers.cookie);
-
-//         hdshData.sessionID = connect.utils.parseSignedCookie(hdshData.cookie["express.sid"], "super_secret");
-
-//         if (hdshData.cookie["express.sid"] === handshake.sessionID) {
-//             return accept("cookie is invalid");
-//         }
-//     } else {
-//         return accept("No Cookie transmitted", false);
-//     }
-
-//     accept(null, true);
-// });
 
 io.on("connection", function (client) {
     console.log("NEW CONNECTION");

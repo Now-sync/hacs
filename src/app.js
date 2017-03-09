@@ -26,7 +26,7 @@ var config = {
 };
 
 var server = https.createServer(config, app);
-var io = IO(server); 
+var io = IO(server);
 
 /* -----------  -------------*/
 
@@ -41,7 +41,7 @@ var verifyRoomAndPassword = function (roomname, roompass, callback) {
         if (key === roomname) {
             found = true;
             break;
-        } 
+        }
     }
 
     if (found) {
@@ -139,7 +139,7 @@ app.get("/api/session/", function (req, res, next) {
     verifyRoomAndPassword(roomname, roompass, function (err, entry) {
         if (!err) {
             var sessData = {};
-            sessData.roomname = roomname;  
+            sessData.roomname = roomname;
             req.session.datum = sessData;
             res.json({roomname: roomname});
         } else {
@@ -211,7 +211,7 @@ io.on("connection", function (client) {
     client.on("play", function () {
         console.log("Socket signal play");
 
-        if (clientInRoom) io.to(clientInRoom).emit("play", {username:screenName});    
+        if (clientInRoom) io.to(clientInRoom).emit("play", {username:screenName});
     });
 
     client.on("disconnect", function () {

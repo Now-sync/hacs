@@ -5,17 +5,20 @@ var express = require("express");
 var bodyParser = require("body-parser");
 var session = require("express-session");
 var IO = require("socket.io");
+var sharedsocses = require("express-socket.io-session");
 
 var app = express();
 
 app.use(bodyParser.json());
 
-app.use(session({
+var exprSess = session({
     secret: "its dat boii",
     resave: false,
     saveUninitialized: true,
     cookie: { secure: true, sameSite: true }
-}));
+});
+
+app.use(exprSess);
 
 var privateKey = fs.readFileSync( "server.key" );
 var certificate = fs.readFileSync( "server.crt" );
@@ -165,10 +168,18 @@ app.get("/room/:room_id/", function (req, res, next) {
 /* Sockets */
 
 /* Uncomment below when sessions are properly implemented */
-// io.use(function(socket, next) {
-//     if (socket.request.session) next();
-//     next(new Error("No Authentic Session Error"));
-// });
+
+// Note: if autoSave set true socket event handlers can modify.
+io.use(sharedsocses(exprSess, {autoSave: false}));
+
+io.use(function(socket, next) {
+    console.log("/--------------", socket.request.session);
+    if (socket.handshake.session) {
+        next();
+    } else {
+        next(new Error("No Authentic Session Error"));
+    }
+});
 
 io.on("connection", function (client) {
     console.log("NEW CONNECTION");

@@ -33,6 +33,13 @@ var io = IO(server);
 
 var BLOCK_CONSOLE = process.env.NODE_ENV !== "test";
 
+var PORT;
+if (process.env.NODE_ENV === "test") {
+    PORT = 3002;
+} else {
+    PORT = 3000;
+}
+
 /* -----------  -------------*/
 
 var ROOM_NAME_LENGTH = 16;
@@ -205,7 +212,7 @@ io.on("connection", function (client) {
         }
 
         client.join(roomname, function (err) {
-            if (!err) {
+            if (err) {
                 /* Do something */
                 return;
             }
@@ -243,6 +250,6 @@ app.use(function (req, res) {
 });
 
 /* Expose server for testing */
-module.exports = server.listen(3000, function () {
+module.exports = server.listen(PORT, function () {
     if (BLOCK_CONSOLE) console.log("HTTPS on port 3000");
 });

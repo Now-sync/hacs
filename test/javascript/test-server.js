@@ -5,7 +5,7 @@ var chaiHttp = require("chai-http");
 var server = require("../../src/app.js");
 var should = chai.should();
 var io = require("socket.io-client");
-var socketUrl = "https://localhost:3000";
+var socketUrl = "https://localhost:3002";
 var options = {
     transports: ["websocket"],
     "force new connection": true

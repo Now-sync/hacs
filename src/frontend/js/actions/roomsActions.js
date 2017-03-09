@@ -11,3 +11,7 @@ export function createRooms() {
       })
   }
 }
+
+export function counter(){
+  return {type: "Add"}
+}

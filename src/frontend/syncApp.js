@@ -1,1 +1,0 @@
-var testing = ["cat", "dog"];

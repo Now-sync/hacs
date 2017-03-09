@@ -1,116 +1,104 @@
-var model = (function(){
-	"use strict";
-
-	var socket = io("https://localhost:3000");
-	var model = {};
-
-	var doAjax = function (method, url, body, json, callback) {
-		// --- This following function is by Thierry Sans from lab 5
-        var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function (e) {
-            switch(this.readyState){
-                 case (XMLHttpRequest.DONE):
-                    if (this.status === 200) {
-                        if (json) return callback(null, JSON.parse(this.responseText));
-                        return callback(null, this.responseText);
-                    }else{
-                        return callback(this.responseText, null);
-                    }
-            }
-        };
-        xhttp.open(method, url, true);
-        if (json) xhttp.setRequestHeader('Content-Type', 'application/json');
-
-        if (json) {
-        	xhttp.send((body)? JSON.stringify(body) : null);  
-        } else {
-        	xhttp.send(body);
-        }
-        
-    };
-
-    var dispatchResponseError = function (err) {
-    	document.dispatchEvent(new CustomEvent("responseError", {
-    		detail:err
-    	}));
-    };
-
-	/* Socket listener */
-	socket.on("connect", function () {
-		document.dispatchEvent(new CustomEvent("serverConnectSuccess"));
-		model.joinRoom("yellow_sub");
-		model.signalPlay();
-		model.signalPause("69:69");
-	});
-
-	socket.on("play", function (data) {
-		document.dispatchEvent(new CustomEvent("eventPlay", {detail:data}));
-	});
-	socket.on("pause", function (data) {
-		document.dispatchEvent(new CustomEvent("eventPause", {
-			detail:data
-		}));
-	});
-
-	socket.on("userJoined", function (data) {
-		document.dispatchEvent(new CustomEvent("eventUserJoinedRoom", {
-			detail:data
-		}));
-	});
-
-	socket.on("disconnect", function () {
-		document.dispatchEvent(new CustomEvent("socketDisconnected"));
-	});
-
-
-	/* Socket signal */
-	model.connect = function () {
-		socket = io("https://localhost:3000");
-	};
-
-	model.joinRoom = function (room, user) {
-		if (typeof user === "undefined") user = null;
-		var data = {};
-		data.roomname = room;
-		data.username = user;
-		socket.emit("join", data);
-	};
-
-	model.signalPlay = function () {
-		socket.emit("play");
-	};
-
-	model.signalPause = function (pauseTime) {
-		socket.emit("pause", pauseTime);
-	};
-
-	/* API Calls */
-	model.createRoom = function (roompassword, videoUrl, screenName) {
-		if (typeof screenName === "undefined") screenName = null;
-		var body = {roomPassword: roompassword, videoUrl: videoUrl, screenName: screenName};
-		doAjax("PUT", "/api/createroom/", body, true, function (err, data) {
-			if (!err) {
-				dispatchResponseError(err);
-				return;
-			}
-			var roomname = data.roomname;
-			model.joinRoom(roomname);
-			document.dispatchEvent(new CustomEvent("onRoomCreated", {
-				detail:{roomName:roomname}
-			}));
-		});
-	};
-
-	model.getSession = function(roomname, password, callback) {
-		doAjax("GET", "/api/session/", {roomname: roomname, password: password}, true, function (err, data) {
-			if (!err) {
-				dispatchResponseError(err);
-				return
-			}
-			var roomname = data.roomname;
-			callback(roomname);
-		});
-	};
-
-	return model;
-}());
+// var model = (function(){
+// 	"use strict";
+//
+// 	var socket = io("https://localhost:3000");
+// 	var model = {};
+//
+// 	var doAjax = function (method, url, body, json, callback) {
+// 		// --- This following function is by Thierry Sans from lab 5
+//         var xhttp = new XMLHttpRequest();
+//         xhttp.onreadystatechange = function (e) {
+//             switch(this.readyState){
+//                  case (XMLHttpRequest.DONE):
+//                     if (this.status === 200) {
+//                         if (json) return callback(null, JSON.parse(this.responseText));
+//                         return callback(null, this.responseText);
+//                     }else{
+//                         return callback(this.responseText, null);
+//                     }
+//             }
+//         };
+//         xhttp.open(method, url, true);
+//         if (json) xhttp.setRequestHeader('Content-Type', 'application/json');
+//
+//         if (json) {
+//         	xhttp.send((body)? JSON.stringify(body) : null);
+//         } else {
+//         	xhttp.send(body);
+//         }
+//
+//     };
+//
+//     var dispatchResponseError = function (err) {
+//     	document.dispatchEvent(new CustomEvent("responseError", {
+//     		detail:err
+//     	}));
+//     };
+//
+// 	/* Socket listener */
+// 	socket.on("connect", function () {
+// 		document.dispatchEvent(new CustomEvent("serverConnectSuccess"));
+// 	});
+//
+// 	socket.on("play", function (data) {
+// 		document.dispatchEvent(new CustomEvent("eventPlay", {detail:data}));
+// 	});
+// 	socket.on("pause", function (data) {
+// 		document.dispatchEvent(new CustomEvent("eventPause", {
+// 			detail:data
+// 		}));
+// 	});
+//
+// 	socket.on("userJoined", function (data) {
+// 		document.dispatchEvent(new CustomEvent("eventUserJoinedRoom", {
+// 			detail:data
+// 		}));
+// 	});
+//
+// 	socket.on("disconnect", function () {
+// 		document.dispatchEvent(new CustomEvent("socketDisconnected"));
+// 	});
+//
+//
+// 	/* Socket signal */
+// 	model.connect = function (callback) {
+// 		socket = io("https://localhost:3000");
+// 		callback();
+// 	};
+//
+// 	model.joinRoom = function (room, user) {
+// 		if (typeof user === "undefined") user = null;
+// 		var data = {};
+// 		data.roomname = room;
+// 		data.username = user;
+// 		socket.emit("join", data);
+// 	};
+//
+// 	model.signalPlay = function () {
+// 		socket.emit("play");
+// 	};
+//
+// 	model.signalPause = function (pauseTime) {
+// 		socket.emit("pause", pauseTime);
+// 	};
+//
+// 	/* API Calls */
+// 	model.createRoom = function (roompassword, videoUrl, screenName) {
+// 		if (typeof screenName === "undefined") screenName = null;
+// 		var body = {roomPassword: roompassword, videoUrl: videoUrl, screenName: screenName};
+// 		doAjax("PUT", "/api/createroom/", body, true, function (err, data) {
+// 			if (!err) {
+// 				dispatchResponseError(err);
+// 				return;
+// 			}
+// 			var roomname = data.roomname;
+// 			model.joinRoom(roomname);
+// 			document.dispatchEvent(new CustomEvent("onRoomCreated", {
+// 				detail:{roomName:roomname}
+// 			}));
+// 		});
+// 	};
+//
+//
+// 	return model;
+// }());

@@ -3,27 +3,19 @@ var fs = require("fs");
 var https = require("https");
 var express = require("express");
 var bodyParser = require("body-parser");
-var cookieParser = require("cookie-parser");
 var session = require("express-session");
 var IO = require("socket.io");
-var sharedsocses = require("express-socket.io-session");
 
 var app = express();
 
 app.use(bodyParser.json());
 
-
-app.use(cookieParser());
-
-var exprSess = session({
+app.use(session({
     secret: "its dat boii",
-    key: "express.sid",
     resave: false,
     saveUninitialized: true,
     cookie: { secure: true, sameSite: true }
-});
-
-app.use(exprSess);
+}));
 
 var privateKey = fs.readFileSync( "server.key" );
 var certificate = fs.readFileSync( "server.crt" );
@@ -34,7 +26,7 @@ var config = {
 };
 
 var server = https.createServer(config, app);
-var io = IO(server); 
+var io = IO(server);
 
 /* -----------  -------------*/
 
@@ -49,7 +41,7 @@ var verifyRoomAndPassword = function (roomname, roompass, callback) {
         if (key === roomname) {
             found = true;
             break;
-        } 
+        }
     }
 
     if (found) {
@@ -147,7 +139,7 @@ app.get("/api/session/", function (req, res, next) {
     verifyRoomAndPassword(roomname, roompass, function (err, entry) {
         if (!err) {
             var sessData = {};
-            sessData.roomname = roomname;  
+            sessData.roomname = roomname;
             req.session.datum = sessData;
             res.json({roomname: roomname});
         } else {
@@ -173,19 +165,10 @@ app.get("/room/:room_id/", function (req, res, next) {
 /* Sockets */
 
 /* Uncomment below when sessions are properly implemented */
-
-// Note: if autoSave set true socket event handlers can modify.
-io.use(sharedsocses(exprSess, {autoSave: false}));
-
-io.use(function(socket, next) {
-    console.log("/--------------", socket.handshake.session);
-    if (socket.handshake.session) {
-        next();
-    } else {
-        next(new Error("No Authentic Session Error"));
-    }
-});
-
+// io.use(function(socket, next) {
+//     if (socket.request.session) next();
+//     next(new Error("No Authentic Session Error"));
+// });
 
 io.on("connection", function (client) {
     console.log("NEW CONNECTION");
@@ -227,7 +210,8 @@ io.on("connection", function (client) {
 
     client.on("play", function () {
         console.log("Socket signal play");
-        if (clientInRoom) io.to(clientInRoom).emit("play", {username:screenName});    
+
+        if (clientInRoom) io.to(clientInRoom).emit("play", {username:screenName});
     });
 
     client.on("disconnect", function () {

@@ -188,6 +188,7 @@ io.on("connection", function (client) {
 
     client.on("join", function (data) {
         var roomname = data.roomname;
+        var roompass = data.roompass;
         var username = data.username;
 
         if (!username) {

@@ -74,7 +74,7 @@ var destroyInactiveRooms = function () {
 };
 
 app.use(function (req, res, next) {
-    if (BLOCK_CONSOLE) if (BLOCK_CONSOLE) console.log("HTTP request", req.method, req.url, req.body);
+    if (BLOCK_CONSOLE) console.log("HTTP request", req.method, req.url, req.body);
     return next();
 });
 

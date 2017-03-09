@@ -17,10 +17,7 @@
 	});
 
 	window.onload = function () {
-		//model.connect();
-		model.joinRoom("yellow_sub");
-		model.signalPlay();
-		model.signalPause("69:69");
+		// model.connect();
 	};
 
 

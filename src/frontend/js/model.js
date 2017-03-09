@@ -38,6 +38,9 @@ var model = (function(){
 	/* Socket listener */
 	socket.on("connect", function () {
 		document.dispatchEvent(new CustomEvent("serverConnectSuccess"));
+		model.joinRoom("yellow_sub");
+		model.signalPlay();
+		model.signalPause("69:69");
 	});
 
 	socket.on("play", function (data) {
@@ -61,9 +64,8 @@ var model = (function(){
 
 
 	/* Socket signal */
-	model.connect = function (callback) {
+	model.connect = function () {
 		socket = io("https://localhost:3000");
-		callback();
 	};
 
 	model.joinRoom = function (room, user) {
@@ -99,6 +101,16 @@ var model = (function(){
 		});
 	};
 
+	model.getSession = function(roomname, password, callback) {
+		doAjax("GET", "/api/session/", {roomname: roomname, password: password}, true, function (err, data) {
+			if (!err) {
+				dispatchResponseError(err);
+				return
+			}
+			var roomname = data.roomname;
+			callback(roomname);
+		});
+	};
 
 	return model;
 }());

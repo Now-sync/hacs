@@ -3,6 +3,7 @@ var fs = require("fs");
 var https = require("https");
 var express = require("express");
 var bodyParser = require("body-parser");
+var cookieParser = require("cookie-parser");
 var session = require("express-session");
 var IO = require("socket.io");
 var sharedsocses = require("express-socket.io-session");
@@ -11,8 +12,12 @@ var app = express();
 
 app.use(bodyParser.json());
 
+
+app.use(cookieParser());
+
 var exprSess = session({
     secret: "its dat boii",
+    key: "express.sid",
     resave: false,
     saveUninitialized: true,
     cookie: { secure: true, sameSite: true }
@@ -173,13 +178,31 @@ app.get("/room/:room_id/", function (req, res, next) {
 io.use(sharedsocses(exprSess, {autoSave: false}));
 
 io.use(function(socket, next) {
-    console.log("/--------------", socket.request.session);
+    console.log("/--------------", socket.handshake.session);
     if (socket.handshake.session) {
         next();
     } else {
         next(new Error("No Authentic Session Error"));
     }
 });
+
+// var connect = require("connect");
+// var parseCookie = require("connect").utils.parseCookie;
+// io.set("authorization", function (hdshData, accept) {
+//     if (hdshData.headers.cookie) {
+//         hdshData.cookie = parseCookie(hdshData.headers.cookie);
+
+//         hdshData.sessionID = connect.utils.parseSignedCookie(hdshData.cookie["express.sid"], "super_secret");
+
+//         if (hdshData.cookie["express.sid"] === handshake.sessionID) {
+//             return accept("cookie is invalid");
+//         }
+//     } else {
+//         return accept("No Cookie transmitted", false);
+//     }
+
+//     accept(null, true);
+// });
 
 io.on("connection", function (client) {
     console.log("NEW CONNECTION");
@@ -221,7 +244,6 @@ io.on("connection", function (client) {
 
     client.on("play", function () {
         console.log("Socket signal play");
-
         if (clientInRoom) io.to(clientInRoom).emit("play", {username:screenName});    
     });
 

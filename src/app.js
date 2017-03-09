@@ -39,7 +39,6 @@ var ROOM_NAME_LENGTH = 16;
 /* Use dictionary for now until more research is done on databases */
 var activeRooms = {};
 var verifyRoomAndPassword = function (roomname, roompass, callback) {
-    var err = null;
 
     var found = false;
     for (var key in activeRooms) {
@@ -67,14 +66,15 @@ var addNewRoom = function (roomname, roompass, videoUrl, callback) {
     callback(null, activeRooms.roomname);
 };
 
-var refreshRoomActivity = function (roomname) {
-    /* Refresh room activity */
-};
+/* Commented to bypass eslint warnings */
+// var refreshRoomActivity = function (roomname) {
+//     /* Refresh room activity */
+// };
 
-var destroyInactiveRooms = function () {
-    /* as function name */
-    /* this will probably called in a setTimer() */
-};
+// var destroyInactiveRooms = function () {
+//     /* as function name */
+//     /* this will probably called in a setTimer() */
+// };
 
 app.use(function (req, res, next) {
     if (BLOCK_CONSOLE) console.log("HTTP request", req.method, req.url, req.body);
@@ -82,7 +82,7 @@ app.use(function (req, res, next) {
 });
 
 /* http://stackoverflow.com/questions/35408729/express-js-prevent-get-favicon-ico */
-app.get("/favicon.ico/", function (req, res, next) {
+app.get("/favicon.ico/", function (req, res) {
     /* Remove this GET method if necessary.
     Only here to prevent favicon error console spam */
     res.status(200).end();
@@ -110,7 +110,7 @@ app.put("/api/createroom/", function (req, res, next) {
     var new_room_name = crypto.randomBytes(ROOM_NAME_LENGTH).toString("base64");
 
     /* Add new room to db and set room password HERE*/
-    addNewRoom(new_room_name, roomPassword, videoUrl, function (err, entry) {
+    addNewRoom(new_room_name, roomPassword, videoUrl, function (err) {
         if (err) {
             res.status(500).end("Database Error");
             return next();
@@ -141,7 +141,7 @@ app.get("/api/session/", function (req, res, next) {
         return next();
     }
 
-    verifyRoomAndPassword(roomname, roompass, function (err, entry) {
+    verifyRoomAndPassword(roomname, roompass, function (err) {
         if (!err) {
             var sessData = {};
             sessData.roomname = roomname;
@@ -156,7 +156,7 @@ app.get("/api/session/", function (req, res, next) {
 
 app.get("/room/:room_id/", function (req, res, next) {
     /* User has arrived on site with direct link to a room */
-    var roomId = req.params.room_id;
+    //var roomId = req.params.room_id;
 
     if (true) {
         /* IF room exists do something */
@@ -205,6 +205,10 @@ io.on("connection", function (client) {
         }
 
         client.join(roomname, function (err) {
+            if (!err) {
+                /* Do something */
+                return;
+            }
             clientInRoom = roomname;
             io.to(clientInRoom).emit("userJoined", {username:screenName});
         });
@@ -234,7 +238,7 @@ io.on("connection", function (client) {
 
 app.use(express.static("frontend"));  // This probably not be needed. Remove if see fit.
 
-app.use(function (req, res, next) {
+app.use(function (req, res) {
     if (BLOCK_CONSOLE) console.log("HTTP Response", res.statusCode);
 });
 

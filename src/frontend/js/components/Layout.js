@@ -1,7 +1,7 @@
-import React, { PropTypes } from "react"
-import { connect } from "react-redux"
+import React from "react";
+import { connect } from "react-redux";
 
-import { counter } from "../actions/roomsActions"
+import { createRooms } from "../actions/roomsActions";
 
 class Layout extends React.Component {
   constructor(props) {
@@ -9,7 +9,7 @@ class Layout extends React.Component {
   }
 
   click(){
-    this.props.testClick();
+    this.props.createRoom();
   }
 
   render () {
@@ -17,26 +17,26 @@ class Layout extends React.Component {
     return (
       <div>
         <h1>HELLO FROM REACT</h1>
-        <h2>Counter : {this.props.rooms.counter}</h2>
+        <h2>Room created?: {this.props.rooms.fetched}</h2>
         <button onClick={this.click.bind(this)}>CreateRoom</button>
       </div>
-    )
+    );
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    testClick: () => dispatch(counter("Add"))
-  }
-}
+    createRoom: () => dispatch(createRooms("CreateRoom"))
+  };
+};
 
 const mapStateToProps = (state) => {
   return state;
-}
+};
 
 const DefaultApp = connect(
   mapStateToProps,
   mapDispatchToProps
-)(Layout)
+)(Layout);
 
 export default DefaultApp;

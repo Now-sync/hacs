@@ -5,22 +5,19 @@ export default function reducer(state={
       users: null,
     },
     fetching: false,
-    fetched: false,
-    counter: 0,
+    fetched: "no",
     error: null,
   }, action) {
 
     switch (action.type) {
       case "CreateRoom": {
-        console.log("HERE YES!");
-        return Object.assign({}, state, {fetching: true});
+        console.log("HERE YES!", action.payload);
+        return Object.assign({}, state, {fetched: "yes"});
       }
       case "CreateRoomError": {
         console.log("Error!");
+        return Object.assign({}, state, {fetched: "no", error: action.payload});
       }
-      case "Add":
-        console.log("ADD!!", state);
-        return Object.assign({}, state, {counter: state.counter + 1});
       default:
         return state;
     }

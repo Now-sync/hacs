@@ -1,13 +1,13 @@
 import axios from "axios";
 
-export function fetchTweets() {
+export function createRooms() {
   return function(dispatch) {
-    axios.get("http://rest.learncode.academy/api/test123/tweets")
+    axios.put("http://localhost:3000/api/createroom")
       .then((response) => {
-        dispatch({type: "FETCH_TWEETS_FULFILLED", payload: response.data})
+        dispatch({type: "CreateRoom", payload: response.data})
       })
       .catch((err) => {
-        dispatch({type: "FETCH_TWEETS_REJECTED", payload: err})
+        dispatch({type: "CreateRoomError", payload: err})
       })
   }
 }

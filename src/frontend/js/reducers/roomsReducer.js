@@ -10,7 +10,8 @@ export default function reducer(state={
   }, action) {
 
     switch (action.type) {
-      case "FETCH_USER": {
+      case "CreateRoom": {
+        console.log("HERE YES!");
         return Object.assign({}, state, {fetching: true})
       }
     }

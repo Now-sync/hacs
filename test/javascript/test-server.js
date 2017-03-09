@@ -71,7 +71,7 @@ describe("All server testing", function () {
         });
 
         it("should broadcast play to all users in the same room", function (done) {
-            var expect = 3;
+            var recievedA = false, recievedB = false, recievedC = false;
             var messageCounter = 0;
             var personA = io.connect(socketUrl, options);
             personA.on("connect", function() {
@@ -83,8 +83,8 @@ describe("All server testing", function () {
                     personC.on("connect", function() {
                         personC.emit("join", {roomname: roomname, username: "personC"});
                         personC.on("play", function(data) {
-                            messageCounter++;
-                            if (messageCounter === expect) {
+                            recievedC = true;
+                            if (recievedA && recievedB && recievedC) {
                                 done();
                             }
                         });
@@ -95,16 +95,16 @@ describe("All server testing", function () {
                     });
 
                     personB.on("play", function (data) {
-                        messageCounter++;
-                        if (messageCounter === expect) {
+                        recievedB = true;
+                        if (recievedA && recievedB && recievedC) {
                             done();
                         }
                     });
                 });
                 
                 personA.on("play", function (data) {
-                    messageCounter++;
-                    if (messageCounter === expect) {
+                    recievedA = true;
+                    if (recievedA && recievedB && recievedC) {
                         done();
                     }
                 });

@@ -161,8 +161,7 @@ describe("All server testing", function () {
         });
 
         it("should broadcast pause to all users in the same room", function (done) {
-            var expect = 6;
-            var messageCounter = 0;
+            var countA = 0, countB = 0, countC = 0, expect = 1;
             var personA = io.connect(socketUrl, options);
             personA.on("connect", function() {
                 personA.emit("join", {roomname: roomname, username: "personA"});
@@ -173,28 +172,28 @@ describe("All server testing", function () {
                     personC.on("connect", function() {
                         personC.emit("join", {roomname: roomname, username: "personC"});
                         personC.on("pause", function(data) {
-                            messageCounter++;
-                            if (messageCounter === expect) {
+                            countC++;
+                            if (countA === expect && countB === expect && countC === expect) {
                                 done();
                             }
                         });
                         personC.on("userJoined", function (data) {
                             personA.emit("pause");
-                            personA.emit("pause");
+
                         });
                     });
 
                     personB.on("pause", function (data) {
-                        messageCounter++;
-                        if (messageCounter === expect) {
+                        countB++;
+                        if (countA === expect && countB === expect && countC === expect) {
                             done();
                         }
                     });
                 });
                 
                 personA.on("pause", function (data) {
-                    messageCounter++;
-                    if (messageCounter === expect) {
+                    countA++;
+                    if (countA === expect && countB === expect && countC === expect) {
                         done();
                     }
                 });

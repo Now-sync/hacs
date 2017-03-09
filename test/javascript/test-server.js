@@ -67,43 +67,42 @@ describe("All server testing", function () {
 
         it("should broadcast play to all users in the same room", function (done) {
             var messageCounter = 0;
-
-            chai.request(server)
-                .get("/api/session/")
-                .send({roomname: roomname, password: "password"})
-                .end(function (res) {
-                    var personA = io.connect(socketUrl, options);
-                    personA.emit("join", {roomname: roomname, username: null});
-
-                    personA.on("error", function(msg) {
-                        console.log(msg);
+            var personA = io.connect(socketUrl, options);
+            personA.on("connect", function() {
+                personA.emit("join", {roomname: roomname, username: "personA"});
+                var personB = io.connect(socketUrl, options);
+                personB.on("connect", function() {
+                    personB.emit("join", {roomname: roomname, username: "personB"});
+                    var personC = io.connect(socketUrl, options);
+                    personC.on("connect", function() {
+                        personC.emit("join", {roomname: roomname, username: "personC"});
+                        personC.on("play", function(data) {
+                            messageCounter++;
+                            if (messageCounter === 6) {
+                                done();
+                            }
+                        });
+                        personC.on("userJoined", function (data) {
+                            personA.emit("play");
+                            personA.emit("play");
+                        });
                     });
 
-                    personA.on("play", function(data) {
+                    personB.on("play", function(data) {
                         messageCounter++;
-                        if (messageCounter === 2) {
+                        if (messageCounter === 6) {
                             done();
                         }
                     });
-
-                    chai.request(server)
-                        .get("/api/session/")
-                        .send({roomname: roomname, password: "password"})
-                        .end(function (res2) {
-                            var personB = io.connect(socketUrl, options);
-                            personB.emit("join", {roomname: roomname, username: null});
-                            personB.on("play", function(data) {
-                                messageCounter++;
-                                if (messageCounter === 2) {
-                                    done();
-                                }
-                            });
-
-                            personB.on("userJoined", function (data) {
-                                personA.emit("play");
-                            });
-                        });
                 });
+                
+                personA.on("play", function(data) {
+                    messageCounter++;
+                    if (messageCounter === 6) {
+                        done();
+                    }
+                });
+            });
         });
     });
 });

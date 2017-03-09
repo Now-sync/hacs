@@ -1,11 +1,12 @@
 var gulp = require("gulp");
 var mocha = require("gulp-mocha");
-var webpack = require("webpack-stream");
+var webpack = require("webpack");
+var gulpWebpack = require("webpack-stream");
 var nodemon = require("nodemon");
 
 gulp.task("build", function () {
     return gulp.src("src/frontend/js/client.js")
-        .pipe(webpack(require("./webpack.config.js")))
+        .pipe(gulpWebpack(require("./webpack.config.js"), webpack))
         .pipe(gulp.dest("src/frontend/"));
 });
 

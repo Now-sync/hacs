@@ -28,7 +28,7 @@ var config = {
 var server = https.createServer(config, app);
 var io = IO(server);
 
-var BLOCK_CONSOLE = false;  // variable exposed for testing. Set true to block all console.logs
+var BLOCK_CONSOLE = process.env.NODE_ENV !== "test";
 
 /* -----------  -------------*/
 

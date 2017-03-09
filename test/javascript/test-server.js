@@ -1,4 +1,5 @@
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";  // This is supposedly very bad
+process.env.NODE_ENV = "test";
 var chai = require("chai");
 var chaiHttp = require("chai-http");
 var server = require("../../src/app.js");
@@ -12,18 +13,11 @@ var options = {
 
 chai.use(chaiHttp);
 
-var BLOCK_CONSOLE = true;
+var BLOCK_CONSOLE = false;
 
 describe("All server testing", function () {
 
     describe("Create room", function() {
-        // before(function () {
-        //     if (BLOCK_CONSOLE) console.log = function () {};
-        // });
-
-        // after(function (){
-        //     if (BLOCK_CONSOLE) delete console.log;
-        // });
 
         it("should return a status code 200", function (done) {
             chai.request(server)

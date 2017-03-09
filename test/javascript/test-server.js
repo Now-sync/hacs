@@ -148,4 +148,115 @@ describe("All server testing", function () {
                 });
         });
     });
+
+    describe("Test emit pause", function() {
+
+        var roomname;
+        beforeEach(function (){
+            chai.request(server)
+                .put("/api/createroom/")
+                .send({roomPassword: "password", videoUrl: "random", screenName: "Mallory"})
+                .end(function (res) {
+                    roomname = res.body.roomname;
+                });
+        });
+
+        it("should broadcast pause to all users in the same room", function (done) {
+            var expect = 6;
+            var messageCounter = 0;
+            var personA = io.connect(socketUrl, options);
+            personA.on("connect", function() {
+                personA.emit("join", {roomname: roomname, username: "personA"});
+                var personB = io.connect(socketUrl, options);
+                personB.on("connect", function() {
+                    personB.emit("join", {roomname: roomname, username: "personB"});
+                    var personC = io.connect(socketUrl, options);
+                    personC.on("connect", function() {
+                        personC.emit("join", {roomname: roomname, username: "personC"});
+                        personC.on("pause", function(data) {
+                            messageCounter++;
+                            if (messageCounter === expect) {
+                                done();
+                            }
+                        });
+                        personC.on("userJoined", function (data) {
+                            personA.emit("pause");
+                            personA.emit("pause");
+                        });
+                    });
+
+                    personB.on("pause", function (data) {
+                        messageCounter++;
+                        if (messageCounter === expect) {
+                            done();
+                        }
+                    });
+                });
+                
+                personA.on("pause", function (data) {
+                    messageCounter++;
+                    if (messageCounter === expect) {
+                        done();
+                    }
+                });
+            });
+        });
+
+        it("should not broadcast in other rooms", function (done) {
+            /* Create new room */
+            var counter1 = 0, counter2 = 0;
+            var roomname2;
+            chai.request(server)
+                .put("/api/createroom/")
+                .send({roomPassword: "password", videoUrl: "random", screenName: "Mallory"})
+                .end(function (res) {
+                    roomname2 = res.body.roomname;
+                    var personA = io.connect(socketUrl, options);
+                    personA.on("connect", function () {
+                        personA.emit("join", {roomname: roomname2, username: "personA"});
+                        var personB = io.connect(socketUrl, options);
+                        personB.on("connect", function() {
+                            personB.emit("join", {roomname: roomname, username: "personB"});
+                            personB.on("userJoined", function (data) {
+                                personA.emit("pause");
+                                personB.emit("pause");
+                            });
+                            personB.on("pause", function (data) {
+                                counter2++;
+                                if (counter1 === 1 && counter2 === 1) {
+                                    done();
+                                }
+                            });
+                        });
+
+                        personA.on("pause", function (data) {
+                            counter1++;
+                            if (counter1 === 1 && counter2 === 1) {
+                                done();
+                            }
+                        });
+                    });
+                });
+        });
+
+        it("should transmit time paused", function (done) {
+            var pausedtime = "59:59";
+            var personA = io.connect(socketUrl, options);
+            personA.on("connect", function () {
+                personA.emit("join", {roomname: roomname, username: "personA"});
+                var personB = io.connect(socketUrl, options);
+                personB.on("connect", function () {
+                    personB.emit("join", {roomname: roomname, username: "personB"});
+                    personB.on("pause", function (data) {
+                        if (data.pausedtime === pausedtime) {
+                            done();
+                        }
+                    });
+                    personB.on("userJoined", function (data) {
+                        personA.emit("pause", pausedtime);
+                    });
+                });
+            });
+        });
+    });
 });

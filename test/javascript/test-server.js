@@ -72,7 +72,6 @@ describe("All server testing", function () {
 
         it("should broadcast play to all users in the same room", function (done) {
             var countA = 0, countB = 0, countC = 0, expect = 1;
-            var messageCounter = 0;
             var personA = io.connect(socketUrl, options);
             personA.on("connect", function() {
                 personA.emit("join", {roomname: roomname, username: "personA"});

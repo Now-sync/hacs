@@ -5,7 +5,8 @@
   "main": "app.js",
   "scripts": {
     "webpack": "webpack",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha test/javascript/*.js",
+    "watch": "gulp watch"
   },
   "author": "",
   "license": "ISC",
@@ -33,6 +34,9 @@
     "chai": "^3.2.0",
     "chai-http": "^1.0.0",
     "eslint": "^3.17.1",
+    "gulp": "^3.9.1",
+    "gulp-mocha": "^4.1.0",
+    "mocha": "^3.2.0",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
     "react-redux": "^5.0.3",

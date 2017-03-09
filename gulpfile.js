@@ -28,7 +28,7 @@ gulp.task("test_after_build", ["build"], function () {
 });
 
 gulp.task("default", ["nodemon"], function () {
-    gulp.watch("src/frontend/js/*.js", ["test_after_build"]);
+    gulp.watch("src/frontend/js/**/*.js", ["test_after_build"]);
     gulp.watch("src/app.js", ["test"]);
     gulp.watch("test/**/*.js", ["test"]);
 });

@@ -1,5 +1,5 @@
 module.exports = {
-  entry: "./src/frontend/syncApp.js",
+  entry: "./src/frontend/js/client.js",
   output: {
     path: __dirname + "/src/frontend",
     filename: "bundle.js"

@@ -71,7 +71,6 @@ describe("All server testing", function () {
         });
 
         it("should broadcast play to all users in the same room", function (done) {
-            var recievedA = false, recievedB = false, recievedC = false;
             var countA = 0, countB = 0, countC = 0;
             var messageCounter = 0;
             var personA = io.connect(socketUrl, options);
@@ -84,12 +83,9 @@ describe("All server testing", function () {
                     personC.on("connect", function() {
                         personC.emit("join", {roomname: roomname, username: "personC"});
                         personC.on("play", function(data) {
-                            recievedC = true;
                             countC++;
-                            if (recievedA && recievedB && recievedC && countC === 1) {
-                                if (countA === 1 && countB === 1 && countC === 1) {
-                                    done();
-                                }
+                            if (countA === 1 && countB === 1 && countC === 1) {
+                                done();
                             }
                         });
                         personC.on("userJoined", function (data) {
@@ -99,23 +95,17 @@ describe("All server testing", function () {
                     });
 
                     personB.on("play", function (data) {
-                        recievedB = true;
                         countB++;
-                        if (recievedA && recievedB && recievedC && countB === 1) {
-                            if (countA === 1 && countB === 1 && countC === 1) {
-                                done();
-                            }
+                        if (countA === 1 && countB === 1 && countC === 1) {
+                            done();
                         }
                     });
                 });
                 
                 personA.on("play", function (data) {
-                    recievedA = true;
                     countA++;
-                    if (recievedA && recievedB && recievedC && countA === 1) {
-                        if (countA === 1 && countB === 1 && countC === 1) {
-                            done();
-                        }
+                    if (countA === 1 && countB === 1 && countC === 1) {
+                        done();
                     }
                 });
             });

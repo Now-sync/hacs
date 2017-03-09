@@ -71,7 +71,7 @@ describe("All server testing", function () {
         });
 
         it("should broadcast play to all users in the same room", function (done) {
-            var expect = 6;
+            var expect = 3;
             var messageCounter = 0;
             var personA = io.connect(socketUrl, options);
             personA.on("connect", function() {
@@ -90,7 +90,7 @@ describe("All server testing", function () {
                         });
                         personC.on("userJoined", function (data) {
                             personA.emit("play");
-                            personA.emit("play");
+
                         });
                     });
 

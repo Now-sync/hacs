@@ -1,10 +1,8 @@
-
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";  // This is supposedly very bad
 var chai = require("chai");
 var chaiHttp = require("chai-http");
 var server = require("../../src/app.js");
 var should = chai.should();
-
 var io = require("socket.io-client");
 var socketUrl = "https://localhost:3000";
 var options = {
@@ -14,8 +12,19 @@ var options = {
 
 chai.use(chaiHttp);
 
+var BLOCK_CONSOLE = true;
+
 describe("All server testing", function () {
+
     describe("Create room", function() {
+        // before(function () {
+        //     if (BLOCK_CONSOLE) console.log = function () {};
+        // });
+
+        // after(function (){
+        //     if (BLOCK_CONSOLE) delete console.log;
+        // });
+
         it("should return a status code 200", function (done) {
             chai.request(server)
                 .put("/api/createroom/")
@@ -51,10 +60,12 @@ describe("All server testing", function () {
                     });
             });
         });
+
+
     });
 
     describe("Test emit play", function() {
-        
+
         var roomname;
         beforeEach(function (){
             chai.request(server)
@@ -66,6 +77,7 @@ describe("All server testing", function () {
         });
 
         it("should broadcast play to all users in the same room", function (done) {
+            var expect = 6;
             var messageCounter = 0;
             var personA = io.connect(socketUrl, options);
             personA.on("connect", function() {
@@ -78,7 +90,7 @@ describe("All server testing", function () {
                         personC.emit("join", {roomname: roomname, username: "personC"});
                         personC.on("play", function(data) {
                             messageCounter++;
-                            if (messageCounter === 6) {
+                            if (messageCounter === expect) {
                                 done();
                             }
                         });
@@ -90,7 +102,7 @@ describe("All server testing", function () {
 
                     personB.on("play", function (data) {
                         messageCounter++;
-                        if (messageCounter === 6) {
+                        if (messageCounter === expect) {
                             done();
                         }
                     });
@@ -98,7 +110,7 @@ describe("All server testing", function () {
                 
                 personA.on("play", function (data) {
                     messageCounter++;
-                    if (messageCounter === 6) {
+                    if (messageCounter === expect) {
                         done();
                     }
                 });

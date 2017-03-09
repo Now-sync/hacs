@@ -28,6 +28,8 @@ var config = {
 var server = https.createServer(config, app);
 var io = IO(server);
 
+var BLOCK_CONSOLE = false;  // variable exposed for testing. Set true to block all console.logs
+
 /* -----------  -------------*/
 
 var ROOM_NAME_LENGTH = 16;
@@ -72,7 +74,7 @@ var destroyInactiveRooms = function () {
 };
 
 app.use(function (req, res, next) {
-    console.log("HTTP request", req.method, req.url, req.body);
+    if (BLOCK_CONSOLE) if (BLOCK_CONSOLE) console.log("HTTP request", req.method, req.url, req.body);
     return next();
 });
 
@@ -171,7 +173,7 @@ app.get("/room/:room_id/", function (req, res, next) {
 // });
 
 io.on("connection", function (client) {
-    console.log("NEW CONNECTION");
+    if (BLOCK_CONSOLE) console.log("NEW CONNECTION");
 
     var clientInRoom = null;
     var screenName = null;
@@ -184,7 +186,7 @@ io.on("connection", function (client) {
             username = "user_" + crypto.randomBytes(8).toString("base64");
         }
 
-        console.log("User:", username, "has joined room:", roomname);
+        if (BLOCK_CONSOLE) console.log("User:", username, "has joined room:", roomname);
 
         screenName = username;
 
@@ -199,23 +201,23 @@ io.on("connection", function (client) {
             io.to(clientInRoom).emit("userJoined", {username:screenName});
         });
 
-        console.log(client.rooms);
+        if (BLOCK_CONSOLE) console.log(client.rooms);
     });
 
     client.on("pause", function (pausedtime) {
-        console.log("Socket signal pause");
+        if (BLOCK_CONSOLE) console.log("Socket signal pause");
 
         if (clientInRoom) io.to(clientInRoom).emit("pause", {pausedtime:pausedtime, username:screenName});
     });
 
     client.on("play", function () {
-        console.log("Socket signal play");
+        if (BLOCK_CONSOLE) console.log("Socket signal play");
 
         if (clientInRoom) io.to(clientInRoom).emit("play", {username:screenName});
     });
 
     client.on("disconnect", function () {
-        console.log("DISCONNECTED");
+        if (BLOCK_CONSOLE) console.log("DISCONNECTED");
         client.leave(clientInRoom, function () {
             io.to(clientInRoom).emit("userLeft", {username:screenName});
         });
@@ -225,10 +227,10 @@ io.on("connection", function (client) {
 app.use(express.static("frontend"));  // This probably not be needed. Remove if see fit.
 
 app.use(function (req, res, next) {
-    console.log("HTTP Response", res.statusCode);
+    if (BLOCK_CONSOLE) console.log("HTTP Response", res.statusCode);
 });
 
 /* Expose server for testing */
 module.exports = server.listen(3000, function () {
-    console.log("HTTPS on port 3000");
+    if (BLOCK_CONSOLE) console.log("HTTPS on port 3000");
 });

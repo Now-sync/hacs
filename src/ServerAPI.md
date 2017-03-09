@@ -17,14 +17,14 @@
 ##Server Sockets
 
 	List of current possible signals the server might send
-		- "userLeft" 
-			A user has left the room you are in. Returns {username: <name of user that left>}
-		- "userJoined"
-			A user has joined the room you are in. Returns {username: <name of user that joined>}
-		- "pause" 
-			A user in the room has signalled pause into the room. Returns {pausedtime: <paused time>, username: <name of user that signalled pause>}
-		- "play" 
-			A user in the room has signalled play into the room. Returns {username: <name of user that signalled the pause>}
+		- "userLeft" -> A user has left the room you are in.
+			Returns {username: <name of user that left>}
+		- "userJoined" -> A user has joined the room you are in.
+			Returns {username: <name of user that joined>}
+		- "pause" -> A user in the room has signalled pause into the room.
+			Returns {pausedtime: <paused time>, username: <name of user that signalled pause>}
+		- "play" -> A user in the room has signalled play into the room.
+			Returns {username: <name of user that signalled the pause>}
 
 	List of signals that the server will accept and handle
 		- "join"

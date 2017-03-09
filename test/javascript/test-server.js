@@ -88,7 +88,7 @@ describe("All server testing", function () {
                         });
                     });
 
-                    personB.on("play", function(data) {
+                    personB.on("play", function (data) {
                         messageCounter++;
                         if (messageCounter === 6) {
                             done();
@@ -96,13 +96,50 @@ describe("All server testing", function () {
                     });
                 });
                 
-                personA.on("play", function(data) {
+                personA.on("play", function (data) {
                     messageCounter++;
                     if (messageCounter === 6) {
                         done();
                     }
                 });
             });
+        });
+
+        it("should not broadcast in other rooms", function (done) {
+            /* Create new room */
+            var counter1 = 0, counter2 = 0;
+            var roomname2;
+            chai.request(server)
+                .put("/api/createroom/")
+                .send({roomPassword: "password", videoUrl: "random", screenName: "Mallory"})
+                .end(function (res) {
+                    roomname2 = res.body.roomname;
+                    var personA = io.connect(socketUrl, options);
+                    personA.on("connect", function () {
+                        personA.emit("join", {roomname: roomname2, username: "personA"});
+                        var personB = io.connect(socketUrl, options);
+                        personB.on("connect", function() {
+                            personB.emit("join", {roomname: roomname, username: "personB"});
+                            personB.on("userJoined", function (data) {
+                                personA.emit("play");
+                                personB.emit("play");
+                            });
+                            personB.on("play", function (data) {
+                                counter2++;
+                                if (counter1 === 1 && counter2 === 1) {
+                                    done();
+                                }
+                            });
+                        });
+
+                        personA.on("play", function (data) {
+                            counter1++;
+                            if (counter1 === 1 && counter2 === 1) {
+                                done();
+                            }
+                        });
+                    });
+                });
         });
     });
 });

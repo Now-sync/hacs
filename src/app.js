@@ -70,7 +70,7 @@ var verifyRoomAndPassword = function (roomname, roompass, callback) {
 var addNewRoom = function (roomname, roompass, videoUrl, callback) {
     activeRooms[roomname] = {roomPassword: roompass, activeUsers:[], videoUrl:videoUrl, lastActive:null};
 
-    callback(null, activeRooms.roomname);
+    callback(null, activeRooms[roomname]);
 };
 
 /* Commented to bypass eslint warnings */
@@ -195,6 +195,7 @@ io.on("connection", function (client) {
 
     client.on("join", function (data) {
         var roomname = data.roomname;
+        var roompass = data.roompass;
         var username = data.username;
 
         if (!username) {

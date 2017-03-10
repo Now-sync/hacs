@@ -10,7 +10,9 @@ class Layout extends React.Component {
 
   onsubmit(){
     const url = this.refs.url.value;
+    this.refs.url.value = "";
     const password = this.refs.password.value;
+    this.refs.password.value = "";
     this.props.createRoom(url, password);
   }
 
@@ -19,13 +21,13 @@ class Layout extends React.Component {
       <div>
         <h1>HELLO FROM REACT</h1>
         <h2>Room created?: {this.props.rooms.fetched}</h2>
-        <form onSubmit= {e => {
+        <form ref = "create_room" onSubmit= {e => {
           e.preventDefault();
           this.onsubmit();
         }}>
           <input ref="password" type="text" placeholder= "RoomPassword"/>
           <input ref= "url" type="text" placeholder= "VideoUrl"/>
-          <button id = "create_room" type="submit">CreateRoom</button>
+          <button type="submit">Create Room</button>
         </form>
       </div>
     );

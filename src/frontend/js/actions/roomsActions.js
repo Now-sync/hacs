@@ -1,7 +1,6 @@
 import axios from "axios";
 
 export function createRooms(url, password) {
-  console.log("inside action", url , " ", password);
   return function(dispatch) {
     axios.put("/api/createroom", {
       roomPassword: password,

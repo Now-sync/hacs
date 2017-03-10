@@ -72,13 +72,13 @@ describe("All server testing", function () {
             var countA = 0, countB = 0, countC = 0, expect = 1;
             var personA = io.connect(socketUrl, options);
             personA.on("connect", function() {
-                personA.emit("join", {roomname: roomname, username: "personA"});
+                personA.emit("join", {roomname: roomname, roompass: "password", username: "personA"});
                 var personB = io.connect(socketUrl, options);
                 personB.on("connect", function() {
-                    personB.emit("join", {roomname: roomname, username: "personB"});
+                    personB.emit("join", {roomname: roomname, roompass: "password", username: "personB"});
                     var personC = io.connect(socketUrl, options);
                     personC.on("connect", function() {
-                        personC.emit("join", {roomname: roomname, username: "personC"});
+                        personC.emit("join", {roomname: roomname, roompass: "password", username: "personC"});
                         personC.on("play", function () {
                             countC++;
                             if (countA === expect && countB === expect && countC === expect) {
@@ -119,10 +119,10 @@ describe("All server testing", function () {
                     roomname2 = res.body.roomname;
                     var personA = io.connect(socketUrl, options);
                     personA.on("connect", function () {
-                        personA.emit("join", {roomname: roomname2, username: "personA"});
+                        personA.emit("join", {roomname: roomname2, roompass: "password", username: "personA"});
                         var personB = io.connect(socketUrl, options);
                         personB.on("connect", function() {
-                            personB.emit("join", {roomname: roomname, username: "personB"});
+                            personB.emit("join", {roomname: roomname, roompass: "password", username: "personB"});
                             personB.on("userJoined", function () {
                                 personA.emit("play");
                                 personB.emit("play");
@@ -162,13 +162,13 @@ describe("All server testing", function () {
             var countA = 0, countB = 0, countC = 0, expect = 1;
             var personA = io.connect(socketUrl, options);
             personA.on("connect", function() {
-                personA.emit("join", {roomname: roomname, username: "personA"});
+                personA.emit("join", {roomname: roomname, roompass: "password", username: "personA"});
                 var personB = io.connect(socketUrl, options);
                 personB.on("connect", function() {
-                    personB.emit("join", {roomname: roomname, username: "personB"});
+                    personB.emit("join", {roomname: roomname, roompass: "password", username: "personB"});
                     var personC = io.connect(socketUrl, options);
                     personC.on("connect", function() {
-                        personC.emit("join", {roomname: roomname, username: "personC"});
+                        personC.emit("join", {roomname: roomname, roompass: "password", username: "personC"});
                         personC.on("pause", function() {
                             countC++;
                             if (countA === expect && countB === expect && countC === expect) {
@@ -209,10 +209,10 @@ describe("All server testing", function () {
                     roomname2 = res.body.roomname;
                     var personA = io.connect(socketUrl, options);
                     personA.on("connect", function () {
-                        personA.emit("join", {roomname: roomname2, username: "personA"});
+                        personA.emit("join", {roomname: roomname2, roompass: "password", username: "personA"});
                         var personB = io.connect(socketUrl, options);
                         personB.on("connect", function() {
-                            personB.emit("join", {roomname: roomname, username: "personB"});
+                            personB.emit("join", {roomname: roomname, roompass: "password", username: "personB"});
                             personB.on("userJoined", function () {
                                 personA.emit("pause");
                                 personB.emit("pause");
@@ -239,10 +239,10 @@ describe("All server testing", function () {
             var pausedtime = "59:59";
             var personA = io.connect(socketUrl, options);
             personA.on("connect", function () {
-                personA.emit("join", {roomname: roomname, username: "personA"});
+                personA.emit("join", {roomname: roomname, roompass: "password", username: "personA"});
                 var personB = io.connect(socketUrl, options);
                 personB.on("connect", function () {
-                    personB.emit("join", {roomname: roomname, username: "personB"});
+                    personB.emit("join", {roomname: roomname, roompass: "password", username: "personB"});
                     personB.on("pause", function (data) {
                         if (data.pausedtime === pausedtime) {
                             done();

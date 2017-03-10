@@ -124,7 +124,7 @@ app.put("/api/createroom/", function (req, res, next) {
     }
 
     var new_room_name = crypto.randomBytes(ROOM_NAME_LENGTH)
-                        .toString("base64").replace(/\//g,'_').replace(/\+/g,'-'));
+                        .toString("base64");//.replace(/\//g,'_').replace(/\+/g,'-');
 
     /* Add new room to db and set room password HERE*/
     addNewRoom(new_room_name, roomPassword, videoUrl, function (err) {

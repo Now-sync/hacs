@@ -13,12 +13,16 @@ class Layout extends React.Component {
   }
 
   render () {
-    console.log(this.props);
+    console.log(this.props, "HAHA");
     return (
       <div>
         <h1>HELLO FROM REACT</h1>
         <h2>Room created?: {this.props.rooms.fetched}</h2>
-        <button onClick={this.click.bind(this)}>CreateRoom</button>
+        <form>
+          <input type="text" placeholder= "RoomPassword"/>
+          <input type="text" placeholder= "VideoUrl"/>
+          <button onClick={this.click.bind(this)}>CreateRoom</button>
+        </form>
       </div>
     );
   }

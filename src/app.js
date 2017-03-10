@@ -68,7 +68,12 @@ var verifyRoomAndPassword = function (roomname, roompass, callback) {
 };
 
 var addNewRoom = function (roomname, roompass, videoUrl, callback) {
-    activeRooms[roomname] = {roomPassword: roompass, activeUsers:[], videoUrl:videoUrl, lastActive:null};
+    activeRooms[roomname] = {
+        roomPassword: roompass,
+        activeUsers: [],
+        videoUrl: videoUrl,
+        videoTimeMaster: null,
+        lastActive:null};
 
     callback(null, activeRooms[roomname]);
 };
@@ -201,11 +206,13 @@ io.on("connection", function (client) {
 
     var clientInRoom = null;
     var screenName = null;
+    var videoTimeMaster = null;
 
     client.on("join", function (data) {
         var roomname = data.roomname;
         var roompass = data.roompass;
         var username = data.username;
+
 
         verifyRoomAndPassword(roomname, roompass, function (err, roomData) {
             if (err) {
@@ -264,22 +271,28 @@ io.on("connection", function (client) {
         }
     });
 
-    client.on("pause", function (pausedtime) {
+    client.on("pause", function (data) {
         if (BLOCK_CONSOLE) console.log("Socket signal pause");
-
-        if (clientInRoom) io.to(clientInRoom).emit("pause", {pausedtime:pausedtime, username:screenName});
+        if (!data) {
+            if (BLOCK_CONSOLE) console.log("no data given in signal pause");
+            return;
+        } else if (data && !data.pausedtime) {
+            if (BLOCK_CONSOLE) console.log("no pause time given in pause signal");
+            return;
+        }
+        if (clientInRoom) io.to(clientInRoom).emit("pause", {pausedtime: data.pausedtime, username: screenName});
     });
 
     client.on("play", function () {
         if (BLOCK_CONSOLE) console.log("Socket signal play");
 
-        if (clientInRoom) io.to(clientInRoom).emit("play", {username:screenName});
+        if (clientInRoom) io.to(clientInRoom).emit("play", {username: screenName});
     });
 
     client.on("disconnect", function () {
         if (BLOCK_CONSOLE) console.log("DISCONNECTED");
         client.leave(clientInRoom, function () {
-            io.to(clientInRoom).emit("userLeft", {username:screenName});
+            io.to(clientInRoom).emit("userLeft", {username: screenName});
         });
     });
 });

@@ -206,7 +206,7 @@ describe("All server testing", function () {
                             }
                         });
                         personC.on("userJoined", function () {
-                            personA.emit("pause");
+                            personA.emit("pause", {pausedtime: "not_empty"});
 
                         });
                     });
@@ -244,8 +244,8 @@ describe("All server testing", function () {
                         personB.on("connect", function() {
                             personB.emit("join", {roomname: roomname, roompass: "password", username: "personB"});
                             personB.on("userJoined", function () {
-                                personA.emit("pause");
-                                personB.emit("pause");
+                                personA.emit("pause", {pausedtime: "not_empty"});
+                                personB.emit("pause", {pausedtime: "not_empty"});
                             });
                             personB.on("pause", function () {
                                 counter2++;
@@ -279,7 +279,7 @@ describe("All server testing", function () {
                         }
                     });
                     personB.on("userJoined", function () {
-                        personA.emit("pause", pausedtime);
+                        personA.emit("pause", {pausedtime: pausedtime});
                     });
                 });
             });

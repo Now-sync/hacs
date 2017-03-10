@@ -1,11 +1,10 @@
-import React, {Component} from "react";
-import {bindActionCreators} from "redux";
+import React from "react";
 import { connect } from "react-redux";
 //insert css here using require statement
 
-import { createRooms } from "../actions/roomsActions";
+import { createRoom } from "../actions/roomActions";
 
-class CreateRoom extends Component {
+class CreateRoom extends React.Component {
   constructor(props) {
     super(props);
   }
@@ -26,8 +25,8 @@ class CreateRoom extends Component {
           e.preventDefault();
           this.onsubmit();
         }}>
-          <input ref="password" type="text" placeholder= "RoomPassword"/>
-          <input ref= "url" type="text" placeholder= "VideoUrl"/>
+          <input ref="password" type="text" placeholder="RoomPassword"/>
+          <input ref="url" type="text" placeholder="VideoUrl"/>
           <button type="submit">Create Room</button>
         </form>
       </div>
@@ -37,7 +36,7 @@ class CreateRoom extends Component {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    createRoom: (url, password) => dispatch(createRooms(url, password, "CreateRoom"))
+    createRoom: (url, password) => dispatch(createRoom(url, password))
   };
 };
 

@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export function createRooms(url, password) {
+export function createRoom(url, password) {
   return function(dispatch) {
     axios.put("/api/createroom", {
       roomPassword: password,

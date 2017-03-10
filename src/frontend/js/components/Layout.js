@@ -8,20 +8,24 @@ class Layout extends React.Component {
     super(props);
   }
 
-  click(){
-    this.props.createRoom();
+  onsubmit(){
+    const url = this.refs.url.value;
+    const password = this.refs.password.value;
+    this.props.createRoom(url, password);
   }
 
   render () {
-    console.log(this.props, "HAHA");
     return (
       <div>
         <h1>HELLO FROM REACT</h1>
         <h2>Room created?: {this.props.rooms.fetched}</h2>
-        <form>
-          <input type="text" placeholder= "RoomPassword"/>
-          <input type="text" placeholder= "VideoUrl"/>
-          <button onClick={this.click.bind(this)}>CreateRoom</button>
+        <form onSubmit= {e => {
+          e.preventDefault();
+          this.onsubmit();
+        }}>
+          <input ref="password" type="text" placeholder= "RoomPassword"/>
+          <input ref= "url" type="text" placeholder= "VideoUrl"/>
+          <button id = "create_room" type="submit">CreateRoom</button>
         </form>
       </div>
     );
@@ -30,7 +34,7 @@ class Layout extends React.Component {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    createRoom: () => dispatch(createRooms("CreateRoom"))
+    createRoom: (url, password) => dispatch(createRooms(url, password, "CreateRoom"))
   };
 };
 

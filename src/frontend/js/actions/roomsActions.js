@@ -1,8 +1,12 @@
 import axios from "axios";
 
-export function createRooms() {
+export function createRooms(url, password) {
+  console.log("inside action", url , " ", password);
   return function(dispatch) {
-    axios.put("https://localhost:3000/api/createroom")
+    axios.put("/api/createroom", {
+      roomPassword: password,
+      videoUrl: url
+    })
       .then((response) => {
         dispatch({type: "CreateRoom", payload: response.data});
       })

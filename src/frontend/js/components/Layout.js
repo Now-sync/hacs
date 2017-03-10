@@ -1,11 +1,13 @@
-import React from "react"
-import { connect } from "react-redux"
+import React from "react";
+import Room from "./room";
+//insert css here using require statement
 
-export default class Layout extends React.Component {
-  render() {
 
-    return <div>
-      <h1>HELLO FROM REACT</h1>
-    </div>
-  }
-}
+const Layout = () => (
+  <div>
+    <h1>NOW-SYNC</h1>
+    <Room />
+  </div>
+);
+
+export default Layout;

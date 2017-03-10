@@ -19,12 +19,12 @@ gulp.task("nodemon", ["build"], function () {
 });
 
 gulp.task("test", function () {
-    return gulp.src("test/javascript/*.js")
+    return gulp.src("test/**/*.js")
         .pipe(mocha({reporter: "nyan"}));
 });
 
 gulp.task("test_after_build", ["build"], function () {
-    return gulp.src("test/javascript/*.js")
+    return gulp.src("test/**/*.js")
         .pipe(mocha({reporter: "nyan"}));
 });
 

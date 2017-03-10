@@ -2,7 +2,7 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";  // This is supposedly very bad
 process.env.NODE_ENV = "test";
 var chai = require("chai");
 var chaiHttp = require("chai-http");
-var server = require("../../src/app.js");
+var server = require("../src/app.js");
 var should = chai.should();
 var expect = chai.expect;
 var io = require("socket.io-client");
@@ -175,7 +175,7 @@ describe("All server testing", function () {
                         }
                     });
                 });
-                
+
                 personA.on("play", function () {
                     countA++;
                     if (countA === expect && countB === expect && countC === expect) {
@@ -283,7 +283,7 @@ describe("All server testing", function () {
                         }
                     });
                 });
-                
+
                 personA.on("pause", function () {
                     countA++;
                     if (countA === expect && countB === expect && countC === expect) {

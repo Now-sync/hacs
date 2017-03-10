@@ -1,11 +1,15 @@
 {
   "name": "nowsync",
   "version": "1.0.0",
-  "description": "",
-  "main": "app.js",
+  "description": "Nowsync provides a synchronization video streaming experience",
+  "main": "src/app.js",
   "scripts": {
     "test": "mocha test/javascript/*.js",
     "gulp": "gulp"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/UTSCC09/hacs.git"
   },
   "author": "",
   "license": "ISC",
@@ -31,13 +35,16 @@
     "babel-cli": "^6.23.0",
     "babel-preset-react": "^6.23.0",
     "chai": "^3.2.0",
+    "chai-enzyme": "^0.6.1",
     "chai-http": "^1.0.0",
+    "enzyme": "^2.7.1",
     "eslint": "^3.17.1",
     "gulp": "^3.9.1",
     "gulp-mocha": "^4.1.0",
     "gulp-nodemon": "^2.2.1",
     "mocha": "^3.2.0",
     "react": "^15.4.2",
+    "react-addons-test-utils": "^15.4.2",
     "react-dom": "^15.4.2",
     "react-redux": "^5.0.3",
     "redux": "^3.6.0",

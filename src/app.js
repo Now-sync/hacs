@@ -243,10 +243,11 @@ io.on("connection", function (client) {
     });
 });
 
-app.use(express.static("frontend"));  // This probably not be needed. Remove if see fit.
+app.use(express.static(__dirname + "/frontend"));
 
-app.use(function (req, res) {
+app.use(function (req, res, next) {
     if (BLOCK_CONSOLE) console.log("HTTP Response", res.statusCode);
+    return next();
 });
 
 /* Expose server for testing */

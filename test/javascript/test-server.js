@@ -57,9 +57,9 @@ describe("All server testing", function () {
     });
 
     describe("Test emit play", function() {
-
+        var personA, personB, personC;
         var roomname;
-        beforeEach(function (){
+        before(function (){
             chai.request(server)
                 .put("/api/createroom/")
                 .send({roomPassword: "password", videoUrl: "random", screenName: "Mallory"})
@@ -68,15 +68,30 @@ describe("All server testing", function () {
                 });
         });
 
+        afterEach(function(){
+            try{
+                personA.disconnect();
+            } finally {/* Do nothing */}
+
+            try{
+                personB.disconnect();
+            } finally {/* Do nothing */}
+
+            try{
+                personC.disconnect();
+            } finally {/* Do nothing */}
+
+        });
+
         it("should broadcast play to all users in the same room", function (done) {
             var countA = 0, countB = 0, countC = 0, expect = 1;
-            var personA = io.connect(socketUrl, options);
+            personA = io.connect(socketUrl, options);
             personA.on("connect", function() {
                 personA.emit("join", {roomname: roomname, roompass: "password", username: "personA"});
-                var personB = io.connect(socketUrl, options);
+                personB = io.connect(socketUrl, options);
                 personB.on("connect", function() {
                     personB.emit("join", {roomname: roomname, roompass: "password", username: "personB"});
-                    var personC = io.connect(socketUrl, options);
+                    personC = io.connect(socketUrl, options);
                     personC.on("connect", function() {
                         personC.emit("join", {roomname: roomname, roompass: "password", username: "personC"});
                         personC.on("play", function () {
@@ -117,10 +132,10 @@ describe("All server testing", function () {
                 .send({roomPassword: "password", videoUrl: "random", screenName: "Mallory"})
                 .end(function (res) {
                     roomname2 = res.body.roomname;
-                    var personA = io.connect(socketUrl, options);
+                    personA = io.connect(socketUrl, options);
                     personA.on("connect", function () {
                         personA.emit("join", {roomname: roomname2, roompass: "password", username: "personA"});
-                        var personB = io.connect(socketUrl, options);
+                        personB = io.connect(socketUrl, options);
                         personB.on("connect", function() {
                             personB.emit("join", {roomname: roomname, roompass: "password", username: "personB"});
                             personB.on("userJoined", function () {
@@ -147,9 +162,9 @@ describe("All server testing", function () {
     });
 
     describe("Test emit pause", function() {
-
+        var personA, personB, personC;
         var roomname;
-        beforeEach(function (){
+        before(function (){
             chai.request(server)
                 .put("/api/createroom/")
                 .send({roomPassword: "password", videoUrl: "random", screenName: "Mallory"})
@@ -158,15 +173,30 @@ describe("All server testing", function () {
                 });
         });
 
+        afterEach(function(){
+            try{
+                personA.disconnect();
+            } finally {/* Do nothing */}
+
+            try{
+                personB.disconnect();
+            } finally {/* Do nothing */}
+
+            try{
+                personC.disconnect();
+            } finally {/* Do nothing */}
+
+        });
+
         it("should broadcast pause to all users in the same room", function (done) {
             var countA = 0, countB = 0, countC = 0, expect = 1;
-            var personA = io.connect(socketUrl, options);
+            personA = io.connect(socketUrl, options);
             personA.on("connect", function() {
                 personA.emit("join", {roomname: roomname, roompass: "password", username: "personA"});
-                var personB = io.connect(socketUrl, options);
+                personB = io.connect(socketUrl, options);
                 personB.on("connect", function() {
                     personB.emit("join", {roomname: roomname, roompass: "password", username: "personB"});
-                    var personC = io.connect(socketUrl, options);
+                    personC = io.connect(socketUrl, options);
                     personC.on("connect", function() {
                         personC.emit("join", {roomname: roomname, roompass: "password", username: "personC"});
                         personC.on("pause", function() {
@@ -207,10 +237,10 @@ describe("All server testing", function () {
                 .send({roomPassword: "password", videoUrl: "random", screenName: "Mallory"})
                 .end(function (res) {
                     roomname2 = res.body.roomname;
-                    var personA = io.connect(socketUrl, options);
+                    personA = io.connect(socketUrl, options);
                     personA.on("connect", function () {
                         personA.emit("join", {roomname: roomname2, roompass: "password", username: "personA"});
-                        var personB = io.connect(socketUrl, options);
+                        personB = io.connect(socketUrl, options);
                         personB.on("connect", function() {
                             personB.emit("join", {roomname: roomname, roompass: "password", username: "personB"});
                             personB.on("userJoined", function () {
@@ -237,10 +267,10 @@ describe("All server testing", function () {
 
         it("should transmit time paused", function (done) {
             var pausedtime = "59:59";
-            var personA = io.connect(socketUrl, options);
+            personA = io.connect(socketUrl, options);
             personA.on("connect", function () {
                 personA.emit("join", {roomname: roomname, roompass: "password", username: "personA"});
-                var personB = io.connect(socketUrl, options);
+                personB = io.connect(socketUrl, options);
                 personB.on("connect", function () {
                     personB.emit("join", {roomname: roomname, roompass: "password", username: "personB"});
                     personB.on("pause", function (data) {

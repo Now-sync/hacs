@@ -5,12 +5,19 @@ import YouTube from "react-youtube";
 import { changeVideo, newURLInput } from "../actions/videoPlayerActions";
 
 class VideoPlayer extends React.Component {
-    handleSubmit(e) {
+    constructor(props) {
+        super(props);
+        // this.handleSubmit = this.handleSubmit.bind(this);
+        // this.handleURLChange = this.handleURLChange.bind(this);
+    }
+
+    handleSubmit = (e) => {
         e.preventDefault();
         this.props.changeVideo();
     }
 
-    handleURLChange(e) {
+    handleURLChange = (e) => {
+        console.log(this.props);
         this.props.newURLInput(e.target.value);
     }
 
@@ -45,7 +52,7 @@ const mapDispatchToProps = dispatch => {
 };
 
 const mapStateToProps = state => {
-    return state;
+    return state.videoPlayerReducer;
 };
 
 export default connect(

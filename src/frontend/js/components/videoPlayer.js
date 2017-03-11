@@ -14,6 +14,7 @@ class VideoPlayer extends React.Component {
     handleSubmit = (e) => {
         e.preventDefault();
         this.props.changeVideo();
+        e.target.reset();
     }
 
     handleURLChange = (e) => {
@@ -22,9 +23,17 @@ class VideoPlayer extends React.Component {
     }
 
     render() {
+        const options = {
+            playerVars: {
+                autoplay: 1
+            }
+        };
         return (
             <div>
-                <YouTube videoId={this.props.videoId} />
+                <YouTube
+                    videoId={this.props.videoId}
+                    opts={options}
+                />
                 <form onSubmit={this.handleSubmit}>
                     <input type="text" placeholder="Video URL" onChange={this.handleURLChange} />
                 </form>

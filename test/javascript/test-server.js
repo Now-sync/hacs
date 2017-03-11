@@ -57,6 +57,53 @@ describe("All server testing", function () {
 
     });
 
+    describe("Test Validator", function() {
+        var goodUrl = "https://www.youtube.com/watch?v=_OBlgSz8sSM";
+        var badUrl1 = "wwwadasfVsfOSbJY0";
+        var badUrl2 = "asdas://www.youtube.com/watch?v=kfVsfOSbJY0";
+        var badUrl3 = "https://www.youtube.com/?v=_OBlgSsdM";
+
+        it("should accept well formed urls", function (done){
+            chai.request(server)
+                .put("/api/createroom/")
+                .send({roomPassword: "password", videoUrl: goodUrl})
+                .end(function (res) {
+                    res.should.have.status(200);
+                    done();
+                });
+        });
+
+        it("should reject poorly formed url1", function (done){
+            chai.request(server)
+                .put("/api/createroom/")
+                .send({roomPassword: "password", videoUrl: badUrl1})
+                .end(function (res) {
+                    res.should.have.status(400);
+                    done();
+                });
+        });
+
+        it("should reject poorly formed url2", function (done){
+            chai.request(server)
+                .put("/api/createroom/")
+                .send({roomPassword: "password", videoUrl: badUrl2})
+                .end(function (res) {
+                    res.should.have.status(400);
+                    done();
+                });
+        });
+
+        it("should reject poorly formed url3", function (done){
+            chai.request(server)
+                .put("/api/createroom/")
+                .send({roomPassword: "password", videoUrl: badUrl3})
+                .end(function (res) {
+                    res.should.have.status(400);
+                    done();
+                });
+        });
+    });
+
     describe("Test emit play", function() {
         var personA, personB, personC;
         var roomname;

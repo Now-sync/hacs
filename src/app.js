@@ -89,6 +89,23 @@ var setRoomVideo = function (roomname, videoUrl, callback) {
     callback(null);
 };
 
+var youtubeUrlValidator = function(url) {
+    /* Taken from
+    http://stackoverflow.com/questions/28735459/how-to-validate-youtube-url-in-client-side-in-text-box */
+    if (url != undefined || url != '') {
+        var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|\?v=)([^#\&\?]*).*/;
+        var match = url.match(regExp);
+        if (match && match[2].length == 11) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    } else {
+        return false;
+    }
+};
+
 /* Commented to bypass eslint warnings */
 // var refreshRoomActivity = function (roomname) {
 //     /* Refresh room activity */
@@ -121,6 +138,9 @@ app.use(expressValidator({
     customValidators: {
         fail: function(value){
             return false;
+        },
+        validDateVideoUrl: function(url){
+            return youtubeUrlValidator(url);
         }
     }
 })); 
@@ -132,7 +152,7 @@ app.use(function(req, res, next){
                 req.sanitizeBody(arg).escape().trim();
                 break;
             case "videoUrl":
-                req.checkBody(arg, "invalid Url").isURL();
+                req.checkBody(arg, "invalid Url").validDateVideoUrl().isURL();
                 break;
             case "roomname":
                 req.sanitizeBody(arg).escape().trim();
@@ -144,7 +164,7 @@ app.use(function(req, res, next){
         }
     });
     req.getValidationResult().then(function(result) {
-        if (!result.isEmpty()) return res.status(400).send("Validation errors: " /* + util.inspect(result.array())*/);
+        if (!result.isEmpty()) return res.status(400).send("Validation Error");
         else next();
     });
 });

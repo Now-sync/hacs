@@ -21,7 +21,7 @@ describe("All server testing", function () {
         it("should return a status code 200", function (done) {
             chai.request(server)
                 .put("/api/createroom/")
-                .send({roomPassword: "password", videoUrl: "random", screenName: "Mallory"})
+                .send({roomPassword: "password", videoUrl: "random"})
                 .end(function (res) {
                     res.should.have.status(200);
                     done();
@@ -31,7 +31,7 @@ describe("All server testing", function () {
         it("should have a return with property roomname", function (done) {
             chai.request(server)
                 .put("/api/createroom/")
-                .send({roomPassword: "password", videoUrl: "random", screenName: "Mallory"})
+                .send({roomPassword: "password", videoUrl: "random"})
                 .end(function (res) {
                     res.body.should.have.property("roomname");
                     done();
@@ -42,7 +42,7 @@ describe("All server testing", function () {
         it("should return a string as room name and room should exist", function (done) {
             chai.request(server)
                 .put("/api/createroom/")
-                .send({roomPassword: "password", videoUrl: "random", screenName: "Mallory"})
+                .send({roomPassword: "password", videoUrl: "random"})
                 .end(function (res) {
                     chai.request(server)
                         .get("/api/session/")
@@ -63,7 +63,7 @@ describe("All server testing", function () {
         before(function (done){
             chai.request(server)
                 .put("/api/createroom/")
-                .send({roomPassword: "password", videoUrl: "random", screenName: "Mallory"})
+                .send({roomPassword: "password", videoUrl: "random"})
                 .end(function (res) {
                     roomname = res.body.roomname;
                     done();
@@ -132,7 +132,7 @@ describe("All server testing", function () {
             var roomname2;
             chai.request(server)
                 .put("/api/createroom/")
-                .send({roomPassword: "password", videoUrl: "random", screenName: "Mallory"})
+                .send({roomPassword: "password", videoUrl: "random"})
                 .end(function (res) {
                     roomname2 = res.body.roomname;
                     personA = io.connect(socketUrl, options);
@@ -170,7 +170,7 @@ describe("All server testing", function () {
         before(function (done){
             chai.request(server)
                 .put("/api/createroom/")
-                .send({roomPassword: "password", videoUrl: "random", screenName: "Mallory"})
+                .send({roomPassword: "password", videoUrl: "random"})
                 .end(function (res) {
                     roomname = res.body.roomname;
                     done();
@@ -239,7 +239,7 @@ describe("All server testing", function () {
             var roomname2;
             chai.request(server)
                 .put("/api/createroom/")
-                .send({roomPassword: "password", videoUrl: "random", screenName: "Mallory"})
+                .send({roomPassword: "password", videoUrl: "random"})
                 .end(function (res) {
                     roomname2 = res.body.roomname;
                     personA = io.connect(socketUrl, options);
@@ -300,7 +300,7 @@ describe("All server testing", function () {
         beforeEach(function (done){
             chai.request(server)
                 .put("/api/createroom/")
-                .send({roomPassword: "password", videoUrl: videoUrl, screenName: "Mallory"})
+                .send({roomPassword: "password", videoUrl: videoUrl})
                 .end(function (res) {
                     roomname = res.body.roomname;
                     

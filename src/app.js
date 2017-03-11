@@ -95,12 +95,8 @@ var youtubeUrlValidator = function(url) {
     if (url != undefined || url != '') {
         var regExp = /^(?:https?:\/\/)?(?:m\.|www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
         var match = url.match(regExp);
-        if (match) {
-            return true;
-        }
-        else {
-            return false;
-        }
+        if (BLOCK_CONSOLE) console.log(match);
+        return match !== null && match !== [];
     } else {
         return false;
     }
@@ -139,7 +135,7 @@ app.use(expressValidator({
         fail: function(){
             return false;
         },
-        validDateVideoUrl: function(url){
+        validateVideoUrl: function(url){
             return youtubeUrlValidator(url);
         }
     }
@@ -152,7 +148,7 @@ app.use(function(req, res, next){
                 req.sanitizeBody(arg).escape().trim();
                 break;
             case "videoUrl":
-                req.checkBody(arg, "invalid Url").validDateVideoUrl().isURL();
+                req.checkBody(arg, "invalid Url").validateVideoUrl().isURL();
                 break;
             case "roomname":
                 req.sanitizeBody(arg).escape().trim();

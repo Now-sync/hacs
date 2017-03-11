@@ -118,14 +118,9 @@ app.get("/", function (req, res, next) {
 app.put("/api/createroom/", function (req, res, next) {
     var roomPassword = req.body.roomPassword;
     var videoUrl = req.body.videoUrl;  // TODO: verify if valid URL.
-    var screenName = req.body.screenName;  // This is irrelevant to room creation
     if (!roomPassword) {
         res.status(400).end("No Room Password Given");
         return next();
-    }
-
-    if (!screenName) {
-        screenName = "user_" + crypto.randomBytes(8).toString("base64");
     }
 
     var new_room_name = crypto.randomBytes(ROOM_NAME_LENGTH)
@@ -139,7 +134,6 @@ app.put("/api/createroom/", function (req, res, next) {
         }
         var sessData = {};
         sessData.roomname = new_room_name;
-        sessData.screenName = screenName;
         req.session.datum = sessData;  // Give room creator the session
 
         res.json({roomname: new_room_name});  // respond with roomname

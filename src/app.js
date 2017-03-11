@@ -68,9 +68,23 @@ var verifyRoomAndPassword = function (roomname, roompass, callback) {
 };
 
 var addNewRoom = function (roomname, roompass, videoUrl, callback) {
-    activeRooms[roomname] = {roomPassword: roompass, activeUsers:[], videoUrl:videoUrl, lastActive:null};
+    activeRooms[roomname] = {
+        roomPassword: roompass,
+        activeUsers: [],
+        videoUrl: videoUrl,
+        videoTimeMaster: null,
+        lastActive:null};
 
     callback(null, activeRooms[roomname]);
+};
+
+var setRoomVideo = function (roomname, videoUrl, callback) {
+    if (activeRooms[roomname]) {
+        activeRooms[roomname].videoUrl = videoUrl;
+    } else {
+        callback("Error no such room");
+    }
+    callback(null);
 };
 
 /* Commented to bypass eslint warnings */
@@ -103,8 +117,8 @@ app.get("/", function (req, res, next) {
 /* Create Room */
 app.put("/api/createroom/", function (req, res, next) {
     var roomPassword = req.body.roomPassword;
-    var videoUrl = req.body.videoUrl;
-    var screenName = req.body.screenName;
+    var videoUrl = req.body.videoUrl;  // TODO: verify if valid URL.
+    var screenName = req.body.screenName;  // This is irrelevant to room creation
     if (!roomPassword) {
         res.status(400).end("No Room Password Given");
         return next();
@@ -114,7 +128,8 @@ app.put("/api/createroom/", function (req, res, next) {
         screenName = "user_" + crypto.randomBytes(8).toString("base64");
     }
 
-    var new_room_name = crypto.randomBytes(ROOM_NAME_LENGTH).toString("base64");
+    var new_room_name = crypto.randomBytes(ROOM_NAME_LENGTH)
+                        .toString("base64");//.replace(/\//g,'_').replace(/\+/g,'-');
 
     /* Add new room to db and set room password HERE*/
     addNewRoom(new_room_name, roomPassword, videoUrl, function (err) {
@@ -179,7 +194,6 @@ app.get("/room/:room_id/", function (req, res, next) {
 io.use(sharedsocses(exprSess, {autoSave: false}));
 
 io.use(function(socket, next) {
-    if (BLOCK_CONSOLE) console.log("/--------------", socket.handshake.session);
     if (socket.handshake.session) {
         next();
     } else {
@@ -192,54 +206,93 @@ io.on("connection", function (client) {
 
     var clientInRoom = null;
     var screenName = null;
+    //var videoTimeMaster = null;  /* May be needed later */
 
     client.on("join", function (data) {
         var roomname = data.roomname;
         var roompass = data.roompass;
         var username = data.username;
 
-        if (!username) {
-            username = "user_" + crypto.randomBytes(8).toString("base64");
-        }
 
-        if (BLOCK_CONSOLE) console.log("User:", username, "has joined room:", roomname);
-
-        screenName = username;
-
-        if (clientInRoom) {
-            client.leave(clientInRoom, function () {
-                io.to(clientInRoom).emit("userLeft", {username:screenName});
-            });
-        }
-
-        client.join(roomname, function (err) {
+        verifyRoomAndPassword(roomname, roompass, function (err, roomData) {
             if (err) {
                 /* Do something */
                 return;
             }
-            clientInRoom = roomname;
-            io.to(clientInRoom).emit("userJoined", {username:screenName});
+
+            if (!username) {  // If joining room without given username, random name is generated.
+                username = "user_" + crypto.randomBytes(8).toString("base64");
+            }
+
+            if (BLOCK_CONSOLE) console.log("User:", username, "has joined room:", roomname);
+
+            screenName = username;
+
+            if (clientInRoom) {
+                client.leave(clientInRoom, function () {
+                    io.to(clientInRoom).emit("userLeft", {username: screenName});
+                });
+            }
+
+            client.join(roomname, function (err) {
+                if (err) {
+                    /* Do something */
+                    return;
+                }
+                clientInRoom = roomname;
+                io.to(clientInRoom).emit("userJoined", {username: screenName});
+
+                /* When user has joined the room. Send the Url of the video in the room */
+                // Note: skipTo is null until there is away to track video location.
+                client.emit("videoChange", {
+                    videoUrl: roomData.videoUrl,
+                    username: null,  // null because no user emitted videoChange signal
+                    skipTo: null
+                });
+            });
+
+            if (BLOCK_CONSOLE) console.log(client.rooms);
+
         });
 
-        if (BLOCK_CONSOLE) console.log(client.rooms);
     });
 
-    client.on("pause", function (pausedtime) {
-        if (BLOCK_CONSOLE) console.log("Socket signal pause");
+    client.on("videoChange", function (data) {
+        if (BLOCK_CONSOLE) console.log("Socket signal video change");
 
-        if (clientInRoom) io.to(clientInRoom).emit("pause", {pausedtime:pausedtime, username:screenName});
+        if (clientInRoom) {
+            setRoomVideo(clientInRoom, data.videoUrl, function() {
+                io.to(clientInRoom).emit("videoChange", {
+                    videoUrl: data.videoUrl,
+                    username: screenName,
+                    skipTo: null  // A time in the video
+                });
+            });
+        }
+    });
+
+    client.on("pause", function (data) {
+        if (BLOCK_CONSOLE) console.log("Socket signal pause");
+        if (!data) {
+            if (BLOCK_CONSOLE) console.log("no data given in signal pause");
+            return;
+        } else if (data && !data.pausedtime) {
+            if (BLOCK_CONSOLE) console.log("no pause time given in pause signal");
+            return;
+        }
+        if (clientInRoom) io.to(clientInRoom).emit("pause", {pausedtime: data.pausedtime, username: screenName});
     });
 
     client.on("play", function () {
         if (BLOCK_CONSOLE) console.log("Socket signal play");
 
-        if (clientInRoom) io.to(clientInRoom).emit("play", {username:screenName});
+        if (clientInRoom) io.to(clientInRoom).emit("play", {username: screenName});
     });
 
     client.on("disconnect", function () {
         if (BLOCK_CONSOLE) console.log("DISCONNECTED");
         client.leave(clientInRoom, function () {
-            io.to(clientInRoom).emit("userLeft", {username:screenName});
+            io.to(clientInRoom).emit("userLeft", {username: screenName});
         });
     });
 });

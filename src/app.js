@@ -128,14 +128,14 @@ app.use(expressValidator({
 app.use(function(req, res, next){
     Object.keys(req.body).forEach(function(arg){
         switch(arg){
-            case "username":
+            case "roomPassword":
                 req.sanitizeBody(arg).escape().trim();
                 break;
-            case "roomPassword":
-                break;
             case "videoUrl":
+                req.checkBody(arg, "invalid Url").isURL();
                 break;
             case "roomname":
+                req.sanitizeBody(arg).escape().trim();
                 break;
             case "password":
                 break;
@@ -159,7 +159,7 @@ app.put("/api/createroom/", function (req, res, next) {
     }
 
     var new_room_name = crypto.randomBytes(ROOM_NAME_LENGTH)
-                        .toString("base64");//.replace(/\//g,'_').replace(/\+/g,'-');
+                        .toString("base64").replace(/\//g,'_').replace(/\+/g,'-');
 
     /* Add new room to db and set room password HERE*/
     addNewRoom(new_room_name, roomPassword, videoUrl, function (err) {

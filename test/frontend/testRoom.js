@@ -1,17 +1,12 @@
 import React from "react";
 import chai from "chai";
-<<<<<<< HEAD
 import { connect } from "react-redux";
 import { shallowWithStore } from "enzyme-redux";
 import { createMockStore } from "redux-test-utils";
-=======
-import { shallow } from "enzyme";
->>>>>>> 4ede7b7149ef0587c4f9521f986a8942e50bf675
 import Room from "../../src/frontend/js/components/room";
 
 var should = chai.should();
 
-<<<<<<< HEAD
 describe("shallowWithStore", () => {
     const ReactComponent = () => (Room);
 
@@ -48,11 +43,5 @@ describe("shallowWithStore", () => {
 
             (store.isActionDispatched(action)).should.to.be.true;
         });
-=======
-describe('<Room />', () => {
-    it('should load a form with two inputs and one button', () => {
-        const wrapper = shallow(<Room />);
-        // wrapper.should.to.have.length(0);
->>>>>>> 4ede7b7149ef0587c4f9521f986a8942e50bf675
     });
 });

@@ -60,8 +60,9 @@ describe("All server testing", function () {
     describe("Test Validator", function() {
         var goodUrl = "https://www.youtube.com/watch?v=_OBlgSz8sSM";
         var badUrl1 = "wwwadasfVsfOSbJY0";
-        var badUrl2 = "asdas://www.youtube.com/watch?v=kfVsfOSbJY0";
-        var badUrl3 = "https://www.youtube.com/?v=_OBlgSsdM";
+        var badUrl2 = "asdas://www.youtube.com/watch?v=kfVsfOSbJY0";  // no protocol
+        var badUrl3 = "https://www.youtube.com/?v=_OBlgSsdM";  // too short
+        var badUrl4 = "https://www.youtub.com/watch?v=_OBlgSz8sSM";
 
         it("should accept well formed urls", function (done){
             chai.request(server)
@@ -83,7 +84,7 @@ describe("All server testing", function () {
                 });
         });
 
-        it("should reject poorly formed url2", function (done){
+        it("should reject no protocol", function (done){
             chai.request(server)
                 .put("/api/createroom/")
                 .send({roomPassword: "password", videoUrl: badUrl2})
@@ -93,10 +94,20 @@ describe("All server testing", function () {
                 });
         });
 
-        it("should reject poorly formed url3", function (done){
+        it("should reject url too short", function (done){
             chai.request(server)
                 .put("/api/createroom/")
                 .send({roomPassword: "password", videoUrl: badUrl3})
+                .end(function (res) {
+                    res.should.have.status(400);
+                    done();
+                });
+        });
+
+        it("should reject misspelled 'youtube'", function (done){
+            chai.request(server)
+                .put("/api/createroom/")
+                .send({roomPassword: "password", videoUrl: badUrl4})
                 .end(function (res) {
                     res.should.have.status(400);
                     done();

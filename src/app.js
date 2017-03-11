@@ -93,9 +93,9 @@ var youtubeUrlValidator = function(url) {
     /* Taken from
     http://stackoverflow.com/questions/28735459/how-to-validate-youtube-url-in-client-side-in-text-box */
     if (url != undefined || url != '') {
-        var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|\?v=)([^#\&\?]*).*/;
+        var regExp = /^(?:https?:\/\/)?(?:m\.|www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
         var match = url.match(regExp);
-        if (match && match[2].length == 11) {
+        if (match) {
             return true;
         }
         else {

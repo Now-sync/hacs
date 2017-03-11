@@ -20,16 +20,21 @@ gulp.task("nodemon", ["build"], function () {
 
 gulp.task("test", function () {
     return gulp.src("test/**/*.js")
-        .pipe(mocha({reporter: "nyan"}));
+        .pipe(mocha({
+            reporter: "nyan",
+            compilers: "js:babel-core/register"
+        }));
 });
 
 gulp.task("test_after_build", ["build"], function () {
     return gulp.src("test/**/*.js")
-        .pipe(mocha({reporter: "nyan"}));
+        .pipe(mocha({
+            reporter: "nyan",
+            compilers: "js:babel-core/register"
+        }));
 });
 
 gulp.task("default", ["nodemon"], function () {
     gulp.watch("src/frontend/js/**/*.js", ["test_after_build"]);
-    gulp.watch("src/app.js", ["test"]);
-    gulp.watch("test/**/*.js", ["test"]);
+    gulp.watch(["src/app.js", "test/**/*.js"], ["test"]);
 });

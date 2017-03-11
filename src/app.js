@@ -6,6 +6,7 @@ var bodyParser = require("body-parser");
 var session = require("express-session");
 var IO = require("socket.io");
 var sharedsocses = require("express-socket.io-session");
+var expressValidator = require("express-validator");
 
 var app = express();
 
@@ -88,6 +89,13 @@ var setRoomVideo = function (roomname, videoUrl, callback) {
     callback(null);
 };
 
+var youtubeUrlValidator = function(url) {
+    /* regex taken from
+    http://stackoverflow.com/questions/28735459/how-to-validate-youtube-url-in-client-side-in-text-box */
+    var regExp = /^(?:https?:\/\/)?(?:m\.|www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
+    return url !== undefined && url !== "" ? regExp.test(url) : false;
+};
+
 /* Commented to bypass eslint warnings */
 // var refreshRoomActivity = function (roomname) {
 //     /* Refresh room activity */
@@ -99,7 +107,7 @@ var setRoomVideo = function (roomname, videoUrl, callback) {
 // };
 
 app.use(function (req, res, next) {
-    if (BLOCK_CONSOLE) console.log("HTTP request", req.method, req.url, req.body);
+    if (BLOCK_CONSOLE) console.log("HTTPS request", req.method, req.url, req.body);
     return next();
 });
 
@@ -115,17 +123,53 @@ app.get("/", function (req, res, next) {
     return next();
 });
 
+/* Sanitize and Validate */
+app.use(expressValidator({
+    customValidators: {
+        fail: function(){
+            return false;
+        },
+        validateVideoUrl: function(url){
+            return youtubeUrlValidator(url);
+        }
+    }
+})); 
+
+app.use(function(req, res, next){
+    Object.keys(req.body).forEach(function(arg){
+        switch(arg){
+            case "roomPassword":
+                req.sanitizeBody(arg).escape().trim();
+                break;
+            case "videoUrl":
+                req.checkBody(arg, "invalid Url").validateVideoUrl().isURL();
+                break;
+            case "roomname":
+                req.sanitizeBody(arg).escape().trim();
+                break;
+            case "password":
+                break;
+            default:
+                req.checkBody(arg, "unknown argument").fail();
+        }
+    });
+    req.getValidationResult().then(function(result) {
+        if (!result.isEmpty()) return res.status(400).send("Validation Error");
+        else next();
+    });
+});
+
 /* Create Room */
 app.put("/api/createroom/", function (req, res, next) {
     var roomPassword = req.body.roomPassword;
-    var videoUrl = req.body.videoUrl;  // TODO: verify if valid URL.
+    var videoUrl = req.body.videoUrl;
     if (!roomPassword) {
         res.status(400).end("No Room Password Given");
         return next();
     }
 
     var new_room_name = crypto.randomBytes(ROOM_NAME_LENGTH)
-                        .toString("base64");//.replace(/\//g,'_').replace(/\+/g,'-');
+                        .toString("base64").replace(/\//g,'_').replace(/\+/g,'-');
 
     /* Add new room to db and set room password HERE*/
     addNewRoom(new_room_name, roomPassword, videoUrl, function (err) {

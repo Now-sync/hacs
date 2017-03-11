@@ -17,11 +17,11 @@ chai.use(chaiHttp);
 describe("All server testing", function () {
 
     describe("Create room", function() {
-
+        var videoUrl = "https://www.youtube.com/watch?v=rJdMFyxd8ps";
         it("should return a status code 200", function (done) {
             chai.request(server)
                 .put("/api/createroom/")
-                .send({roomPassword: "password", videoUrl: "random", screenName: "Mallory"})
+                .send({roomPassword: "password", videoUrl: videoUrl})
                 .end(function (res) {
                     res.should.have.status(200);
                     done();
@@ -31,7 +31,7 @@ describe("All server testing", function () {
         it("should have a return with property roomname", function (done) {
             chai.request(server)
                 .put("/api/createroom/")
-                .send({roomPassword: "password", videoUrl: "random", screenName: "Mallory"})
+                .send({roomPassword: "password", videoUrl: videoUrl})
                 .end(function (res) {
                     res.body.should.have.property("roomname");
                     done();
@@ -42,7 +42,7 @@ describe("All server testing", function () {
         it("should return a string as room name and room should exist", function (done) {
             chai.request(server)
                 .put("/api/createroom/")
-                .send({roomPassword: "password", videoUrl: "random", screenName: "Mallory"})
+                .send({roomPassword: "password", videoUrl: videoUrl})
                 .end(function (res) {
                     chai.request(server)
                         .get("/api/session/")
@@ -57,13 +57,72 @@ describe("All server testing", function () {
 
     });
 
+    describe("Test Validator", function() {
+        var goodUrl = "https://www.youtube.com/watch?v=_OBlgSz8sSM";
+        var badUrl1 = "wwwadasfVsfOSbJY0";
+        var badUrl2 = "asdas://www.youtube.com/watch?v=kfVsfOSbJY0";  // no protocol
+        var badUrl3 = "https://www.youtube.com/?v=_OBlgSsdM";  // too short
+        var badUrl4 = "https://www.youtub.com/watch?v=_OBlgSz8sSM";
+
+        it("should accept well formed urls", function (done){
+            chai.request(server)
+                .put("/api/createroom/")
+                .send({roomPassword: "password", videoUrl: goodUrl})
+                .end(function (res) {
+                    res.should.have.status(200);
+                    done();
+                });
+        });
+
+        it("should reject poorly formed url1", function (done){
+            chai.request(server)
+                .put("/api/createroom/")
+                .send({roomPassword: "password", videoUrl: badUrl1})
+                .end(function (res) {
+                    res.should.have.status(400);
+                    done();
+                });
+        });
+
+        it("should reject no protocol", function (done){
+            chai.request(server)
+                .put("/api/createroom/")
+                .send({roomPassword: "password", videoUrl: badUrl2})
+                .end(function (res) {
+                    res.should.have.status(400);
+                    done();
+                });
+        });
+
+        it("should reject url too short", function (done){
+            chai.request(server)
+                .put("/api/createroom/")
+                .send({roomPassword: "password", videoUrl: badUrl3})
+                .end(function (res) {
+                    res.should.have.status(400);
+                    done();
+                });
+        });
+
+        it("should reject misspelled 'youtube'", function (done){
+            chai.request(server)
+                .put("/api/createroom/")
+                .send({roomPassword: "password", videoUrl: badUrl4})
+                .end(function (res) {
+                    res.should.have.status(400);
+                    done();
+                });
+        });
+    });
+
     describe("Test emit play", function() {
         var personA, personB, personC;
         var roomname;
+        var videoUrl = "https://www.youtube.com/watch?v=7PCkvCPvDXk";
         before(function (done){
             chai.request(server)
                 .put("/api/createroom/")
-                .send({roomPassword: "password", videoUrl: "random", screenName: "Mallory"})
+                .send({roomPassword: "password", videoUrl: videoUrl})
                 .end(function (res) {
                     roomname = res.body.roomname;
                     done();
@@ -132,7 +191,7 @@ describe("All server testing", function () {
             var roomname2;
             chai.request(server)
                 .put("/api/createroom/")
-                .send({roomPassword: "password", videoUrl: "random", screenName: "Mallory"})
+                .send({roomPassword: "password", videoUrl: videoUrl})
                 .end(function (res) {
                     roomname2 = res.body.roomname;
                     personA = io.connect(socketUrl, options);
@@ -167,10 +226,11 @@ describe("All server testing", function () {
     describe("Test emit pause", function() {
         var personA, personB, personC;
         var roomname;
+        var videoUrl = "https://www.youtube.com/watch?v=kfVsfOSbJY0";
         before(function (done){
             chai.request(server)
                 .put("/api/createroom/")
-                .send({roomPassword: "password", videoUrl: "random", screenName: "Mallory"})
+                .send({roomPassword: "password", videoUrl: videoUrl})
                 .end(function (res) {
                     roomname = res.body.roomname;
                     done();
@@ -239,7 +299,7 @@ describe("All server testing", function () {
             var roomname2;
             chai.request(server)
                 .put("/api/createroom/")
-                .send({roomPassword: "password", videoUrl: "random", screenName: "Mallory"})
+                .send({roomPassword: "password", videoUrl: videoUrl})
                 .end(function (res) {
                     roomname2 = res.body.roomname;
                     personA = io.connect(socketUrl, options);
@@ -300,7 +360,7 @@ describe("All server testing", function () {
         beforeEach(function (done){
             chai.request(server)
                 .put("/api/createroom/")
-                .send({roomPassword: "password", videoUrl: videoUrl, screenName: "Mallory"})
+                .send({roomPassword: "password", videoUrl: videoUrl})
                 .end(function (res) {
                     roomname = res.body.roomname;
                     

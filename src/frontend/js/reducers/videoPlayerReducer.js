@@ -6,7 +6,7 @@ function youtubeGetId(url) {
         ID = url[2].split(/[^0-9a-z_\-]/i);
         ID = ID[0];
     } else {
-        ID = url;
+        ID = null;
     }
     return ID;
 }

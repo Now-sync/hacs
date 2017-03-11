@@ -206,7 +206,7 @@ io.on("connection", function (client) {
 
     var clientInRoom = null;
     var screenName = null;
-    var videoTimeMaster = null;
+    //var videoTimeMaster = null;  /* May be needed later */
 
     client.on("join", function (data) {
         var roomname = data.roomname;

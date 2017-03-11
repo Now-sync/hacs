@@ -3,7 +3,7 @@ process.env.NODE_ENV = "test";
 var chai = require("chai");
 var chaiHttp = require("chai-http");
 var server = require("../../src/app.js");
-var should = chai.should();
+var should = chai.should(); // eslint-disable-line
 var io = require("socket.io-client");
 var socketUrl = "https://localhost:3002";
 var options = {
@@ -354,21 +354,21 @@ describe("All server testing", function () {
         it("should broadcast video change to all users in the same room", function (done) {
             var countA = 0, countB = 0, countC = 0, expect = 1;
 
-            personA.on("videoChange", function (data) {
+            personA.on("videoChange", function () {
                 countA++;
                 if (countA === expect && countB === expect && countC === expect) {
                     done();
                 }
             });
 
-            personB.on("videoChange", function (data) {
+            personB.on("videoChange", function () {
                 countB++;
                 if (countA === expect && countB === expect && countC === expect) {
                     done();
                 }
             });
 
-            personC.on("videoChange", function (data) {
+            personC.on("videoChange", function () {
                 countC++;
                 if (countA === expect && countB === expect && countC === expect) {
                     done();
@@ -393,21 +393,21 @@ describe("All server testing", function () {
                     personOther = io.connect(socketUrl, options);
                     personOther.on("connect", function(){
                         personOther.emit("join", {roomname: roomname2, roompass: "password", username: "personOther"});
-                        personOther.once("videoChange", function (data) { /*Do nothing on video change. Catches first useless video change*/
+                        personOther.once("videoChange", function () { /*Do nothing on video change. Catches first useless video change*/
                             personA.on("videoChange", function () {
                                 countA++;
                                 if (countA === 1 && countOther === 1) {
                                     done();
                                 }
                             });
-                            personOther.on("videoChange", function (data) {
+                            personOther.on("videoChange", function () {
                                 countOther++;
                                 if (countA === 1 && countOther === 1) {
                                     done();
                                 }
                             });
-                            personOther.emit("videoChange", {videoUrl: newVideo})
-                            personA.emit("videoChange", {videoUrl: newVideo})
+                            personOther.emit("videoChange", {videoUrl: newVideo});
+                            personA.emit("videoChange", {videoUrl: newVideo});
                         });
                     });
                 });

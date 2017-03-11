@@ -95,7 +95,6 @@ var youtubeUrlValidator = function(url) {
     if (url != undefined || url != '') {
         var regExp = /^(?:https?:\/\/)?(?:m\.|www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
         var match = url.match(regExp);
-        if (BLOCK_CONSOLE) console.log(match);
         return match !== null && match !== [];
     } else {
         return false;

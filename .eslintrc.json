@@ -15,15 +15,16 @@
     "plugins": [
         "react"
     ],
-    "extends": "plugin:react/recommended",
+    "extends": ["eslint:recommended", "plugin:react/recommended"],
     "rules": {
         "no-const-assign": "warn",
         "no-this-before-super": "warn",
         "no-undef": "warn",
         "no-unreachable": "warn",
-        "no-unused-vars": "warn",
+        "no-unused-vars": ["warn", {"varsIgnorePattern": "should"}],
         "constructor-super": "warn",
         "valid-typeof": "warn",
-        "semi": "warn"
+        "semi": "warn",
+        "no-console": "off"
     }
 }

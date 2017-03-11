@@ -92,7 +92,7 @@ var setRoomVideo = function (roomname, videoUrl, callback) {
 var youtubeUrlValidator = function(url) {
     /* Taken from
     http://stackoverflow.com/questions/28735459/how-to-validate-youtube-url-in-client-side-in-text-box */
-    if (url != undefined || url != '') {
+    if (url !== undefined && url !== "") {
         var regExp = /^(?:https?:\/\/)?(?:m\.|www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
         var match = url.match(regExp);
         return match !== null && match !== [];

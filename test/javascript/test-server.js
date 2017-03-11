@@ -59,28 +59,30 @@ describe("All server testing", function () {
     describe("Test emit play", function() {
         var personA, personB, personC;
         var roomname;
-        before(function (){
+        before(function (done){
             chai.request(server)
                 .put("/api/createroom/")
                 .send({roomPassword: "password", videoUrl: "random", screenName: "Mallory"})
                 .end(function (res) {
                     roomname = res.body.roomname;
+                    done();
                 });
         });
 
-        afterEach(function(){
+        afterEach(function(done){
             try{
                 personA.disconnect();
-            } finally {/* Do nothing */}
-
-            try{
-                personB.disconnect();
-            } finally {/* Do nothing */}
-
-            try{
-                personC.disconnect();
-            } finally {/* Do nothing */}
-
+            } finally {
+                try{
+                    personB.disconnect();
+                } finally {
+                    try{
+                        personC.disconnect();
+                    } finally {
+                        done();
+                    }
+                }
+            }  
         });
 
         it("should broadcast play to all users in the same room", function (done) {
@@ -164,28 +166,30 @@ describe("All server testing", function () {
     describe("Test emit pause", function() {
         var personA, personB, personC;
         var roomname;
-        before(function (){
+        before(function (done){
             chai.request(server)
                 .put("/api/createroom/")
                 .send({roomPassword: "password", videoUrl: "random", screenName: "Mallory"})
                 .end(function (res) {
                     roomname = res.body.roomname;
+                    done();
                 });
         });
 
-        afterEach(function(){
+        afterEach(function (done){
             try{
                 personA.disconnect();
-            } finally {/* Do nothing */}
-
-            try{
-                personB.disconnect();
-            } finally {/* Do nothing */}
-
-            try{
-                personC.disconnect();
-            } finally {/* Do nothing */}
-
+            } finally {
+                try{
+                    personB.disconnect();
+                } finally {
+                    try{
+                        personC.disconnect();
+                    } finally {
+                        done();
+                    }
+                }
+            }  
         });
 
         it("should broadcast pause to all users in the same room", function (done) {
@@ -283,6 +287,156 @@ describe("All server testing", function () {
                     });
                 });
             });
+        });
+    });
+
+    describe("Test emit video change", function() {
+        var personA, personB, personC;
+        var videoUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
+        var newVideo = "https://www.youtube.com/watch?v=ZyhrYis509A";
+        var roomname;
+        before(function (done){
+            chai.request(server)
+                .put("/api/createroom/")
+                .send({roomPassword: "password", videoUrl: videoUrl, screenName: "Mallory"})
+                .end(function (res) {
+                    roomname = res.body.roomname;
+                    done();
+                });
+        });
+
+        beforeEach(function (done){
+            personA = io.connect(socketUrl, options);
+            personB = io.connect(socketUrl, options);
+            personC = io.connect(socketUrl, options);
+            /* This setup is necessary because when joining a room a user recieves a
+             videoChange signal immeadiately. This can mess with later test cases.*/
+            var countA = 0, countB = 0, countC = 0, expect = 1;
+            personA.on("connect", function() {
+                personA.emit("join", {roomname: roomname, roompass: "password", username: "personA"});
+                personB.on("connect", function() {
+                    personB.emit("join", {roomname: roomname, roompass: "password", username: "personB"});
+                    personC.on("connect", function() {
+                        personC.emit("join", {roomname: roomname, roompass: "password", username: "personC"});
+                        personC.once("videoChange", function(){
+                            countC++;
+                            if (countA === expect && countB === expect && countC === expect) done();
+                        });
+                    });
+                    personB.once("videoChange", function(){
+                        countB++;
+                        if (countA === expect && countB === expect && countC === expect) done();
+                    });
+                });
+                personA.once("videoChange", function(){
+                    countA++;
+                    if (countA === expect && countB === expect && countC === expect) done();
+                });
+            });
+        });
+
+        afterEach(function (done){
+            try{
+                personA.disconnect();
+            } finally {
+                try{
+                    personB.disconnect();
+                } finally {
+                    try{
+                        personC.disconnect();
+                    } finally {
+                        done();
+                    }
+                }
+            }  
+        }); 
+
+        it("should broadcast video change to all users in the same room", function (done) {
+            var countA = 0, countB = 0, countC = 0, expect = 1;
+
+            personA.on("videoChange", function (data) {
+                countA++;
+                if (countA === expect && countB === expect && countC === expect) {
+                    done();
+                }
+            });
+
+            personB.on("videoChange", function (data) {
+                countB++;
+                if (countA === expect && countB === expect && countC === expect) {
+                    done();
+                }
+            });
+
+            personC.on("videoChange", function (data) {
+                countC++;
+                if (countA === expect && countB === expect && countC === expect) {
+                    done();
+                }
+            });
+
+            personA.emit("videoChange", {videoUrl: newVideo});
+
+        });
+
+        it("should not broadcast in other rooms", function (done) {
+            /* Fails if one or both recieves more than 1 videoChange signal */
+            var countA = 0, countOther = 0;
+            var roomname2;
+            var personOther;
+            var videoUrl2 = "https://www.youtube.com/watch?v=Zi_XLOBDo_Y";
+            chai.request(server)
+                .put("/api/createroom/")
+                .send({roomPassword: "password", videoUrl: videoUrl2})
+                .end(function (res) {
+                    roomname2 = res.body.roomname;
+                    personOther = io.connect(socketUrl, options);
+                    personOther.on("connect", function(){
+                        personOther.emit("join", {roomname: roomname2, roompass: "password", username: "personOther"});
+                        personOther.once("videoChange", function (data) { /*Do nothing on video change. Catches first useless video change*/
+                            personA.on("videoChange", function () {
+                                countA++;
+                                if (countA === 1 && countOther === 1) {
+                                    done();
+                                }
+                            });
+                            personOther.on("videoChange", function (data) {
+                                countOther++;
+                                if (countA === 1 && countOther === 1) {
+                                    done();
+                                }
+                            });
+                            personOther.emit("videoChange", {videoUrl: newVideo})
+                            personA.emit("videoChange", {videoUrl: newVideo})
+                        });
+                    });
+                });
+        });
+
+        it("should transmit video Url to all in room", function (done) {
+            var countA = false, countB = false, countC = false;
+            personA.on("videoChange", function (data) {
+                countA = data.videoUrl === newVideo;
+                if (countA && countB && countC) {
+                    done();
+                }
+            });
+
+            personB.on("videoChange", function (data) {
+                countB = data.videoUrl === newVideo;
+                if (countA && countB && countC) {
+                    done();
+                }
+            });
+
+            personC.on("videoChange", function (data) {
+                countC = data.videoUrl === newVideo;
+                if (countA && countB && countC) {
+                    done();
+                }
+            });
+
+            personA.emit("videoChange", {videoUrl: newVideo});
         });
     });
 });

@@ -43,7 +43,6 @@
         - "videoChange"
             Send: {videoUrl: <Url of video>}
 
-
     JOIN ROOM
         - my_socket.emit("join", {roomname: "pjifpadfj", roompass: "hunter2"});
         Expect two responses:

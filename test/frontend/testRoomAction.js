@@ -7,27 +7,24 @@ import chai from "chai";
 var should = chai.should();
 
 const middlewares = [ thunk ];
+const mockStore = createMockStore(middlewares);
 
 describe("async actions", () => {
     afterEach(() => {
         nock.cleanAll();
     });
 
-    it("creates FETCH_TODOS_SUCCESS when fetching todos has been done", () => {
-        nock("http://example.com/")
-            .get("/api/createRoom")
+    it("successfully creates a room", () => {
+        nock("https://localhost:3000")
+            .put("/api/createRoom")
             .reply(200, { body: { roomname: ["foo"] } } );
 
         const expectedActions = [
-          { type: "CreateRoomError" },
-          { type:"CreateRoom", body: { roomname: ["foo"] } }
-      ];
+          { type:"CreateRoom", body: { roomname: ["foo"] } } ];
 
-        const store = createMockStore({ roomname: [] }, middlewares);
-
-        return store.dispatch(actions.createRoom("http://example.com/", "hi"));
-            // .then(() => { // return of async actions
-            //     expect(store.getActions()).toEqual(expectedActions);
-            // });
+        mockStore.dispatch(actions.createRoom("https://www.youtube.com/watch?v=NdJ6BbvTw-s", "hi"))
+            .then(() => { // return of async actions
+                (mockStore.getActions()).should.to.equal(expectedActions);
+            });
     });
 });

@@ -4,10 +4,10 @@ import Room from "./room";
 
 
 const Layout = () => (
-  <div>
-    <h1>NOW-SYNC</h1>
-    <Room />
-  </div>
+    <div>
+        <h1>NOW-SYNC</h1>
+        <Room />
+    </div>
 );
 
 export default Layout;

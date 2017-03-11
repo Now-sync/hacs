@@ -473,28 +473,32 @@ describe("All server testing", function () {
         }); 
 
         it("should broadcast video change to all users in the same room", function (done) {
-            var countA = 0, countB = 0, countC = 0, expect = 1;
+            var personAListen = function () {
+                return new Promise(function (acc) {
+                    personA.on("videoChange", function () {
+                        acc();
+                    });
+                });
+            };
 
-            personA.on("videoChange", function () {
-                countA++;
-                if (countA === expect && countB === expect && countC === expect) {
-                    done();
-                }
-            });
+            var personBListen = function() {
+                return new Promise(function (acc) {
+                    personB.on("videoChange", function () {
+                        acc();
+                    });
+                });
+            };
 
-            personB.on("videoChange", function () {
-                countB++;
-                if (countA === expect && countB === expect && countC === expect) {
-                    done();
-                }
-            });
+            var personCListen = function() {
+                return new Promise(function (acc) {
+                    personC.on("videoChange", function () {
+                        acc();
+                    });
+                });
+            };
 
-            personC.on("videoChange", function () {
-                countC++;
-                if (countA === expect && countB === expect && countC === expect) {
-                    done();
-                }
-            });
+            var p = [personAListen(), personBListen(), personCListen()];
+            Promise.all(p).then(function () { done(); });
 
             personA.emit("videoChange", {videoUrl: newVideo});
 

@@ -9,8 +9,8 @@ class VideoPlayer extends React.Component {
         this.props.changeVideo();
     }
 
-    handleURLChange() {
-        this.props.newURLInput(event.target.value);
+    handleURLChange(e) {
+        this.props.newURLInput(e.target.value);
     }
 
     render() {
@@ -26,7 +26,7 @@ class VideoPlayer extends React.Component {
 }
 
 VideoPlayer.propTypes = {
-    potentialURL: React.PropTypes.string,
+    inputURL: React.PropTypes.string,
     url: React.PropTypes.string,
     videoId: React.PropTypes.string,
     playing: React.PropTypes.bool,

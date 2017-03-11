@@ -12,7 +12,7 @@ function youtubeGetId(url) {
 }
 
 const defaultState = {
-    potentialURL: null,
+    inputURL: null,
     url: null,
     videoId: null,
     playing: false,
@@ -24,12 +24,12 @@ export default function reducer(state=defaultState, action) {
     switch (action.type) {
         case "newURLInput":
             return Object.assign({}, state, {
-                potentialURL: action.url
+                inputURL: action.url
             });
         case "changeVideo":
             return Object.assign({}, state, {
-                url: state.potentialURL,
-                videoId: youtubeGetId(state.potentialURL)
+                url: state.inputURL,
+                videoId: youtubeGetId(state.inputURL)
             });
         case "play":
             return Object.assign({}, state, {
@@ -49,5 +49,7 @@ export default function reducer(state=defaultState, action) {
                 paused: false,
                 buffering: true
             });
+        default:
+            return state;
     }
 }

@@ -356,43 +356,55 @@ describe("All server testing", function () {
         var videoUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
         var newVideo = "https://www.youtube.com/watch?v=ZyhrYis509A";
         var roomname;
+        var password = "password";
 
         beforeEach(function (done){
-            chai.request(server)
-                .put("/api/createroom/")
-                .send({roomPassword: "password", videoUrl: videoUrl})
-                .end(function (res) {
-                    roomname = res.body.roomname;
-                    
+            var createRoom = function () {
+                return new Promise(function (acc) {
+                    chai.request(server)
+                        .put("/api/createroom/")
+                        .send({roomPassword: "password", videoUrl: videoUrl})
+                        .end(function (res) {
+                            acc(res.body.roomname);
+                        });
+                });
+            }
 
+            var connectPersonA = function (roomname){
+                return new Promise(function (acc) {
                     personA = io.connect(socketUrl, options);
-                    personB = io.connect(socketUrl, options);
-                    personC = io.connect(socketUrl, options);
-                    /* This setup is necessary because when joining a room a user recieves a
-                     videoChange signal immeadiately. This can mess with later test cases.*/
-                    var countA = 0, countB = 0, countC = 0, expect = 1;
-                    personA.on("connect", function() {
-                        personA.emit("join", {roomname: roomname, roompass: "password", username: "personA"});
-                        personB.on("connect", function() {
-                            personB.emit("join", {roomname: roomname, roompass: "password", username: "personB"});
-                            personC.on("connect", function() {
-                                personC.emit("join", {roomname: roomname, roompass: "password", username: "personC"});
-                                personC.once("videoChange", function(){
-                                    countC++;
-                                    if (countA === expect && countB === expect && countC === expect) done();
-                                });
-                            });
-                            personB.once("videoChange", function(){
-                                countB++;
-                                if (countA === expect && countB === expect && countC === expect) done();
-                            });
-                        });
-                        personA.once("videoChange", function(){
-                            countA++;
-                            if (countA === expect && countB === expect && countC === expect) done();
-                        });
+                    personA.on("connect", function () {
+                        personA.once("videoChange", function() {acc()})
+                            .emit("join", {roomname: roomname, roompass: password, username: "personA"});
                     });
                 });
+            };
+
+            var connectPersonB = function (roomname){
+                return new Promise(function (acc) {
+                    personB = io.connect(socketUrl, options);
+                    personB.on("connect", function () {
+                        personB.once("videoChange", function() {acc()})
+                            .emit("join", {roomname: roomname, roompass: password, username: "personB"});
+                    });
+                });
+            };
+
+            var connectPersonC = function (roomname){
+                return new Promise(function (acc) {
+                    personC = io.connect(socketUrl, options);
+                    personC.on("connect", function () {
+                        personC.once("videoChange", function() {acc()})
+                            .emit("join", {roomname: roomname, roompass: password, username: "personC"});
+                    });
+                });
+            };
+
+            createRoom().then(function (roomname2) {
+                roomname = roomname2;
+                var p = [connectPersonA(roomname), connectPersonB(roomname), connectPersonC(roomname)];
+                Promise.all(p).then(function () { done(); });
+            });
         });
 
         afterEach(function (done){
@@ -503,8 +515,7 @@ describe("All server testing", function () {
             personA.on("videoChange", function (data) {
                 expect(data.videoUrl).to.equal(videoUrl);
                 done();
-            });
-            personA.emit("join", {roomname: roomname, roompass: "password", username: "personA"});
+            }).emit("join", {roomname: roomname, roompass: password, username: "personA"});
         });
     });
 });

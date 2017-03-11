@@ -73,7 +73,8 @@ var addNewRoom = function (roomname, roompass, videoUrl, callback) {
         activeUsers: [],
         videoUrl: videoUrl,
         videoTimeMaster: null,
-        lastActive:null};
+        lastActive:null
+    };
 
     callback(null, activeRooms[roomname]);
 };

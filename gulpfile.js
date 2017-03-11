@@ -4,6 +4,8 @@ var webpack = require("webpack");
 var gulpWebpack = require("webpack-stream");
 var nodemon = require("nodemon");
 var browsersync = require("browser-sync").create();
+var proxy = require("proxy-middleware");
+var url = require("url");
 
 function handleError() {
     this.emit("end");
@@ -25,11 +27,22 @@ gulp.task("nodemon", ["build"], function () {
 });
 
 gulp.task("browsersync", ["nodemon"], function () {
+    // redirect all api requests to port 3000 where the server is actually running
+    var proxyOptions = url.parse("https://localhost:3000/api");
+    proxyOptions.route = "/api";
+    proxyOptions.rejectUnauthorized = false;
     return browsersync.init({
-        server: "src/frontend/",
+        server: {
+            baseDir: "src/frontend/",
+            middleware: [proxy(proxyOptions)]
+        },
         port: 3010,
         ui: {
             port: 3011
+        },
+        https: {
+            key: "./server.key",
+            cert: "./server.crt"
         }
     });
 });

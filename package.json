@@ -4,7 +4,7 @@
   "description": "Nowsync provides a synchronization video streaming experience",
   "main": "src/app.js",
   "scripts": {
-    "test": "mocha test/javascript/*.js",
+    "test": "mocha --compilers js:babel-core/register test/**/*.js",
     "gulp": "gulp"
   },
   "repository": {

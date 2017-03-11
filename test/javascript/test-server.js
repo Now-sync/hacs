@@ -4,6 +4,7 @@ var chai = require("chai");
 var chaiHttp = require("chai-http");
 var server = require("../../src/app.js");
 var should = chai.should(); // eslint-disable-line
+var expect = chai.expect;
 var io = require("socket.io-client");
 var socketUrl = "https://localhost:3002";
 var options = {
@@ -295,44 +296,43 @@ describe("All server testing", function () {
         var videoUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
         var newVideo = "https://www.youtube.com/watch?v=ZyhrYis509A";
         var roomname;
-        before(function (done){
+
+        beforeEach(function (done){
             chai.request(server)
                 .put("/api/createroom/")
                 .send({roomPassword: "password", videoUrl: videoUrl, screenName: "Mallory"})
                 .end(function (res) {
                     roomname = res.body.roomname;
-                    done();
-                });
-        });
+                    
 
-        beforeEach(function (done){
-            personA = io.connect(socketUrl, options);
-            personB = io.connect(socketUrl, options);
-            personC = io.connect(socketUrl, options);
-            /* This setup is necessary because when joining a room a user recieves a
-             videoChange signal immeadiately. This can mess with later test cases.*/
-            var countA = 0, countB = 0, countC = 0, expect = 1;
-            personA.on("connect", function() {
-                personA.emit("join", {roomname: roomname, roompass: "password", username: "personA"});
-                personB.on("connect", function() {
-                    personB.emit("join", {roomname: roomname, roompass: "password", username: "personB"});
-                    personC.on("connect", function() {
-                        personC.emit("join", {roomname: roomname, roompass: "password", username: "personC"});
-                        personC.once("videoChange", function(){
-                            countC++;
+                    personA = io.connect(socketUrl, options);
+                    personB = io.connect(socketUrl, options);
+                    personC = io.connect(socketUrl, options);
+                    /* This setup is necessary because when joining a room a user recieves a
+                     videoChange signal immeadiately. This can mess with later test cases.*/
+                    var countA = 0, countB = 0, countC = 0, expect = 1;
+                    personA.on("connect", function() {
+                        personA.emit("join", {roomname: roomname, roompass: "password", username: "personA"});
+                        personB.on("connect", function() {
+                            personB.emit("join", {roomname: roomname, roompass: "password", username: "personB"});
+                            personC.on("connect", function() {
+                                personC.emit("join", {roomname: roomname, roompass: "password", username: "personC"});
+                                personC.once("videoChange", function(){
+                                    countC++;
+                                    if (countA === expect && countB === expect && countC === expect) done();
+                                });
+                            });
+                            personB.once("videoChange", function(){
+                                countB++;
+                                if (countA === expect && countB === expect && countC === expect) done();
+                            });
+                        });
+                        personA.once("videoChange", function(){
+                            countA++;
                             if (countA === expect && countB === expect && countC === expect) done();
                         });
                     });
-                    personB.once("videoChange", function(){
-                        countB++;
-                        if (countA === expect && countB === expect && countC === expect) done();
-                    });
                 });
-                personA.once("videoChange", function(){
-                    countA++;
-                    if (countA === expect && countB === expect && countC === expect) done();
-                });
-            });
         });
 
         afterEach(function (done){
@@ -437,6 +437,14 @@ describe("All server testing", function () {
             });
 
             personA.emit("videoChange", {videoUrl: newVideo});
+        });
+
+        it("should should receive correct video when joining room", function (done) {
+            personA.on("videoChange", function (data) {
+                expect(data.videoUrl).to.equal(videoUrl);
+                done();
+            });
+            personA.emit("join", {roomname: roomname, roompass: "password", username: "personA"});
         });
     });
 });

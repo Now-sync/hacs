@@ -136,7 +136,7 @@ app.get("/", function (req, res, next) {
 /* Sanitize and Validate */
 app.use(expressValidator({
     customValidators: {
-        fail: function(value){
+        fail: function(){
             return false;
         },
         validDateVideoUrl: function(url){

@@ -1,0 +1,53 @@
+import React from "react";
+import { connect } from "react-redux";
+import YouTube from "react-youtube";
+
+import { changeVideo, newURLInput } from "../actions/videoPlayerActions";
+
+class VideoPlayer extends React.Component {
+    handleSubmit() {
+        this.props.changeVideo();
+    }
+
+    handleURLChange() {
+        this.props.newURLInput(event.target.value);
+    }
+
+    render() {
+        return (
+            <div>
+                <YouTube videoId={this.props.videoId} />
+                <form onSubmit={this.handleSubmit}>
+                    <input type="text" placeholder="Video URL" onChange={this.handleURLChange} />
+                </form>
+            </div>
+        );
+    }
+}
+
+VideoPlayer.propTypes = {
+    potentialURL: React.PropTypes.string,
+    url: React.PropTypes.string,
+    videoId: React.PropTypes.string,
+    playing: React.PropTypes.bool,
+    paused: React.PropTypes.bool,
+    buffering: React.PropTypes.bool,
+    changeVideo: React.PropTypes.func,
+    newURLInput: React.PropTypes.func
+};
+
+const mapDispatchToProps = dispatch => {
+    return {
+        changeVideo: () => dispatch(changeVideo()),
+        newURLInput: url => dispatch(newURLInput(url))
+    };
+};
+
+const mapStateToProps = state => {
+    return state;
+};
+
+export default connect(
+    mapDispatchToProps,
+    mapStateToProps
+)(VideoPlayer);

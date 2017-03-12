@@ -1,12 +1,25 @@
 import React from "react";
 import { connect } from "react-redux";
-//insert css here using require statement
+
 
 import { createRoom } from "../actions/roomActions";
 
 class CreateRoom extends React.Component {
     constructor(props) {
-    super(props);
+        super(props);
+    }
+
+    componentDidUpdate(){
+        var socket = this.props.socket;
+        if(this.props.rooms.fetched && this.props.videoPlayerReducer.inputURL === null) {
+            socket.connect();
+            socket.emit("join",{
+                roomname: this.props.rooms.room.roomname,
+                roompass: this.props.rooms.password
+            });
+        } else if(!this.props.rooms.fetched) {
+            socket.disconnect();
+        }
     }
 
     onsubmit(){
@@ -21,24 +34,26 @@ class CreateRoom extends React.Component {
 
     render () {
         return (
-          <div>
-            <h2>Room created?: {this.props.rooms.fetched}</h2>
-            <form ref="create_room" onSubmit= {e => {
-              e.preventDefault();
-              this.onsubmit();
-            }}>
-              <input ref="password" type="text" placeholder="RoomPassword"/>
-              <input ref="url" type="text" placeholder="VideoUrl"/>
-              <button type="submit">Create Room</button>
-            </form>
-          </div>
+            <div>
+                <form ref="create_room" onSubmit= {e => {
+                    e.preventDefault();
+                    this.onsubmit();
+                    }}>
+                    <input ref="password" type="text" placeholder="RoomPassword"/>
+                    <input ref="url" type="text" placeholder="VideoUrl"/>
+                    <button type="submit">Create Room</button>
+                </form>
+                <hr/>
+            </div>
         );
     }
 }
 
 CreateRoom.propTypes = {
     createRoom: React.PropTypes.func,
-    rooms: React.PropTypes.object
+    rooms: React.PropTypes.object,
+    videoPlayerReducer: React.PropTypes.object,
+    socket: React.PropTypes.object
 };
 
 const mapDispatchToProps = (dispatch) => {

@@ -5,6 +5,7 @@ import YouTube from "react-youtube";
 import * as actions from "../actions/videoPlayerActions";
 
 export class VideoPlayer extends React.Component {
+
     handleSubmit = e => {
         e.preventDefault();
         this.props.changeVideo();
@@ -38,6 +39,7 @@ export class VideoPlayer extends React.Component {
                 autoplay: 1
             }
         };
+
         return (
             <div>
                 <YouTube

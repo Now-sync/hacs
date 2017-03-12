@@ -51,8 +51,7 @@ gulp.task("test", function () {
         .pipe(mocha({
             reporter: "nyan",
             compilers: "js:babel-core/register"
-        }))
-        .on("error", handleError);
+        }));
 });
 
 gulp.task("test_after_build", ["browsersyncJS"], function () {
@@ -60,8 +59,7 @@ gulp.task("test_after_build", ["browsersyncJS"], function () {
         .pipe(mocha({
             reporter: "nyan",
             compilers: "js:babel-core/register"
-        }))
-        .on("error", handleError);
+        }));
 });
 
 gulp.task("default", ["browsersync"], function () {

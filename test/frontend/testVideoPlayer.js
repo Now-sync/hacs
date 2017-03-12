@@ -7,6 +7,7 @@ import thunk from "redux-thunk";
 
 import { VideoPlayer } from "../../src/frontend/js/components/videoPlayer";
 import * as actions from "../../src/frontend/js/actions/videoPlayerActions";
+import reducer from "../../src/frontend/js/reducers/videoPlayerReducer";
 
 var should = chai.should();
 
@@ -72,6 +73,99 @@ describe.only("<VideoPlayer />", () => {
             expected = [{type: "buffer"}];
             store.dispatch(actions.buffer());
             store.getActions().should.deep.equal(expected);
+        });
+    });
+
+    describe("reducer", () => {
+        var expected;
+        var action;
+        var state;
+
+        beforeEach(() => {
+            state = {
+                inputURL: null,
+                url: null,
+                videoId: null,
+                playing: false,
+                buffering: false
+            };
+
+            expected = {
+                inputURL: null,
+                url: null,
+                videoId: null,
+                playing: false,
+                buffering: false
+            };
+        });
+
+        it("should return the initial state", () => {
+            action = {};
+            reducer(undefined, action).should.deep.equal(expected);
+        });
+
+        it("should handle a newURLInput action", () => {
+            var url = "https://www.youtube.com/watch?v=RMF-1F_v53o";
+            action = {
+                type: "newURLInput",
+                url: url
+            };
+            expected.inputURL = url;
+            reducer(undefined, action).should.deep.equal(expected);
+        });
+
+        it("should handle a changeVideo action", () => {
+            var url = "https://www.youtube.com/watch?v=Ua3hZXfNZOE";
+            action = {
+                type: "changeVideo"
+            };
+            state.inputURL = url;
+            expected.inputURL = url;
+            expected.url = url;
+            expected.videoId = "Ua3hZXfNZOE";
+            reducer(state, action).should.deep.equal(expected);
+        });
+
+        it("should handle a play action", () => {
+            var url ="https://www.youtube.com/watch?v=TvwnrYJZpXc";
+            action = {
+                type: "play"
+            };
+            state.url = url;
+            state.videoId = "TvwnrYJZpXc";
+            expected.url = url;
+            expected.videoId = "TvwnrYJZpXc";
+            expected.playing = true;
+            reducer(state, action).should.deep.equal(expected);
+        });
+
+        it("should handle a pause action", () => {
+            var url = "https://www.youtube.com/watch?v=NGY1gmVZVlo";
+            action = {
+                type: "pause"
+            };
+            state.url = url;
+            state.videoId = "NGY1gmVZVlo";
+            state.playing = true;
+            expected.url = url;
+            expected.videoId = "NGY1gmVZVlo";
+            expected.playing = false;
+            reducer(state, action).should.deep.equal(expected);
+        });
+
+        it("should handle a buffer action", () => {
+            var url = "https://www.youtube.com/watch?v=2Z4m4lnjxkY";
+            action = {
+                type: "buffer"
+            };
+            state.url = url;
+            state.videoId = "2Z4m4lnjxkY";
+            state.playing = true;
+            expected.url = url;
+            expected.videoId = "2Z4m4lnjxkY";
+            expected.playing = false;
+            expected.buffering = true;
+            reducer(state, action).should.deep.equal(expected);
         });
     });
 });

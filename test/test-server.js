@@ -228,7 +228,6 @@ describe("All server testing", function () {
         var personA, personB, personC;
         var roomname;
         var videoUrl = "https://www.youtube.com/watch?v=kfVsfOSbJY0";
-        var roomname;
         var password = "password";
 
         beforeEach(function (done){

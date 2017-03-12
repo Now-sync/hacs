@@ -10,9 +10,6 @@ var socket = io();
 
 class Layout extends React.Component {
 
-    componentDidUpdate(){
-        console.log("one of my components updated!");
-    }
     render () {
         var result = null;
 

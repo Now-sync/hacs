@@ -4,7 +4,14 @@ import YouTube from "react-youtube";
 
 import * as actions from "../actions/videoPlayerActions";
 
+var socket;
+
 export class VideoPlayer extends React.Component {
+
+    componentWillMount = () => {
+        socket = this.props.socket;
+    }
+
     handleSubmit = e => {
         e.preventDefault();
         this.props.changeVideo();
@@ -16,9 +23,11 @@ export class VideoPlayer extends React.Component {
     }
 
     handleStateChange = (e) => {
+        console.log(e, " need pause time");
         // state codes here https://developers.google.com/youtube/iframe_api_reference#Events
         switch (e.data) {
             case 1:
+                socket.emit("play", {});
                 this.props.play();
                 break;
             case 2:
@@ -38,6 +47,7 @@ export class VideoPlayer extends React.Component {
                 autoplay: 1
             }
         };
+
         return (
             <div>
                 <YouTube
@@ -64,7 +74,8 @@ VideoPlayer.propTypes = {
     newURLInput: React.PropTypes.func,
     play: React.PropTypes.func,
     pause: React.PropTypes.func,
-    buffer: React.PropTypes.func
+    buffer: React.PropTypes.func,
+    socket: React.PropTypes.object
 };
 
 const mapDispatchToProps = dispatch => {

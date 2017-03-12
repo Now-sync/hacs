@@ -19,11 +19,12 @@ export class VideoPlayer extends React.Component {
     }
 
     handleURLChange = e => {
+        socket.emit("videoChange", {videoUrl: e.target.value});
         this.props.newURLInput(e.target.value);
     }
 
     handleStateChange = (e) => {
-        console.log(e, " need pause time");
+        var pausedTime = e.target.getCurrentTime();
         // state codes here https://developers.google.com/youtube/iframe_api_reference#Events
         switch (e.data) {
             case 1:
@@ -31,6 +32,7 @@ export class VideoPlayer extends React.Component {
                 this.props.play();
                 break;
             case 2:
+                socket.emit("pause", {pausedtime: pausedTime});
                 this.props.pause();
                 break;
             case 3:

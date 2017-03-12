@@ -40,17 +40,27 @@ describe("<VideoPlayer />", () => {
         var wrapper;
         var stub;
 
+        before(() => {
+            wrapper = mount(<VideoPlayer />);
+        });
+
         afterEach(() => {
             stub.restore();
         });
 
-        it("should fire handleURLChange() when something is typed into the input field", () => {
-            wrapper = mount(<VideoPlayer />);
-            stub = sinon.stub(wrapper.instance(), "handleURLChange", e => e.target.value);
+        it("should fire handleURLChange() with the input text when something is typed in", () => {
+            stub = sinon.stub(wrapper.instance(), "handleURLChange", e => e);
             // force update so the stub is used: https://github.com/airbnb/enzyme/issues/586
             wrapper.update();
             wrapper.find("input").simulate("change", {target: {value: "test"}});
             stub.should.have.been.calledWith(sinon.match({target: {value: "test"}}));
+        });
+
+        it("should fire handleSubmit() when the form is submitted", () => {
+            stub = sinon.stub(wrapper.instance(), "handleSubmit", e => e);
+            wrapper.update();
+            wrapper.find("form").simulate("submit");
+            stub.should.have.been.called;
         });
     });
 

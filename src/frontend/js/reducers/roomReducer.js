@@ -3,14 +3,14 @@ export default function reducer(state={
         roomname: null,
         users: null,
     },
-    fetching: false,
+    socket: null,
     fetched: "no",
     error: null,
     }, action) {
 
         switch (action.type) {
             case "CreateRoom": {
-            return Object.assign({}, state, {fetched: "yes", room: action.payload});
+            return Object.assign({}, state, {fetched: "yes",room: action.payload});
         }
         case "CreateRoomError": {
             return Object.assign({}, state, {fetched: "no", error: action.payload});

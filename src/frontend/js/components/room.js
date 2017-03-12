@@ -1,12 +1,17 @@
 import React from "react";
 import { connect } from "react-redux";
-//insert css here using require statement
+import io from "socket.io-client";
+let socket = io();
 
 import { createRoom } from "../actions/roomActions";
 
 class CreateRoom extends React.Component {
     constructor(props) {
     super(props);
+    }
+
+    componentDidMount(){
+        console.log("HERE, in didMount");
     }
 
     onsubmit(){
@@ -20,6 +25,7 @@ class CreateRoom extends React.Component {
     }
 
     render () {
+        console.log("HERE, render");
         return (
           <div>
             <h2>Room created?: {this.props.rooms.fetched}</h2>

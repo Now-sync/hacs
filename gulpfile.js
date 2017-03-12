@@ -43,7 +43,8 @@ gulp.task("browsersync", ["nodemon"], function () {
         https: {
             key: "./server.key",
             cert: "./server.crt"
-        }
+        },
+        ws: true
     });
 });
 

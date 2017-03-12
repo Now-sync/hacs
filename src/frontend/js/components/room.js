@@ -12,13 +12,14 @@ class CreateRoom extends React.Component {
     }
 
     componentDidUpdate(){
-        if(this.props.rooms.fetched) {
+        console.log(this.props);
+        if(this.props.rooms.fetched && this.props.videoPlayerReducer.inputURL === null) {
             socket.connect();
             socket.emit("join",{
                 roomname: this.props.rooms.room.roomname,
                 roompass: this.props.rooms.password
             });
-        } else {
+        } else if(!this.props.rooms.fetched) {
             socket.disconnect();
         }
     }
@@ -44,6 +45,7 @@ class CreateRoom extends React.Component {
                     <input ref="url" type="text" placeholder="VideoUrl"/>
                     <button type="submit">Create Room</button>
                 </form>
+                <hr/>
             </div>
         );
     }
@@ -51,7 +53,8 @@ class CreateRoom extends React.Component {
 
 CreateRoom.propTypes = {
     createRoom: React.PropTypes.func,
-    rooms: React.PropTypes.object
+    rooms: React.PropTypes.object,
+    videoPlayerReducer: React.PropTypes.object
 };
 
 const mapDispatchToProps = (dispatch) => {

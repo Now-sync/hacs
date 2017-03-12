@@ -2,7 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import YouTube from "react-youtube";
 
-import * as Actions from "../actions/videoPlayerActions";
+import * as actions from "../actions/videoPlayerActions";
 
 export class VideoPlayer extends React.Component {
     handleSubmit = e => {
@@ -69,11 +69,11 @@ VideoPlayer.propTypes = {
 
 const mapDispatchToProps = dispatch => {
     return {
-        changeVideo: () => dispatch(Actions.changeVideo()),
-        newURLInput: url => dispatch(Actions.newURLInput(url)),
-        play: () => dispatch(Actions.play()),
-        pause: () => dispatch(Actions.pause()),
-        buffer: () => dispatch(Actions.buffer())
+        changeVideo: () => dispatch(actions.changeVideo()),
+        newURLInput: url => dispatch(actions.newURLInput(url)),
+        play: () => dispatch(actions.play()),
+        pause: () => dispatch(actions.pause()),
+        buffer: () => dispatch(actions.buffer())
     };
 };
 

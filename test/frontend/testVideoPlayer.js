@@ -1,17 +1,24 @@
 import React from "react";
 import chai from "chai";
-import { shallow } from "enzyme";
+import { shallow, mount } from "enzyme";
 import YouTube from "react-youtube";
 import configureMockStore from "redux-mock-store";
 import thunk from "redux-thunk";
+import jsdom from "jsdom";
+import sinon from "sinon";
+import chaiSinon from "chai-sinon";
 
 import { VideoPlayer } from "../../src/frontend/js/components/videoPlayer";
 import * as actions from "../../src/frontend/js/actions/videoPlayerActions";
 import reducer from "../../src/frontend/js/reducers/videoPlayerReducer";
 
 var should = chai.should();
+chai.use(chaiSinon);
+var doc = jsdom.jsdom("<!DOCTYPE html><html><body></body></html>");
+global.document = doc;
+global.window = doc.defaultView;
 
-describe.only("<VideoPlayer />", () => {
+describe("<VideoPlayer />", () => {
     describe("should render a", () => {
         var wrapper;
 
@@ -26,6 +33,24 @@ describe.only("<VideoPlayer />", () => {
         it("form with one input field", () => {
             wrapper.find("form").should.have.length(1);
             wrapper.find("input").should.have.length(1);
+        });
+    });
+
+    describe("DOM elements", () => {
+        var wrapper;
+        var stub;
+
+        afterEach(() => {
+            stub.restore();
+        });
+
+        it("should fire handleURLChange() when something is typed into the input field", () => {
+            wrapper = mount(<VideoPlayer />);
+            stub = sinon.stub(wrapper.instance(), "handleURLChange", e => e.target.value);
+            // force update so the stub is used: https://github.com/airbnb/enzyme/issues/586
+            wrapper.update();
+            wrapper.find("input").simulate("change", {target: {value: "test"}});
+            stub.should.have.been.calledWith(sinon.match({target: {value: "test"}}));
         });
     });
 

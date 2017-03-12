@@ -4,7 +4,7 @@ import YouTube from "react-youtube";
 
 import * as Actions from "../actions/videoPlayerActions";
 
-class VideoPlayer extends React.Component {
+export class VideoPlayer extends React.Component {
     handleSubmit = e => {
         e.preventDefault();
         this.props.changeVideo();

@@ -50,7 +50,6 @@
     "gulp-nodemon": "^2.2.1",
     "jsdom": "^9.11.0",
     "mocha": "^3.2.0",
-    "proxy-middleware": "^0.15.0",
     "react": "^15.4.2",
     "react-addons-test-utils": "^15.4.2",
     "react-dom": "^15.4.2",

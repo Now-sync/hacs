@@ -68,13 +68,43 @@ var verifyRoomAndPassword = function (roomname, roompass, callback) {
     }
 };
 
+/* every 10 seconds look for and remove dead rooms. */
+var timeout = setInterval(function () {
+    var key, currRoom;
+    for (key in activeRooms) {
+        currRoom = activeRooms[key];
+        if (currRoom.activeUsers !== []) {
+            activeRooms[key].isDead = 6;
+        } else if (currRoom.isDead <= 0) {
+            delete activeRooms[key];
+        } else {
+            activeRooms[key].isDead--;
+        }
+    }
+}, 10000);
+
+var removeUser = function (roomname, username) {
+    if (activeRooms) {
+        var room = activeRooms[roomname];
+        if (room && room.activeUsers) {
+            var ind = room.activeUsers.indexOf(username);
+            if (ind >= 0) room.activeUsers.splice(ind, 1);
+        }
+    }
+}
+
+var addUserToRoom = function (roomname, username) {
+    activeRooms[roomname].activeUsers.push(username);
+}
+
 var addNewRoom = function (roomname, roompass, videoUrl, callback) {
     activeRooms[roomname] = {
         roomPassword: roompass,
         activeUsers: [],
         videoUrl: videoUrl,
         videoTimeMaster: null,
-        lastActive:null
+        lastActive:null,
+        isDead: 6
     };
 
     callback(null, activeRooms[roomname]);
@@ -252,6 +282,7 @@ io.on("connection", function (client) {
         var roompass = data.roompass;
         var username = data.username;
 
+        if (!roomname || !roompass) return; // maybe emit joinError ??
 
         verifyRoomAndPassword(roomname, roompass, function (err, roomData) {
             if (err) {
@@ -269,7 +300,9 @@ io.on("connection", function (client) {
 
             if (clientInRoom) {
                 client.leave(clientInRoom, function () {
+                    removeUser(clientInRoom, screenName);
                     io.to(clientInRoom).emit("userLeft", {username: screenName});
+                    clientInRoom = null;
                 });
             }
 
@@ -279,6 +312,7 @@ io.on("connection", function (client) {
                     return;
                 }
                 clientInRoom = roomname;
+                addUserToRoom(clientInRoom, screenName);
                 io.to(clientInRoom).emit("userJoined", {username: screenName});
 
                 /* When user has joined the room. Send the Url of the video in the room */
@@ -288,6 +322,7 @@ io.on("connection", function (client) {
                     username: null,  // null because no user emitted videoChange signal
                     skipTo: null
                 });
+
             });
 
             if (BLOCK_CONSOLE) console.log(client.rooms);
@@ -331,7 +366,10 @@ io.on("connection", function (client) {
     client.on("disconnect", function () {
         if (BLOCK_CONSOLE) console.log("DISCONNECTED");
         client.leave(clientInRoom, function () {
+            removeUser(clientInRoom, screenName);
             io.to(clientInRoom).emit("userLeft", {username: screenName});
+            clientInRoom = null;
+            screenName = null;
         });
     });
 });

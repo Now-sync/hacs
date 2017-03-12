@@ -2,7 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import io from "socket.io-client";
 
-var socket;
+var socket = io();
 
 import { createRoom } from "../actions/roomActions";
 
@@ -13,13 +13,13 @@ class CreateRoom extends React.Component {
 
     componentDidUpdate(){
         if(this.props.rooms.fetched) {
-            socket = io();
+            socket.connect();
             socket.emit("join",{
                 roomname: this.props.rooms.room.roomname,
                 roompass: this.props.rooms.password
             });
         } else {
-            //disconnect here!
+            socket.disconnect();
         }
     }
 

@@ -1,8 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import io from "socket.io-client";
 
-var socket = io();
 
 import { createRoom } from "../actions/roomActions";
 
@@ -12,7 +10,7 @@ class CreateRoom extends React.Component {
     }
 
     componentDidUpdate(){
-        console.log(this.props);
+        var socket = this.props.socket;
         if(this.props.rooms.fetched && this.props.videoPlayerReducer.inputURL === null) {
             socket.connect();
             socket.emit("join",{
@@ -54,7 +52,8 @@ class CreateRoom extends React.Component {
 CreateRoom.propTypes = {
     createRoom: React.PropTypes.func,
     rooms: React.PropTypes.object,
-    videoPlayerReducer: React.PropTypes.object
+    videoPlayerReducer: React.PropTypes.object,
+    socket: React.PropTypes.object
 };
 
 const mapDispatchToProps = (dispatch) => {

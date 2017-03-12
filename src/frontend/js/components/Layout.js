@@ -2,20 +2,27 @@ import React from "react";
 import Room from "./room";
 import VideoPlayer from "./videoPlayer";
 import { connect } from "react-redux";
+import io from "socket.io-client";
+
+var socket = io();
 //insert css here using require statement
 
 
 class Layout extends React.Component {
+
+    componentDidUpdate(){
+        console.log("one of my components updated!");
+    }
     render () {
         var result = null;
 
         if (this.props.rooms.fetched){
-            result = <VideoPlayer />;
+            result = <VideoPlayer socket={ socket }/>;
         }
         return (
             <div>
               <h1>NOW-SYNC</h1>
-              <Room />
+              <Room socket={ socket }/>
               { result }
             </div>
         );

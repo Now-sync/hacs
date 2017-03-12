@@ -13,12 +13,13 @@ class CreateRoom extends React.Component {
 
     componentDidUpdate(){
         if(this.props.rooms.fetched) {
-            console.log("got here after createRoom");
             socket = io();
-            // return true;
+            socket.emit("join",{
+                roomname: this.props.rooms.room.roomname,
+                roompass: this.props.rooms.password
+            });
         } else {
-            console.log("dont create a Room");
-            // return false;
+            //disconnect here!
         }
     }
 

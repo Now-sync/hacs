@@ -219,11 +219,11 @@ app.get("/room/:room_id/", function (req, res, next) {
     /* User has arrived on site with direct link to a room */
     //var roomId = req.params.room_id;
 
-    if (true) {
-        /* IF room exists do something */
-    } else {
-        /* IF room does NOT exists, do something else */
-    }
+    // if (true) {
+    //     /* IF room exists do something */
+    // } else {
+    //     /* IF room does NOT exists, do something else */
+    // }
     return next();
 });
 

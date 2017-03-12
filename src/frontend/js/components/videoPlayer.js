@@ -27,7 +27,7 @@ export class VideoPlayer extends React.Component {
         // state codes here https://developers.google.com/youtube/iframe_api_reference#Events
         switch (e.data) {
             case 1:
-                socket.emit("play", {});
+                socket.emit("play");
                 this.props.play();
                 break;
             case 2:

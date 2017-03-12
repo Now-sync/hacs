@@ -1,17 +1,25 @@
 import React from "react";
 import { connect } from "react-redux";
 import io from "socket.io-client";
-let socket = io();
+
+var socket;
 
 import { createRoom } from "../actions/roomActions";
 
 class CreateRoom extends React.Component {
     constructor(props) {
-    super(props);
+        super(props);
     }
 
-    componentDidMount(){
-        console.log("HERE, in didMount");
+    componentDidUpdate(){
+        if(this.props.rooms.fetched) {
+            console.log("got here after createRoom");
+            socket = io();
+            // return true;
+        } else {
+            console.log("dont create a Room");
+            // return false;
+        }
     }
 
     onsubmit(){
@@ -25,19 +33,17 @@ class CreateRoom extends React.Component {
     }
 
     render () {
-        console.log("HERE, render");
         return (
-          <div>
-            <h2>Room created?: {this.props.rooms.fetched}</h2>
-            <form ref="create_room" onSubmit= {e => {
-              e.preventDefault();
-              this.onsubmit();
-            }}>
-              <input ref="password" type="text" placeholder="RoomPassword"/>
-              <input ref="url" type="text" placeholder="VideoUrl"/>
-              <button type="submit">Create Room</button>
-            </form>
-          </div>
+            <div>
+                <form ref="create_room" onSubmit= {e => {
+                    e.preventDefault();
+                    this.onsubmit();
+                    }}>
+                    <input ref="password" type="text" placeholder="RoomPassword"/>
+                    <input ref="url" type="text" placeholder="VideoUrl"/>
+                    <button type="submit">Create Room</button>
+                </form>
+            </div>
         );
     }
 }

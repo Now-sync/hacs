@@ -231,8 +231,8 @@ app.get("/room/:room_id/", function (req, res, next) {
             res.status(200).end("Room exists");
         } else {
             res.status(404).end("404 no such room");
-            return next();
         }
+        return next();
     });
 });
 

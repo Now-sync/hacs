@@ -15,6 +15,14 @@
     - Response 500
         - Database error
 
+2. Verify existence of room
+
+    - Request Get /room/:room_id/
+    - Response 200 
+        - room exists
+    - Response 404
+        - No such room
+
 ##Server Sockets
 
     Note: [null] the value of the key-value pair can be 'null'.

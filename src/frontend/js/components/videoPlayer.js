@@ -25,10 +25,17 @@ export class VideoPlayer extends React.Component {
             // TODO: might have to change video location to the timestamp inside this event
             this.player.pauseVideo();
         });
+
+        this.socket.on("videoChange", data => {
+            this.props.changeVideo(data.videoUrl);
+        });
     }
 
     handleSubmit = e => {
         e.preventDefault();
+        this.socket.emit("videoChange", {
+            videoUrl: this.props.url
+        });
         this.props.changeVideo();
         e.target.reset();
     }
@@ -102,7 +109,7 @@ VideoPlayer.propTypes = {
 
 const mapDispatchToProps = dispatch => {
     return {
-        changeVideo: () => dispatch(actions.changeVideo()),
+        changeVideo: url => dispatch(actions.changeVideo(url)),
         newURLInput: url => dispatch(actions.newURLInput(url)),
         play: () => dispatch(actions.play()),
         pause: () => dispatch(actions.pause()),

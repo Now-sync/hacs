@@ -23,9 +23,9 @@ describe("Room", () => {
         });
 
         it("a form with two inputs and a button", () => {
-            wrapper.find("form").should.have.length(1);
-            wrapper.find("input").should.have.length(2);
-            wrapper.find("button").should.have.length(1);
+            wrapper.find("form").should.have.length(2);
+            wrapper.find("input").should.have.length(3);
+            wrapper.find("button").should.have.length(2);
         });
     });
 

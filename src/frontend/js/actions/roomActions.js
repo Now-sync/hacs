@@ -14,3 +14,9 @@ export function createRoom(url, password) {
         });
     };
 }
+
+export function joinRoom(){
+    // return function(dispatch) {
+    //
+    // };
+}

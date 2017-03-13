@@ -2,14 +2,14 @@ import React from "react";
 import chai from "chai";
 import { shallow } from "enzyme";
 import jsdom from "jsdom";
-import chaiSinon from "chai-sinon";
+import sinonChai from "sinon-chai";
 
 import { Room } from "../../src/frontend/js/components/room";
 import reducer from "../../src/frontend/js/reducers/roomReducer";
 
 
 var should = chai.should();
-chai.use(chaiSinon);
+chai.use(sinonChai);
 var doc = jsdom.jsdom("<!DOCTYPE html><html><body></body></html>");
 global.document = doc;
 global.window = doc.defaultView;

@@ -119,14 +119,64 @@ describe("All server testing", function () {
         var personA, personB, personC;
         var roomname;
         var videoUrl = "https://www.youtube.com/watch?v=7PCkvCPvDXk";
+        var password = "password";
         before(function (done){
             chai.request(server)
                 .put("/api/createroom/")
-                .send({roomPassword: "password", videoUrl: videoUrl})
+                .send({roomPassword: password, videoUrl: videoUrl})
                 .end(function (res) {
                     roomname = res.body.roomname;
                     done();
                 });
+        });
+
+        beforeEach(function (done){
+            var createRoom = function () {
+                return new Promise(function (acc) {
+                    chai.request(server)
+                        .put("/api/createroom/")
+                        .send({roomPassword: password, videoUrl: videoUrl})
+                        .end(function (res) {
+                            acc(res.body.roomname);
+                        });
+                });
+            };
+
+            var connectPersonA = function (roomname){
+                return new Promise(function (acc) {
+                    personA = io.connect(socketUrl, options);
+                    personA.on("connect", function () {
+                        personA.once("videoChange", function() { acc(); })
+                                .emit("join", {roomname: roomname, roompass: password, username: "personA"});
+                    });
+                });
+            };
+
+            var connectPersonB = function (roomname){
+                return new Promise(function (acc) {
+                    personB = io.connect(socketUrl, options);
+                    personB.on("connect", function () {
+                        personB.once("videoChange", function() { acc(); })
+                            .emit("join", {roomname: roomname, roompass: password, username: "personB"});
+                    });
+                });
+            };
+
+            var connectPersonC = function (roomname){
+                return new Promise(function (acc) {
+                    personC = io.connect(socketUrl, options);
+                    personC.on("connect", function () {
+                        personC.once("videoChange", function() { acc(); })
+                            .emit("join", {roomname: roomname, roompass: password, username: "personC"});
+                    });
+                });
+            };
+
+            createRoom().then(function (roomname2) {
+                roomname = roomname2;
+                var p = [connectPersonA(roomname), connectPersonB(roomname), connectPersonC(roomname)];
+                Promise.all(p).then(function () { done(); });
+            });
         });
 
         afterEach(function(done){
@@ -146,43 +196,36 @@ describe("All server testing", function () {
         });
 
         it("should broadcast play to all users in the same room", function (done) {
-            var countA = 0, countB = 0, countC = 0, expect = 1;
-            personA = io.connect(socketUrl, options);
-            personA.on("connect", function() {
-                personA.emit("join", {roomname: roomname, roompass: "password", username: "personA"});
-                personB = io.connect(socketUrl, options);
-                personB.on("connect", function() {
-                    personB.emit("join", {roomname: roomname, roompass: "password", username: "personB"});
-                    personC = io.connect(socketUrl, options);
-                    personC.on("connect", function() {
-                        personC.emit("join", {roomname: roomname, roompass: "password", username: "personC"});
-                        personC.on("play", function () {
-                            countC++;
-                            if (countA === expect && countB === expect && countC === expect) {
-                                done();
-                            }
-                        });
-                        personC.on("userJoined", function () {
-                            personA.emit("play");
-
-                        });
+            var personAListen = function () {
+                return new Promise(function (acc) {
+                    personA.on("play", function () {
+                        acc();
                     });
+                });
+            };
 
+            var personBListen = function() {
+                return new Promise(function (acc) {
                     personB.on("play", function () {
-                        countB++;
-                        if (countA === expect && countB === expect && countC === expect) {
-                            done();
-                        }
+                        acc();
                     });
                 });
+            };
 
-                personA.on("play", function () {
-                    countA++;
-                    if (countA === expect && countB === expect && countC === expect) {
-                        done();
-                    }
+            var personCListen = function() {
+                return new Promise(function (acc) {
+                    personC.on("play", function () {
+                        acc();
+                    });
                 });
+            };
+
+            var p = [personAListen(), personBListen(), personCListen()];
+            Promise.all(p).then(function () {
+                done();
             });
+
+            personA.emit("play");
         });
 
         it("should not broadcast in other rooms", function (done) {

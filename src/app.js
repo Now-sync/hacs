@@ -89,6 +89,14 @@ var setRoomVideo = function (roomname, videoUrl, callback) {
     callback(null);
 };
 
+var isRoom = function (roomname, callback) {
+    if (activeRooms[roomname]) {
+        callback(true);
+    } else {
+        callback(false);
+    }
+}
+
 var youtubeUrlValidator = function(url) {
     /* regex taken from
     http://stackoverflow.com/questions/28735459/how-to-validate-youtube-url-in-client-side-in-text-box */
@@ -216,15 +224,16 @@ app.get("/api/session/", function (req, res, next) {
 });
 
 app.get("/room/:room_id/", function (req, res, next) {
-    /* User has arrived on site with direct link to a room */
-    //var roomId = req.params.room_id;
+    var roomId = req.params.room_id;
 
-    // if (true) {
-    //     /* IF room exists do something */
-    // } else {
-    //     /* IF room does NOT exists, do something else */
-    // }
-    return next();
+    isRoom(roomId, function (roomExists) {
+        if (roomExists) {
+            res.status(200).end("Room exists");
+        } else {
+            res.status(404).end("404 no such room");
+            return next();
+        }
+    });
 });
 
 
@@ -255,7 +264,7 @@ io.on("connection", function (client) {
 
         verifyRoomAndPassword(roomname, roompass, function (err, roomData) {
             if (err) {
-                /* Do something */
+                client.emit("joinError", {roomname:roomname, roompass:roompass});
                 return;
             }
 

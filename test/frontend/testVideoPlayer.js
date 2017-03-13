@@ -84,7 +84,7 @@ describe("<VideoPlayer />", () => {
     describe("sockets", () => {
         var wrapper;
 
-        it("should fire a play event when the handleStateChange() has a play action", (done) => {
+        it("should fire a play event when the handleStateChange() has a play action", done => {
             mockServer.on("play", done());
             wrapper = shallow(<VideoPlayer socket={socket}
                                 play={() => null}
@@ -92,12 +92,19 @@ describe("<VideoPlayer />", () => {
             wrapper.instance().handleStateChange({data: 1});
         });
 
-        it("should play the video when a play event is received", (done) => {
+        it("should play the video when a play event is received", done => {
             // can't really see a better way to test this one
             wrapper = shallow(<VideoPlayer socket={socket}
                                 play={done()}
                                 />);
             mockServer.emit("play");
+        });
+
+        it("should fire a pause event when the handleStateChange() has a pause action", done => {
+            mockServer.on("pause", (data) => {
+                if (data.pausedtime === 5) done();
+            });
+
         });
     });
 

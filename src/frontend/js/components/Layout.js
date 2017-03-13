@@ -3,7 +3,6 @@ import Room from "./room";
 import VideoPlayer from "./videoPlayer";
 import { connect } from "react-redux";
 import io from "socket.io-client";
-import { Router, Route, Switch } from "react-router";
 
 var socket = io();
 //insert css here using require statement

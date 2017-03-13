@@ -4,23 +4,26 @@ import YouTube from "react-youtube";
 
 import * as actions from "../actions/videoPlayerActions";
 
-var socket;
-var player;
-
 export class VideoPlayer extends React.Component {
+    constructor(props) {
+        super(props);
+        // for easier unit test stubbing
+        this.socket = {};
+        this.player = {};
+    }
 
     componentWillMount = () => {
-        socket = this.props.socket;
+        this.socket = this.props.socket;
     }
 
     componentDidMount = () => {
-        socket.on("play", () => {
-            player.playVideo();
+        this.socket.on("play", () => {
+            this.player.playVideo();
         });
 
-        socket.on("pause", () => {
+        this.socket.on("pause", () => {
             // TODO: might have to change video location to the timestamp inside this event
-            player.pauseVideo();
+            this.player.pauseVideo();
         });
     }
 
@@ -38,12 +41,12 @@ export class VideoPlayer extends React.Component {
         // state codes here https://developers.google.com/youtube/iframe_api_reference#Events
         switch (e.data) {
             case YouTube.PlayerState.PLAYING:
-                socket.emit("play");
+                this.socket.emit("play");
                 this.props.play();
                 break;
             case YouTube.PlayerState.PAUSED:
-                socket.emit("pause", {
-                    pausedtime: player.getCurrentTime()
+                this.socket.emit("pause", {
+                    pausedtime: this.player.getCurrentTime()
                 });
                 this.props.pause();
                 break;
@@ -56,7 +59,7 @@ export class VideoPlayer extends React.Component {
     }
 
     handleReady = e => {
-        player = e.target;
+        this.player = e.target;
     }
 
     render() {

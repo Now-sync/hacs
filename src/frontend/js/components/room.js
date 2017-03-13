@@ -1,10 +1,9 @@
 import React from "react";
 import { connect } from "react-redux";
 
-
 import { createRoom } from "../actions/roomActions";
 
-class CreateRoom extends React.Component {
+export class Room extends React.Component {
     constructor(props) {
         super(props);
     }
@@ -17,6 +16,10 @@ class CreateRoom extends React.Component {
                 roomname: this.props.rooms.room.roomname,
                 roompass: this.props.rooms.password
             });
+
+            // socket.on("join", (data) => {
+            //     console.log(data, "response from join");
+            // });
         } else if(!this.props.rooms.fetched) {
             socket.disconnect();
         }
@@ -49,7 +52,7 @@ class CreateRoom extends React.Component {
     }
 }
 
-CreateRoom.propTypes = {
+Room.propTypes = {
     createRoom: React.PropTypes.func,
     rooms: React.PropTypes.object,
     videoPlayerReducer: React.PropTypes.object,
@@ -66,9 +69,7 @@ const mapStateToProps = (state) => {
     return state;
 };
 
-const Room = connect(
+export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(CreateRoom);
-
-export default Room;
+)(Room);

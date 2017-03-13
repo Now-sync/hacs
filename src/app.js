@@ -264,7 +264,7 @@ io.on("connection", function (client) {
 
         verifyRoomAndPassword(roomname, roompass, function (err, roomData) {
             if (err) {
-                /* Do something */
+                client.emit("joinError", {roomname:roomname, roompass:roompass});
                 return;
             }
 

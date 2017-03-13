@@ -28,6 +28,8 @@
     Note: [null] the value of the key-value pair can be 'null'.
 
     List of current possible signals the server might send
+        - "joinError" -> Attemping to join a room has failed
+            Returns {roomname: <name of room attemped to join>, roompass: <password attempted to join with>}
         - "userLeft" -> A user has left the room you are in.
             Returns {username: <name of user that left>}
         - "userJoined" -> A user has joined the room you are in.

@@ -1,47 +1,141 @@
 import React from "react";
 import chai from "chai";
-import { connect } from "react-redux";
-import { shallowWithStore } from "enzyme-redux";
-import { createMockStore } from "redux-test-utils";
-import Room from "../../src/frontend/js/components/room";
+import { shallow } from "enzyme";
+import jsdom from "jsdom";
+import chaiSinon from "chai-sinon";
+
+import { Room } from "../../src/frontend/js/components/room";
+import reducer from "../../src/frontend/js/reducers/roomReducer";
+
 
 var should = chai.should();
+chai.use(chaiSinon);
+var doc = jsdom.jsdom("<!DOCTYPE html><html><body></body></html>");
+global.document = doc;
+global.window = doc.defaultView;
 
-describe("shallowWithStore", () => {
-    const ReactComponent = () => (Room);
+describe("Room", () => {
+    describe("should render", () => {
+        var wrapper;
 
-    describe("state", () => {
-        it("should have the correct state", () => {
-            const expectedState = "expectedState";
-            const mapStateToProps = (state) => ({
-                state,
-            });
+        before(() => {
+            wrapper = shallow(<Room />);
+        });
 
-            const ConnectedComponent = connect(mapStateToProps)(ReactComponent);
-            const component = shallowWithStore(<ConnectedComponent />, createMockStore(expectedState));
-
-            (component.props().state).should.to.be.expectedState;
+        it("a form with two inputs and a button", () => {
+            wrapper.find("form").should.have.length(1);
+            wrapper.find("input").should.have.length(2);
+            wrapper.find("button").should.have.length(1);
         });
     });
 
+    // describe("actions", () => {
+    //     var middlewares;
+    //     var mockStore;
+    //     var store;
+    //     var expectedActions;
+    //     var sandbox;
+    //
+    //     before(() => {
+    //         middlewares = [thunk];
+    //         mockStore = configureMockStore(middlewares);
+    //     });
+    //
+    //     beforeEach(() => {
+    //         sandbox = sinon.sandbox.create();
+    //         store = mockStore({ todos: [] });
+    //     });
+    //
+    //     afterEach(() => {
+    //         sandbox.restore();
+    //     });
+    //
+    //     it.only("dispatches a createRoom action", () => {
+    //         nock('https://localhost:3000')
+    //           .put('/api/createRoom')
+    //           .reply(200, { payload: { todos: ['do something'] } });
+    //
+    //         expectedActions = [
+    //           { type: "CreateRoom", payload: { todos: ['do something']  } },
+    //           { type: "CreateRoomError", payload: { todos: ['do something']  } }
+    //         ];
+    //
+    //         return store.dispatch(actions.createRoom("https://www.youtube.com/watch?v=RMF-1F_v53o", "hi"))
+    //             .then (() => {
+    //                 console.log(" HE");
+    //             });
+    //     });
+    // });
 
-    describe("dispatch", () => {
-        it("should dispatch action", () => {
-            const action = {
-                type: "type",
-            };
-            const mapDispatchToProps = (dispatch) => ({
-                dispatchProp() {
-                    dispatch(action);
+    describe("reducer", () => {
+        var expected;
+        var action;
+        var state;
+
+        beforeEach(() => {
+            state = {
+                room: {
+                    roomname: null,
+                    users: null,
                 },
-            });
-            const store = createMockStore();
+                password: null,
+                fetched: false,
+                error: null,
+            };
 
-            const ConnectedComponent = connect(undefined, mapDispatchToProps)(ReactComponent);
-            const component = shallowWithStore(<ConnectedComponent />, store);
-            component.props().dispatchProp();
+            expected = {
+                room: {
+                    roomname: null,
+                    users: null,
+                },
+                password: null,
+                fetched: false,
+                error: null,
+            };
+        });
 
-            (store.isActionDispatched(action)).should.to.be.true;
+        it("should return the initial state", () => {
+            action = {};
+            reducer(undefined, action).should.deep.equal(expected);
+        });
+
+        it("should handle a CreateRoom action", () => {
+            action = {
+                 type: "CreateRoom",
+                 payload: {
+                     roomname: "room1"
+                 },
+                 pass: "hi"
+             };
+
+             state.fetched = true;
+             state.password = "hi";
+             expected.room = {
+                 roomname: "room1"
+             };
+             expected.fetched = true;
+             expected.password = "hi";
+
+             reducer(state, action).should.deep.equal(expected);
+        });
+
+        it("should handle a CreateRoomError action", () => {
+            action = {
+                 type: "CreateRoomError",
+                 payload: {
+                     roomname: "ERROR"
+                 },
+                 pass: "hi"
+             };
+
+             state.fetched = false;
+             expected.error = {
+                 roomname: "ERROR"
+             };
+             expected.fetched = false;
+
+             reducer(state, action).should.deep.equal(expected);
         });
     });
+
 });

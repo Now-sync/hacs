@@ -10,10 +10,17 @@ export default function reducer(state={
 
         switch (action.type) {
             case "CreateRoom": {
-            return Object.assign({}, state, {fetched: true, room: action.payload, password: action.pass});
+            return Object.assign({}, state, {
+                fetched: true,
+                room: action.payload,
+                password: action.pass
+            });
         }
         case "CreateRoomError": {
-            return Object.assign({}, state, {fetched: false, error: action.payload});
+            return Object.assign({}, state, {
+                fetched: false,
+                error: action.payload
+            });
         }
         default:
             return state;

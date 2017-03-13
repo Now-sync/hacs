@@ -85,7 +85,7 @@ describe("<VideoPlayer />", () => {
         // TODO: FIND A WAY TO TEST THESE, implicit calls to done don't work
         var wrapper;
 
-        it("should fire a play event when the handleStateChange() has a play action", done => {
+        it("should fire a play event when handleStateChange() has a play action", done => {
             mockServer.on("play", done);
             wrapper = shallow(<VideoPlayer socket={socket}
                                 play={() => null}
@@ -99,7 +99,7 @@ describe("<VideoPlayer />", () => {
             mockServer.emit("play");
         });
 
-        it("should fire a pause event when the handleStateChange() has a pause action", done => {
+        it("should fire a pause event when handleStateChange() has a pause action", done => {
             // mockServer.on("pause", data => {
             //     if (data.pausedtime === 5) done();
             // });
@@ -152,6 +152,18 @@ describe("<VideoPlayer />", () => {
                 username: "bobjoe",
                 skipTo: 0
             });
+        });
+
+        it("should fire a pause event when handleStateChange() has a buffer action", done => {
+            // mockServer.on("pause", data => {
+            //     if (data.pausedtime === 5) done();
+            // });
+            mockServer.on("pause", done);
+            wrapper = shallow(<VideoPlayer socket={socket}
+                                buffer={() => null}
+                                />);
+            wrapper.instance().player.getCurrentTime = () => 5;
+            wrapper.instance().handleStateChange({data: 3});
         });
     });
 

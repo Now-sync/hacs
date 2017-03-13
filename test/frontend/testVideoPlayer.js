@@ -6,24 +6,41 @@ import configureMockStore from "redux-mock-store";
 import thunk from "redux-thunk";
 import jsdom from "jsdom";
 import sinon from "sinon";
-import chaiSinon from "chai-sinon";
+import sinonChai from "sinon-chai";
+import io from "socket.io-client";
+import { Server } from "mock-socket";
 
 import { VideoPlayer } from "../../src/frontend/js/components/videoPlayer";
 import * as actions from "../../src/frontend/js/actions/videoPlayerActions";
 import reducer from "../../src/frontend/js/reducers/videoPlayerReducer";
 
 var should = chai.should();
-chai.use(chaiSinon);
-var doc = jsdom.jsdom("<!DOCTYPE html><html><body></body></html>");
-global.document = doc;
-global.window = doc.defaultView;
+chai.use(sinonChai);
 
 describe("<VideoPlayer />", () => {
+    var doc;
+    var socketURL;
+    var mockServer;
+    var socket;
+
+    before(() => {
+        doc = jsdom.jsdom("<!DOCTYPE html><html><body></body></html>");
+        global.document = doc;
+        global.window = doc.defaultView;
+        socketURL = "http://localhost:3002";
+        mockServer = new Server(socketURL);
+        socket = io(socketURL);
+    });
+
+    after(() => {
+        mockServer.stop();
+    });
+
     describe("should render a", () => {
         var wrapper;
 
         before(() => {
-            wrapper = shallow(<VideoPlayer />);
+            wrapper = shallow(<VideoPlayer socket={socket} />);
         });
 
         it("<YouTube />", () => {
@@ -41,7 +58,7 @@ describe("<VideoPlayer />", () => {
         var stub;
 
         before(() => {
-            wrapper = mount(<VideoPlayer />);
+            wrapper = mount(<VideoPlayer socket={socket} />);
         });
 
         afterEach(() => {
@@ -61,6 +78,26 @@ describe("<VideoPlayer />", () => {
             wrapper.update();
             wrapper.find("form").simulate("submit");
             stub.should.have.been.called;
+        });
+    });
+
+    describe("sockets", () => {
+        var wrapper;
+
+        it("should fire a play event when the handleStateChange() has a play action", (done) => {
+            mockServer.on("play", done());
+            wrapper = shallow(<VideoPlayer socket={socket}
+                                play={() => null}
+                                />);
+            wrapper.instance().handleStateChange({data: 1});
+        });
+
+        it("should play the video when a play event is received", (done) => {
+            // can't really see a better way to test this one
+            wrapper = shallow(<VideoPlayer socket={socket}
+                                play={done()}
+                                />);
+            mockServer.emit("play");
         });
     });
 

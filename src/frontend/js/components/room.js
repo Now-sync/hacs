@@ -40,6 +40,7 @@ export class Room extends React.Component {
 
     generateUrl = e => {
         e.preventDefault();
+        console.log(this.props);
         var link = window.location.origin + "/room/" + this.props.rooms.room.roomname;
         this.refs.link.value = link;
     }
@@ -72,6 +73,7 @@ Room.propTypes = {
     videoPlayerReducer: React.PropTypes.object,
     changeVideo: React.PropTypes.func,
     socket: React.PropTypes.object,
+    location: React.PropTypes.string,
     newURLInput: React.PropTypes.func
 };
 

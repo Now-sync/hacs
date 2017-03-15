@@ -15,6 +15,6 @@ const history = syncHistoryWithStore(createBrowserHistory(), store);
 ReactDOM.render(
     <Provider store={store}>
         <Router history={history}>
-            <Route path="/index.html" component={Layout}/>
+            <Route path="/" component={Layout}/>
         </Router>
     </Provider>, app);

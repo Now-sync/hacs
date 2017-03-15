@@ -12,6 +12,7 @@ class Layout extends React.Component {
 
     componentWillMount(){
         // console.log(window.location);
+        this.props.history.push("/");
     }
 
     render () {
@@ -23,7 +24,7 @@ class Layout extends React.Component {
         return (
             <div>
               <h1>NOW-SYNC</h1>
-              <Room socket={ socket }/>
+              <Room path="/room" socket={ socket }/>
               { result }
             </div>
         );
@@ -34,6 +35,7 @@ class Layout extends React.Component {
 Layout.propTypes = {
     rooms: React.PropTypes.object,
     videoPlayerReducer: React.PropTypes.object,
+    history: React.PropTypes.object,
     location: React.PropTypes.object
 };
 

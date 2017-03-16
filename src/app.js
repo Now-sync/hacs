@@ -95,7 +95,7 @@ var isRoom = function (roomname, callback) {
     } else {
         callback(false);
     }
-}
+};
 
 var youtubeUrlValidator = function(url) {
     /* regex taken from
@@ -141,7 +141,7 @@ app.use(expressValidator({
             return youtubeUrlValidator(url);
         }
     }
-})); 
+}));
 
 app.use(function(req, res, next){
     Object.keys(req.body).forEach(function(arg){
@@ -228,7 +228,8 @@ app.get("/room/:room_id/", function (req, res, next) {
 
     isRoom(roomId, function (roomExists) {
         if (roomExists) {
-            res.status(200).end("Room exists");
+            res.status(200);
+            res.redirect("/room/?roomname"+roomId);
         } else {
             res.status(404).end("404 no such room");
         }

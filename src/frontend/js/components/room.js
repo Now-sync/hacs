@@ -40,7 +40,6 @@ export class Room extends React.Component {
 
     generateUrl = e => {
         e.preventDefault();
-        console.log(this.props);
         var link = window.location.origin + "/room/" + this.props.rooms.room.roomname;
         this.refs.link.value = link;
     }

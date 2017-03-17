@@ -26,14 +26,9 @@ export default function reducer(state=defaultState, action) {
                 inputURL: action.url
             });
         case "changeVideo":
-            return action.url
-                ? Object.assign({}, state, {
+            return Object.assign({}, state, {
                     url: action.url,
                     videoId: youtubeGetId(action.url)
-                })
-                : Object.assign({}, state, {
-                    url: state.inputURL,
-                    videoId: youtubeGetId(state.inputURL)
                 });
         case "play":
             return Object.assign({}, state, {

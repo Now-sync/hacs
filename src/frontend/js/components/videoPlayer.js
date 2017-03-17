@@ -14,7 +14,7 @@ export class VideoPlayer extends React.Component {
     }
 
     componentWillMount = () => {
-        this.props.history.push("/room");
+        this.props.history.push("/room/?roomname="+ this.props.room.roomname);
         this.socket = this.props.socket;
     }
 
@@ -110,6 +110,7 @@ VideoPlayer.propTypes = {
     buffer: React.PropTypes.func,
     socket: React.PropTypes.object,
     history: React.PropTypes.object,
+    room: React.PropTypes.object,
     changeVideoThenEmit: React.PropTypes.func
 };
 

@@ -228,8 +228,7 @@ app.get("/room/:room_id/", function (req, res, next) {
 
     isRoom(roomId, function (roomExists) {
         if (roomExists) {
-            res.status(200);
-            res.redirect("/room/?roomname"+roomId);
+            res.status(200).end("Room exists");
         } else {
             res.status(404).end("404 no such room");
         }

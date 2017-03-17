@@ -1,7 +1,6 @@
 import React from "react";
 import Room from "./room";
 import VideoPlayer from "./videoPlayer";
-import PasswordAuth from "./passwordAuth";
 import { connect } from "react-redux";
 import io from "socket.io-client";
 
@@ -19,9 +18,8 @@ class Layout extends React.Component {
         var result = null;
 
         if (this.props.rooms.fetched){
-            result = <VideoPlayer history={this.props.history} socket={ socket }/>;
-        }else if (this.props.location.pathname === "/room/?roomname"+this.props.rooms.room.roomname) {
-            result = <PasswordAuth />;
+            // this.props.history.push("/room/?roomname="+this.props.rooms.room.roomname);
+            result = <VideoPlayer history={this.props.history} socket={ socket } room={this.props.rooms.room}/>;
         }
         return (
             <div>

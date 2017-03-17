@@ -1,16 +1,20 @@
 import React from "react";
 import { connect } from "react-redux";
 
-import { createRoom } from "../actions/roomActions";
+import { createRoom, joinRoom } from "../actions/roomActions";
 import { newURLInput, changeVideo } from "../actions/videoPlayerActions";
+var socket;
 
 export class Room extends React.Component {
     constructor(props) {
         super(props);
     }
 
+    componentWillMount(){
+        socket = this.props.socket;
+    }
+
     componentDidUpdate(){
-        var socket = this.props.socket;
         if(this.props.rooms.fetched && this.props.videoPlayerReducer.inputURL === null) {
             socket.connect();
 
@@ -40,13 +44,28 @@ export class Room extends React.Component {
 
     generateUrl = e => {
         e.preventDefault();
-        var link = window.location.origin + "/room/" + this.props.rooms.room.roomname;
+        var link = this.props.rooms.room.roomname;
         this.refs.link.value = link;
     }
+
+    joinRoom = e => {
+        e.preventDefault();
+        const roomName = this.refs.getRoomName.value;
+        const pass = this.refs.getPass.value;
+        console.log(roomName, " ",  pass, "GOT HERE!!");
+        this.props.joinRoom2(roomName);
+    }
+
 
     render () {
         return (
             <div>
+                <form onSubmit={this.joinRoom}>
+                    <input ref="getRoomName" type="text" placeholder="Enter Roomname"/>
+                    <input ref="getPass" type="text" placeholder="Enter Password"/>
+                    <button type="submit">Join Room</button>
+                </form>
+                <hr/>
                 <form ref="create_room" onSubmit= {e => {
                     e.preventDefault();
                     this.onsubmit();
@@ -57,7 +76,7 @@ export class Room extends React.Component {
                 </form>
                 <hr/>
                 <form onSubmit={this.generateUrl}>
-                    <input ref="link" type="text" placeholder="JoinLink"/>
+                    <input ref="link" type="text" placeholder="Roomname"/>
                     <button type="submit">Generate Link to Share</button>
                 </form>
                 <hr/>
@@ -73,6 +92,7 @@ Room.propTypes = {
     changeVideo: React.PropTypes.func,
     socket: React.PropTypes.object,
     location: React.PropTypes.string,
+    joinRoom2: React.PropTypes.func,
     newURLInput: React.PropTypes.func
 };
 
@@ -81,6 +101,7 @@ const mapDispatchToProps = (dispatch) => {
         createRoom: (url, password) => dispatch(createRoom(url, password)),
         newURLInput: url => dispatch(newURLInput(url)),
         changeVideo: () => dispatch(changeVideo()),
+        joinRoom2: (roomName) => dispatch(joinRoom(roomName))
     };
 };
 

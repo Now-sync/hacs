@@ -23,7 +23,9 @@ export default function reducer(state={
             });
         }
         case "JoinRoom": {
-            return Object.assign({}, state);
+            return Object.assign({}, state, {
+                fetched: true
+            });
         }
         default:
             return state;

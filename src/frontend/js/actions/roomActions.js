@@ -17,12 +17,12 @@ export function createRoom(url, password) {
 
 export function joinRoom(roomName) {
     return function(dispatch) {
-        axios.get("/room/"+roomName, {})
+        axios.put("/room/"+roomName)
         .then ((response) => {
             dispatch({type: "JoinRoom", payload:response.data});
         });
-        // .catch(err) => {
-        //     dispatch({type:})
-        // }
+        // .catch((err) => {
+        //     // dispatch({type:})
+        // });
     };
 }

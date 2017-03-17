@@ -20,7 +20,7 @@ export class Room extends React.Component {
 
             socket.on("videoChange", (data) => {
                 this.props.newURLInput(data.videoUrl);
-                this.props.changeVideo();
+                this.props.changeVideo(data.videoUrl);
             });
 
             socket.emit("join",{
@@ -52,8 +52,21 @@ export class Room extends React.Component {
         e.preventDefault();
         const roomName = this.refs.getRoomName.value;
         const pass = this.refs.getPass.value;
+        this.props.rooms.room.roomname = roomName;
+        this.props.rooms.password = pass;
         console.log(roomName, " ",  pass, "GOT HERE!!");
-        this.props.joinRoom2(roomName);
+        socket.connect();
+
+        socket.on("videoChange", (data) => {
+            this.props.newURLInput(data.videoUrl);
+            this.props.changeVideo(data.videoUrl);
+        });
+
+        socket.emit("join",{
+            roomname: this.props.rooms.room.roomname,
+            roompass: this.props.rooms.password
+        });
+        // this.props.joinRoom2(roomName);
     }
 
 
@@ -73,7 +86,7 @@ export class Room extends React.Component {
                     <input ref="password" type="text" placeholder="RoomPassword"/>
                     <input ref="url" type="text" placeholder="VideoUrl"/>
                     <button type="submit">Create Room</button>
-                </form>
+                    </form>
                 <hr/>
                 <form onSubmit={this.generateUrl}>
                     <input ref="link" type="text" placeholder="Roomname"/>
@@ -100,7 +113,7 @@ const mapDispatchToProps = (dispatch) => {
     return {
         createRoom: (url, password) => dispatch(createRoom(url, password)),
         newURLInput: url => dispatch(newURLInput(url)),
-        changeVideo: () => dispatch(changeVideo()),
+        changeVideo: (url) => dispatch(changeVideo(url)),
         joinRoom2: (roomName) => dispatch(joinRoom(roomName))
     };
 };

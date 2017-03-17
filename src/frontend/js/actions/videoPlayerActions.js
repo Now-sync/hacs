@@ -1,6 +1,6 @@
 export function changeVideo(url) {
     return function (dispatch) {
-        url ? dispatch({type: "changeVideo", url: url}) : dispatch({type: "changeVideo"});
+        dispatch({type: "changeVideo", url: url});
     };
 }
 

@@ -34,7 +34,9 @@ export class VideoPlayer extends React.Component {
     handleSubmit = e => {
         e.preventDefault();
         e.target.reset();
-        this.props.changeVideoThenEmit();
+        this.socket.emit("videoChange", {
+            videoUrl: this.props.inputURL
+        });
     }
 
     handleURLChange = e => {
@@ -114,12 +116,7 @@ const mapDispatchToProps = dispatch => {
         newURLInput: url => dispatch(actions.newURLInput(url)),
         play: () => dispatch(actions.play()),
         pause: () => dispatch(actions.pause()),
-        buffer: () => dispatch(actions.buffer()),
-        changeVideoThenEmit: () => dispatch(actions.changeVideo()).then(() => {
-            this.socket.emit("videoChange", {
-                videoUrl: this.props.url
-            });
-        })
+        buffer: () => dispatch(actions.buffer())
     };
 };
 

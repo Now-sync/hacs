@@ -183,8 +183,9 @@ describe("<VideoPlayer />", () => {
         });
 
         it("dispatches a changeVideo action", () => {
-            expected = [{type: "changeVideo"}];
-            store.dispatch(actions.changeVideo());
+            var url = "https://www.youtube.com/watch?v=dA8PT_djQN4";
+            expected = [{type: "changeVideo", url: url}];
+            store.dispatch(actions.changeVideo(url));
             store.getActions().should.deep.equal(expected);
         });
 
@@ -255,13 +256,12 @@ describe("<VideoPlayer />", () => {
         it("should handle a changeVideo action", () => {
             var url = "https://www.youtube.com/watch?v=Ua3hZXfNZOE";
             action = {
-                type: "changeVideo"
+                type: "changeVideo",
+                url: url
             };
-            state.inputURL = url;
-            expected.inputURL = url;
             expected.url = url;
             expected.videoId = "Ua3hZXfNZOE";
-            reducer(state, action).should.deep.equal(expected);
+            reducer(undefined, action).should.deep.equal(expected);
         });
 
         it("should handle a play action", () => {

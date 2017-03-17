@@ -66,7 +66,7 @@ export class Room extends React.Component {
             roomname: this.props.rooms.room.roomname,
             roompass: this.props.rooms.password
         });
-        // this.props.joinRoom2(roomName);
+        this.props.joinRoom2(roomName);
     }
 
 

@@ -1,5 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
+import { Button } from "react-bootstrap";
 
 import { createRoom } from "../actions/roomActions";
 
@@ -44,7 +45,7 @@ export class Room extends React.Component {
                     }}>
                     <input ref="password" type="text" placeholder="RoomPassword"/>
                     <input ref="url" type="text" placeholder="VideoUrl"/>
-                    <button type="submit">Create Room</button>
+                    <Button bsStyle="primary" type="submit">Create Room</Button>
                 </form>
                 <hr/>
             </div>

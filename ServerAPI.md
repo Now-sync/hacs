@@ -40,8 +40,7 @@
             Returns {username: <name of user that signalled the play>}
         - "videoChange" -> A user has changed the video of the room
             Returns {videoUrl: <Url of video>,
-                    username: <name of user that changed the video [null]>,
-                    skipTo: <time in video [null]>}
+                    username: <name of user that changed the video [null]>}
         - "requestTime" -> A user in the room has requested your current video time position.
             Returns Nothing
             Requires a "currentTime" signal response

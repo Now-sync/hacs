@@ -51,7 +51,9 @@
 
     List of signals that the server will accept and handle
         - "join"
-            Send: {roomname: <name of room>, roompass: <password of room>, username: <name to display [optional]>}
+            Send: {roomname: <name of room>,
+                   roompass: <password of room>,
+                   username: <name to display [optional]>}
         - "pause"
             Send: {pausedtime: <time user paused at>}
         - "play"

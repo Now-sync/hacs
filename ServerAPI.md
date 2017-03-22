@@ -88,5 +88,11 @@
             - "videoChange" - The video change the user emitted
 
     Signal Video time into room
-        - my_socket.emit({time: some_time});
+        - my_socket.emit("currentTime", {currTime: some_time});
+        Expect one response
+            - "skipTo"
+
+    Signal skipTo into Room
+        - my_socket.emit("skipTo", {skipToTime: some_time});
         Expect no response
+            - "skipTo"

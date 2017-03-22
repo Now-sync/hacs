@@ -69,7 +69,7 @@ var verifyRoomAndPassword = function (roomname, roompass, callback) {
 };
 
 /* every 10 seconds look for and remove dead rooms. */
-var timeout = setInterval(function () {
+setInterval(function () {
     var key, currRoom;
     for (key in activeRooms) {
         currRoom = activeRooms[key];
@@ -91,12 +91,12 @@ var removeUser = function (roomname, username) {
             if (ind >= 0) room.activeUsers.splice(ind, 1);
         }
     }
-}
+};
 
 var addUserToRoom = function (roomname, username, callback) {
     activeRooms[roomname].activeUsers.push(username);
     callback(null);
-}
+};
 
 var addNewRoom = function (roomname, roompass, videoUrl, callback) {
     activeRooms[roomname] = {
@@ -126,7 +126,7 @@ var isRoom = function (roomname, callback) {
     } else {
         callback(false);
     }
-}
+};
 
 var youtubeUrlValidator = function(url) {
     /* regex taken from

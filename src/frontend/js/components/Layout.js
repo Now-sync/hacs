@@ -12,7 +12,10 @@ var socket = io();
 class Layout extends React.Component {
 
     render () {
-        var result = null;
+        var result =
+            <div>
+                <Room socket={ socket }/>
+            </div>;
 
         if (this.props.rooms.fetched){
             result =
@@ -24,9 +27,6 @@ class Layout extends React.Component {
         return (
             <div>
                 <h1>NOW-SYNC</h1>
-                <div className="create_room_container">
-                    <Room socket={ socket }/>
-                </div>
                 { result }
             </div>
         );

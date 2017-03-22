@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { Button, Form, FormGroup, ControlLabel, Col, FormControl} from "react-bootstrap";
 
 import { createRoom } from "../actions/roomActions";
+require("../../style/main.css");
 var password, url;
 
 export class Room extends React.Component {
@@ -42,36 +43,37 @@ export class Room extends React.Component {
     render () {
         return (
             <div>
-                <Form horizontal ref="create_room" onSubmit= {e => {
-                    e.preventDefault();
-                    e.target.reset();
-                    this.onsubmit();
-                    }}>
-                    <FormGroup controlId="formHorizontalPassword">
-                        <Col componentClass={ControlLabel} sm={2}>
-                            Password
-                        </Col>
-                        <Col sm={10}>
-                            <FormControl type="password" placeholder="RoomPassword" onChange={this.handlePassword}/>
-                        </Col>
-                    </FormGroup>
-                    <FormGroup>
-                        <Col componentClass={ControlLabel} sm={2}>
-                            VideoUrl
-                        </Col>
-                        <Col sm={10}>
-                            <FormControl ref="url" type="text" placeholder="VideoUrl" onChange={this.handleVideoUrl}/>
-                        </Col>
-                    </FormGroup>
-                    <FormGroup>
-                      <Col smOffset={2} sm={10}>
-                        <Button bsStyle="primary" type="submit">
-                          Create Room
-                        </Button>
-                      </Col>
-                    </FormGroup>
-                </Form>
-                <hr/>
+                <Col smOffset={4} sm={4} className="create_room_container" >
+                    <Form horizontal ref="create_room" onSubmit= {e => {
+                        e.preventDefault();
+                        e.target.reset();
+                        this.onsubmit();
+                        }}>
+                        <FormGroup controlId="formHorizontalPassword">
+                            <Col componentClass={ControlLabel} sm={2}>
+                                Password
+                            </Col>
+                            <Col sm={10}>
+                                <FormControl type="password" placeholder="RoomPassword" onChange={this.handlePassword}/>
+                            </Col>
+                        </FormGroup>
+                        <FormGroup>
+                            <Col componentClass={ControlLabel} sm={2}>
+                                VideoUrl
+                            </Col>
+                            <Col sm={10}>
+                                <FormControl ref="url" type="text" placeholder="VideoUrl" onChange={this.handleVideoUrl}/>
+                            </Col>
+                        </FormGroup>
+                        <FormGroup>
+                          <Col smOffset={2} sm={10}>
+                            <Button bsStyle="primary" type="submit">
+                              Create Room
+                            </Button>
+                          </Col>
+                        </FormGroup>
+                    </Form>
+                </Col>
             </div>
         );
     }

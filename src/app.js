@@ -134,16 +134,6 @@ var youtubeUrlValidator = function(url) {
     return url !== undefined && url !== "" ? regExp.test(url) : false;
 };
 
-/* Commented to bypass eslint warnings */
-// var refreshRoomActivity = function (roomname) {
-//     /* Refresh room activity */
-// };
-
-// var destroyInactiveRooms = function () {
-//     /* as function name */
-//     /* this will probably called in a setTimer() */
-// };
-
 app.use(function (req, res, next) {
     if (BLOCK_CONSOLE) console.log("HTTPS request", req.method, req.url, req.body);
     return next();
@@ -269,11 +259,6 @@ app.get("/room/:room_id/", function (req, res, next) {
 
 /* Sockets */
 
-var requestCurrVideoTimeFrom = function (roomname, sendToClient) {
-    /* sendToClient is a socket */
-
-};
-
 io.use(sharedsocses(exprSess, {autoSave: false}));
 
 io.use(function(socket, next) {
@@ -312,7 +297,7 @@ io.on("connection", function (client) {
 
             screenName = username;
 
-            if (clientInRoom) {
+            if (clientInRoom) {  // If already in a room, leave it.
                 client.leave(clientInRoom, function () {
                     removeUser(clientInRoom, screenName);
                     io.to(clientInRoom).emit("userLeft", {username: screenName});
@@ -322,7 +307,7 @@ io.on("connection", function (client) {
 
             client.join(roomname, function (err) {
                 if (err) {
-                    /* Do something */
+                    client.emit("joinError", {roomname:roomname, roompass:roompass});
                     return;
                 }
                 clientInRoom = roomname;
@@ -391,14 +376,12 @@ io.on("connection", function (client) {
 
     client.on("currentTime", function (data) {  // received response from client to requestTime
         if (clientInRoom) {
-            /* Send skipTo signal to everyone in the room */
             io.to(clientInRoom).emit("skipTo", data);
         }
     });
 
     client.on("skipTo", function (data) {
         if (clientInRoom) {
-            /* Send skipTo signal to everyone in the room */
             io.to(clientInRoom).emit("skipTo", data);
         }
     });

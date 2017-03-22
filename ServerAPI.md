@@ -46,7 +46,6 @@
             Returns Nothing
             Requires a "currentTime" signal response
         - "skipTo" -> A user in the room has changed the video time position in the room.
-                      Note: Implies skip to time location and play, do not pause.
             Returns {time: <time location to skipTo>} 
 
     Note: [optional] sending no data will not cause problems.

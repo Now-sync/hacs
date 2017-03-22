@@ -1,6 +1,7 @@
 import React from "react";
 import Room from "./room";
 import VideoPlayer from "./videoPlayer";
+import ChatBox from "./chatBox";
 import { connect } from "react-redux";
 import io from "socket.io-client";
 require("../../style/main.css");
@@ -14,7 +15,11 @@ class Layout extends React.Component {
         var result = null;
 
         if (this.props.rooms.fetched){
-            result = <VideoPlayer socket={ socket }/>;
+            result =
+            <div className="video_chat_container">
+                <VideoPlayer socket={ socket }/>
+                <ChatBox/>
+            </div>;
         }
         return (
             <div>

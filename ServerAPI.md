@@ -78,7 +78,7 @@
             - "play" - The play the user emitted
 
     Signal Pause into room
-        - my_socket.emit("pause", {pausedTime: <time paused at>}});
+        - my_socket.emit("pause", {pausedTime: <time paused at>});
         Expect one response:
             - "pause" - The pause the user emitted
 

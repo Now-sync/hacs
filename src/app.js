@@ -239,6 +239,11 @@ app.get("/room/:room_id/", function (req, res, next) {
 
 /* Sockets */
 
+var requestCurrVideoTimeFrom = function (roomname, sendToClient) {
+    /* sendToClient is a socket */
+
+};
+
 io.use(sharedsocses(exprSess, {autoSave: false}));
 
 io.use(function(socket, next) {
@@ -297,6 +302,17 @@ io.on("connection", function (client) {
                     username: null,  // null because no user emitted videoChange signal
                     skipTo: null
                 });
+
+                /* Request current video time */
+                var roomMaster = roomData.activeUsers[0];
+                if (roomMaster) {
+                    io.to(clientInRoom).to(roomMaster).emit("requestTime");
+                } else {
+                    /* Client is roomMaster do nothing? */
+
+                    // client.emit("skipTo", {time:null});
+                    // pendingTimeRequest = false;
+                }
             });
 
             if (BLOCK_CONSOLE) console.log(client.rooms);
@@ -335,6 +351,20 @@ io.on("connection", function (client) {
         if (BLOCK_CONSOLE) console.log("Socket signal play");
 
         if (clientInRoom) io.to(clientInRoom).emit("play", {username: screenName});
+    });
+
+    client.on("currentTime", function (data) {  // received response from client to requestTime
+        if (clientInRoom) {
+            /* Send skipTo signal to everyone in the room */
+            io.to(clientInRoom).emit("skipTo", data);
+        }
+    });
+
+    client.on("skipTo", function (data) {
+        if (clientInRoom) {
+            /* Send skipTo signal to everyone in the room */
+            io.to(clientInRoom).emit("skipTo", data);
+        }
     });
 
     client.on("disconnect", function () {

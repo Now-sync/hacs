@@ -23,7 +23,7 @@
     - Response 404
         - No such room
 
-##Server Sockets
+## Server Sockets
 
     Note: [null] the value of the key-value pair can be 'null'.
 
@@ -37,9 +37,17 @@
         - "pause" -> A user in the room has signalled pause into the room.
             Returns {pausedtime: <paused time>, username: <name of user that signalled pause>}
         - "play" -> A user in the room has signalled play into the room.
-            Returns {username: <name of user that signalled the pause>}
+            Returns {username: <name of user that signalled the play>}
         - "videoChange" -> A user has changed the video of the room
-            Returns {videoUrl: <Url of video>, username: <name of user that changed the video [null]>, skipTo: <time in video [null]>}
+            Returns {videoUrl: <Url of video>,
+                    username: <name of user that changed the video [null]>,
+                    skipTo: <time in video [null]>}
+        - "requestTime" -> A user in the room has requested your current video time position.
+            Returns Nothing
+            Requires a "currentTime" signal response
+        - "skipTo" -> A user in the room has changed the video time position in the room.
+                      Note: Implies skip to time location and play, do not pause.
+            Returns {time: <time location to skipTo>} 
 
     Note: [optional] sending no data will not cause problems.
 
@@ -52,6 +60,8 @@
             Send: nothing (I mean literally nothing, do not give a second argument in emit())
         - "videoChange"
             Send: {videoUrl: <Url of video>}
+        - "currentTime"
+            Send: {time: <time location of current video>}
 
     JOIN ROOM
         - my_socket.emit("join", {roomname: "pjifpadfj", roompass: "hunter2"});
@@ -65,7 +75,7 @@
             - "play" - The play the user emitted
 
     Signal Pause into room
-        - my_socket.emit("pause", <paused time>);
+        - my_socket.emit("pause", {pausedTime: <time paused at>}});
         Expect one response:
             - "pause" - The pause the user emitted
 

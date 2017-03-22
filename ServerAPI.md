@@ -59,7 +59,9 @@
             Send: nothing (I mean literally nothing, do not give a second argument in emit())
         - "videoChange"
             Send: {videoUrl: <Url of video>}
-        - "currentTime"
+        - "currentTime" -> primarily used as response to "requestTime" signal
+            Send: {time: <time location of current video>}
+        - "skipTo"
             Send: {time: <time location of current video>}
 
     JOIN ROOM
@@ -67,6 +69,7 @@
         Expect two responses:
             - "userJoined" - The user who joined, it this case yourself.
             - "videoChange" - Server will send video Url upon join
+            - "skipTo" - The video location to start playing at
 
     Signal Play into room
         - my_socket.emit("play");
@@ -82,3 +85,7 @@
         - my_socket.emit("videoChange", {videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ"});
         Expect one response:
             - "videoChange" - The video change the user emitted
+
+    Signal Video time into room
+        - my_socket.emit({time: some_time});
+        Expect no response

@@ -3,9 +3,9 @@ import Room from "./room";
 import VideoPlayer from "./videoPlayer";
 import { connect } from "react-redux";
 import io from "socket.io-client";
+require("../../style/main.css");
 
 var socket = io();
-//insert css here using require statement
 
 
 class Layout extends React.Component {
@@ -18,9 +18,11 @@ class Layout extends React.Component {
         }
         return (
             <div>
-              <h1>NOW-SYNC</h1>
-              <Room socket={ socket }/>
-              { result }
+                <h1>NOW-SYNC</h1>
+                <div className="create_room_container">
+                    <Room socket={ socket }/>
+                </div>
+                { result }
             </div>
         );
     }

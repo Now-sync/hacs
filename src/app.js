@@ -93,8 +93,9 @@ var removeUser = function (roomname, username) {
     }
 }
 
-var addUserToRoom = function (roomname, username) {
+var addUserToRoom = function (roomname, username, callback) {
     activeRooms[roomname].activeUsers.push(username);
+    callback(null);
 }
 
 var addNewRoom = function (roomname, roompass, videoUrl, callback) {
@@ -311,29 +312,35 @@ io.on("connection", function (client) {
                     return;
                 }
                 clientInRoom = roomname;
-                addUserToRoom(clientInRoom, screenName);
-                io.to(clientInRoom).emit("userJoined", {username: screenName});
+                addUserToRoom(clientInRoom, screenName, function (err) {
+                    if (err) {
+                        /* Do something */
+                        return;
+                    }
 
-                /* When user has joined the room. Send the Url of the video in the room */
-                // Note: skipTo is null until there is away to track video location.
-                client.emit("videoChange", {
-                    videoUrl: roomData.videoUrl,
-                    username: null,  // null because no user emitted videoChange signal
-                    skipTo: null
+                    io.to(clientInRoom).emit("userJoined", {username: screenName});
+
+                    /* When user has joined the room. Send the Url of the video in the room */
+                    // Note: skipTo is null until there is away to track video location.
+                    client.emit("videoChange", {
+                        videoUrl: roomData.videoUrl,
+                        username: null,  // null because no user emitted videoChange signal
+                        skipTo: null
+                    });
+
+
+                    /* Request current video time */
+                    var roomMaster = roomData.activeUsers[0];
+                    if (roomMaster) {
+                        io.to(clientInRoom).to(roomMaster).emit("requestTime");
+                    } else {
+                        /* Client is roomMaster do nothing? */
+
+                        // client.emit("skipTo", {time:null});
+                        // pendingTimeRequest = false;
+                    }
                 });
-
-
-                /* Request current video time */
-                var roomMaster = roomData.activeUsers[0];
-                if (roomMaster) {
-                    io.to(clientInRoom).to(roomMaster).emit("requestTime");
-                } else {
-                    /* Client is roomMaster do nothing? */
-
-                    // client.emit("skipTo", {time:null});
-                    // pendingTimeRequest = false;
-                }
-
+                
             });
 
             if (BLOCK_CONSOLE) console.log(client.rooms);
@@ -376,7 +383,7 @@ io.on("connection", function (client) {
 
     client.on("currentTime", function (data) {  // received response from client to requestTime
         if (clientInRoom) {
-            io.to(clientInRoom).emit("skipTo", data);
+            io.to(clientInRoom).emit("skipTo", {skipToTime: data.currTime});
         }
     });
 

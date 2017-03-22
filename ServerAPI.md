@@ -45,7 +45,7 @@
             Returns Nothing
             Requires a "currentTime" signal response
         - "skipTo" -> A user in the room has changed the video time position in the room.
-            Returns {time: <time location to skipTo>} 
+            Returns {skipToTime: <time location to skipTo>} 
 
     Note: [optional] sending no data will not cause problems.
 
@@ -61,9 +61,9 @@
         - "videoChange"
             Send: {videoUrl: <Url of video>}
         - "currentTime" -> primarily used as response to "requestTime" signal
-            Send: {time: <time location of current video>}
+            Send: {currTime: <time location of current video>}
         - "skipTo"
-            Send: {time: <time location of current video>}
+            Send: {skipToTime: <time location of current video>}
 
     JOIN ROOM
         - my_socket.emit("join", {roomname: "pjifpadfj", roompass: "hunter2"});

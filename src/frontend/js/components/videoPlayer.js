@@ -91,12 +91,14 @@ export class VideoPlayer extends React.Component {
                         </Col>
                     </FormGroup>
                 </Form>
-                <YouTube
-                    videoId={this.props.videoId}
-                    opts={options}
-                    onStateChange={this.handleStateChange}
-                    onReady={this.handleReady}
-                />
+                <Col sm={12}>
+                    <YouTube
+                        videoId={this.props.videoId}
+                        opts={options}
+                        onStateChange={this.handleStateChange}
+                        onReady={this.handleReady}
+                    />
+                </Col>
             </div>
         );
     }

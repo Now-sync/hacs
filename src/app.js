@@ -147,11 +147,6 @@ app.get("/favicon.ico/", function (req, res) {
     res.status(200).end();
 });
 
-app.get("/", function (req, res, next) {
-    if (!req.session.group) return res.redirect("/index.html");
-    return next();
-});
-
 /* Sanitize and Validate */
 app.use(expressValidator({
     customValidators: {
@@ -340,7 +335,7 @@ io.on("connection", function (client) {
                         // pendingTimeRequest = false;
                     }
                 });
-                
+
             });
 
             if (BLOCK_CONSOLE) console.log(client.rooms);
@@ -404,11 +399,15 @@ io.on("connection", function (client) {
     });
 });
 
-app.use(express.static(__dirname + "/frontend"));
-
 app.use(function (req, res, next) {
     if (BLOCK_CONSOLE) console.log("HTTP Response", res.statusCode);
     return next();
+});
+
+app.use(express.static(__dirname + "/frontend"));
+
+app.get("*", function (req, res) {
+    res.sendFile(__dirname + "/frontend/index.html");
 });
 
 /* Expose server for testing */

@@ -115,7 +115,7 @@ export class Room extends React.Component {
                     <form onSubmit={this.generateUrl}>
                         <input ref="link" type="text" placeholder="Roomname"/>
                         <button type="submit">Generate Link to Share</button>
-                     </form>
+                    </form>
                 </Col>
             </div>
         );

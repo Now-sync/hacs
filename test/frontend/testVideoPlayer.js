@@ -48,8 +48,8 @@ describe("<VideoPlayer />", () => {
         });
 
         it("form with one input field", () => {
-            wrapper.find("form").should.have.length(1);
-            wrapper.find("input").should.have.length(1);
+            wrapper.find("Form").should.have.length(1);
+            wrapper.find("FormControl").should.have.length(1);
         });
     });
 

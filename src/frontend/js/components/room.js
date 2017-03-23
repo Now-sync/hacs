@@ -1,7 +1,10 @@
 import React from "react";
 import { connect } from "react-redux";
+import { Button, Form, FormGroup, ControlLabel, Col, FormControl} from "react-bootstrap";
 
 import { createRoom } from "../actions/roomActions";
+require("../../style/main.css");
+var password, url;
 
 export class Room extends React.Component {
     constructor(props) {
@@ -25,28 +28,52 @@ export class Room extends React.Component {
         }
     }
 
+    handlePassword = e => {
+        password = e.target.value;
+    }
+
+    handleVideoUrl = e => {
+        url = e.target.value;
+    }
+
     onsubmit(){
-        const url = this.refs.url.value;
-        this.refs.url.value = "";
-
-        const password = this.refs.password.value;
-        this.refs.password.value = "";
-
         this.props.createRoom(url, password);
     }
 
     render () {
         return (
             <div>
-                <form ref="create_room" onSubmit= {e => {
-                    e.preventDefault();
-                    this.onsubmit();
-                    }}>
-                    <input ref="password" type="text" placeholder="RoomPassword"/>
-                    <input ref="url" type="text" placeholder="VideoUrl"/>
-                    <button type="submit">Create Room</button>
-                </form>
-                <hr/>
+                <Col smOffset={4} sm={4} className="create_room_container" >
+                    <Form horizontal ref="create_room" onSubmit= {e => {
+                        e.preventDefault();
+                        e.target.reset();
+                        this.onsubmit();
+                        }}>
+                        <FormGroup controlId="formHorizontalPassword">
+                            <Col componentClass={ControlLabel} sm={2}>
+                                Password
+                            </Col>
+                            <Col sm={10}>
+                                <FormControl type="password" placeholder="Room Password" onChange={this.handlePassword}/>
+                            </Col>
+                        </FormGroup>
+                        <FormGroup>
+                            <Col componentClass={ControlLabel} sm={2}>
+                                VideoUrl
+                            </Col>
+                            <Col sm={10}>
+                                <FormControl ref="url" type="text" placeholder="Video Url" onChange={this.handleVideoUrl}/>
+                            </Col>
+                        </FormGroup>
+                        <FormGroup>
+                          <Col smOffset={2} sm={10}>
+                            <Button bsStyle="primary" type="submit">
+                              Create Room
+                            </Button>
+                          </Col>
+                        </FormGroup>
+                    </Form>
+                </Col>
             </div>
         );
     }

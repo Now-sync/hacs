@@ -1,6 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import YouTube from "react-youtube";
+import { Form, FormGroup, ControlLabel, Col, FormControl} from "react-bootstrap";
 
 import * as actions from "../actions/videoPlayerActions";
 
@@ -80,15 +81,24 @@ export class VideoPlayer extends React.Component {
 
         return (
             <div>
-                <YouTube
-                    videoId={this.props.videoId}
-                    opts={options}
-                    onStateChange={this.handleStateChange}
-                    onReady={this.handleReady}
-                />
-                <form onSubmit={this.handleSubmit}>
-                    <input type="text" placeholder="Video URL" onChange={this.handleURLChange} />
-                </form>
+                <Form horizontal onSubmit={this.handleSubmit}>
+                    <FormGroup controlId="formHorizontalVideoChange">
+                        <Col componentClass={ControlLabel} sm={1}>
+                            Video Change
+                        </Col>
+                        <Col sm={6}>
+                            <FormControl type="text" placeholder="Press Enter To Change Video" onChange={this.handleURLChange}/>
+                        </Col>
+                    </FormGroup>
+                </Form>
+                <Col sm={12}>
+                    <YouTube
+                        videoId={this.props.videoId}
+                        opts={options}
+                        onStateChange={this.handleStateChange}
+                        onReady={this.handleReady}
+                    />
+                </Col>
             </div>
         );
     }

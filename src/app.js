@@ -323,14 +323,9 @@ io.on("connection", function (client) {
 
     client.on("pause", function (data) {
         if (BLOCK_CONSOLE) console.log("Socket signal pause");
-        if (!data) {
-            if (BLOCK_CONSOLE) console.log("no data given in signal pause");
-            return;
-        } else if (data && !data.pausedtime) {
-            if (BLOCK_CONSOLE) console.log("no pause time given in pause signal");
-            return;
+        if (clientInRoom && data && data.pausedtime) {
+            io.to(clientInRoom).emit("pause", {pausedtime: data.pausedtime, username: screenName});
         }
-        if (clientInRoom) io.to(clientInRoom).emit("pause", {pausedtime: data.pausedtime, username: screenName});
     });
 
     client.on("play", function () {
@@ -340,13 +335,14 @@ io.on("connection", function (client) {
     });
 
     client.on("currentTime", function (data) {  // received response from client to requestTime
-        if (clientInRoom) {
+        if (clientInRoom && data && data.currTime) {
             io.to(clientInRoom).emit("skipTo", {skipToTime: data.currTime});
         }
     });
 
     client.on("skipTo", function (data) {
-        if (clientInRoom) {
+        if (BLOCK_CONSOLE) console.log("Socket signal skipTo");
+        if (clientInRoom && data && data.skipToTime) {
             io.to(clientInRoom).emit("skipTo", data);
         }
     });

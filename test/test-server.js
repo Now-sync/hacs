@@ -717,7 +717,7 @@ describe("All server testing", function () {
                 done();
             });
 
-            personA.emit("skipTo", {skipTotime: "not_empty"});
+            personA.emit("skipTo", {skipToTime: "not_empty"});
         });
 
         it("should not broadcast in other rooms", function (done) {

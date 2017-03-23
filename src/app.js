@@ -68,13 +68,44 @@ var verifyRoomAndPassword = function (roomname, roompass, callback) {
     }
 };
 
+/* every 10 seconds look for and remove dead rooms. */
+setInterval(function () {
+    var key, currRoom;
+    for (key in activeRooms) {
+        currRoom = activeRooms[key];
+        if (currRoom.activeUsers !== []) {
+            activeRooms[key].isDead = 6;
+        } else if (currRoom.isDead <= 0) {
+            delete activeRooms[key];
+        } else {
+            activeRooms[key].isDead--;
+        }
+    }
+}, 10000);
+
+var removeUser = function (roomname, username) {
+    if (activeRooms) {
+        var room = activeRooms[roomname];
+        if (room && room.activeUsers) {
+            var ind = room.activeUsers.indexOf(username);
+            if (ind >= 0) room.activeUsers.splice(ind, 1);
+        }
+    }
+};
+
+var addUserToRoom = function (roomname, username, callback) {
+    activeRooms[roomname].activeUsers.push(username);
+    callback(null);
+};
+
 var addNewRoom = function (roomname, roompass, videoUrl, callback) {
     activeRooms[roomname] = {
         roomPassword: roompass,
         activeUsers: [],
         videoUrl: videoUrl,
         videoTimeMaster: null,
-        lastActive:null
+        lastActive:null,
+        isDead: 6
     };
 
     callback(null, activeRooms[roomname]);
@@ -95,7 +126,7 @@ var isRoom = function (roomname, callback) {
     } else {
         callback(false);
     }
-}
+};
 
 var youtubeUrlValidator = function(url) {
     /* regex taken from
@@ -103,16 +134,6 @@ var youtubeUrlValidator = function(url) {
     var regExp = /^(?:https?:\/\/)?(?:m\.|www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
     return url !== undefined && url !== "" ? regExp.test(url) : false;
 };
-
-/* Commented to bypass eslint warnings */
-// var refreshRoomActivity = function (roomname) {
-//     /* Refresh room activity */
-// };
-
-// var destroyInactiveRooms = function () {
-//     /* as function name */
-//     /* this will probably called in a setTimer() */
-// };
 
 app.use(function (req, res, next) {
     if (BLOCK_CONSOLE) console.log("HTTPS request", req.method, req.url, req.body);
@@ -261,6 +282,7 @@ io.on("connection", function (client) {
         var roompass = data.roompass;
         var username = data.username;
 
+        if (!roomname || !roompass) return; // maybe emit joinError ??
 
         verifyRoomAndPassword(roomname, roompass, function (err, roomData) {
             if (err) {
@@ -276,27 +298,49 @@ io.on("connection", function (client) {
 
             screenName = username;
 
-            if (clientInRoom) {
+            if (clientInRoom) {  // If already in a room, leave it.
                 client.leave(clientInRoom, function () {
+                    removeUser(clientInRoom, screenName);
                     io.to(clientInRoom).emit("userLeft", {username: screenName});
+                    clientInRoom = null;
                 });
             }
 
             client.join(roomname, function (err) {
                 if (err) {
-                    /* Do something */
+                    client.emit("joinError", {roomname:roomname, roompass:roompass});
                     return;
                 }
                 clientInRoom = roomname;
-                io.to(clientInRoom).emit("userJoined", {username: screenName});
+                addUserToRoom(clientInRoom, screenName, function (err) {
+                    if (err) {
+                        /* Do something */
+                        return;
+                    }
 
-                /* When user has joined the room. Send the Url of the video in the room */
-                // Note: skipTo is null until there is away to track video location.
-                client.emit("videoChange", {
-                    videoUrl: roomData.videoUrl,
-                    username: null,  // null because no user emitted videoChange signal
-                    skipTo: null
+                    io.to(clientInRoom).emit("userJoined", {username: screenName});
+
+                    /* When user has joined the room. Send the Url of the video in the room */
+                    // Note: skipTo is null until there is away to track video location.
+                    client.emit("videoChange", {
+                        videoUrl: roomData.videoUrl,
+                        username: null,  // null because no user emitted videoChange signal
+                        skipTo: null
+                    });
+
+
+                    /* Request current video time */
+                    var roomMaster = roomData.activeUsers[0];
+                    if (roomMaster) {
+                        io.to(clientInRoom).to(roomMaster).emit("requestTime");
+                    } else {
+                        /* Client is roomMaster do nothing? */
+
+                        // client.emit("skipTo", {time:null});
+                        // pendingTimeRequest = false;
+                    }
                 });
+                
             });
 
             if (BLOCK_CONSOLE) console.log(client.rooms);
@@ -337,10 +381,25 @@ io.on("connection", function (client) {
         if (clientInRoom) io.to(clientInRoom).emit("play", {username: screenName});
     });
 
+    client.on("currentTime", function (data) {  // received response from client to requestTime
+        if (clientInRoom) {
+            io.to(clientInRoom).emit("skipTo", {skipToTime: data.currTime});
+        }
+    });
+
+    client.on("skipTo", function (data) {
+        if (clientInRoom) {
+            io.to(clientInRoom).emit("skipTo", data);
+        }
+    });
+
     client.on("disconnect", function () {
         if (BLOCK_CONSOLE) console.log("DISCONNECTED");
         client.leave(clientInRoom, function () {
+            removeUser(clientInRoom, screenName);
             io.to(clientInRoom).emit("userLeft", {username: screenName});
+            clientInRoom = null;
+            screenName = null;
         });
     });
 });

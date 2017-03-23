@@ -209,7 +209,6 @@ app.post("/api/screenname/", function (req, res, next) {
 
 /* Get Session */
 app.get("/api/session/", function (req, res, next) {
-    /* A socket can only be established if there is valid session */
     var roomname = req.body.roomname;
     var roompass = req.body.password;
     if (!roomname || !roompass) {
@@ -248,7 +247,6 @@ io.on("connection", function (client) {
 
     var clientInRoom = null;
     var screenName = null;
-    //var videoTimeMaster = null;  /* May be needed later */
 
     client.on("join", function (data) {
         var roomname = data.roomname;
@@ -306,12 +304,7 @@ io.on("connection", function (client) {
                     var roomMaster = roomData.activeUsers[0];
                     if (roomMaster) {
                         io.to(clientInRoom).to(roomMaster).emit("requestTime");
-                    } else {
-                        /* Client is roomMaster do nothing? */
-
-                        // client.emit("skipTo", {time:null});
-                        // pendingTimeRequest = false;
-                    }
+                    } // Client is room master. Do nothing.
                 });
                 
             });

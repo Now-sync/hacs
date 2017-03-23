@@ -4,7 +4,6 @@ var https = require("https");
 var express = require("express");
 var bodyParser = require("body-parser");
 var IO = require("socket.io");
-var sharedsocses = require("express-socket.io-session");
 var expressValidator = require("express-validator");
 
 var app = express();
@@ -138,7 +137,6 @@ app.get("/favicon.ico/", function (req, res) {
 });
 
 app.get("/", function (req, res, next) {
-    //if (!req.session.group) return res.redirect("/index.html");
     return next();
 });
 

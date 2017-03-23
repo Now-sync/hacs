@@ -92,8 +92,6 @@ var addNewRoom = function (roomname, roompass, videoUrl, callback) {
         roomPassword: roompass,
         activeUsers: [],
         videoUrl: videoUrl,
-        videoTimeMaster: null,
-        lastActive:null,
         isDead: 6
     };
 
@@ -200,11 +198,6 @@ app.put("/api/createroom/", function (req, res, next) {
     });
 });
 
-/* Set Screen Name*/
-app.post("/api/screenname/", function (req, res, next) {
-	return next();
-});
-
 /* Get Session */
 app.get("/api/session/", function (req, res, next) {
     var roomname = req.body.roomname;
@@ -251,7 +244,10 @@ io.on("connection", function (client) {
         var roompass = data.roompass;
         var username = data.username;
 
-        if (!roomname || !roompass) return; // maybe emit joinError ??
+        if (!roomname || !roompass) {
+            client.emit("joinError", {roomname:roomname, roompass:roompass});
+            return;
+        }
 
         verifyRoomAndPassword(roomname, roompass, function (err, roomData) {
             if (err) {
@@ -293,14 +289,13 @@ io.on("connection", function (client) {
                     // Note: skipTo is null until there is away to track video location.
                     client.emit("videoChange", {
                         videoUrl: roomData.videoUrl,
-                        username: null,  // null because no user emitted videoChange signal
-                        skipTo: null
+                        username: null  // null because no user emitted videoChange signal
                     });
 
 
                     /* Request current video time */
                     var roomMaster = roomData.activeUsers[0];
-                    if (roomMaster) {
+                    if (roomMaster && roomMaster !== screenName) {
                         io.to(clientInRoom).to(roomMaster).emit("requestTime");
                     } // Client is room master. Do nothing.
                 });
@@ -320,8 +315,7 @@ io.on("connection", function (client) {
             setRoomVideo(clientInRoom, data.videoUrl, function() {
                 io.to(clientInRoom).emit("videoChange", {
                     videoUrl: data.videoUrl,
-                    username: screenName,
-                    skipTo: null  // A time in the video
+                    username: screenName
                 });
             });
         }

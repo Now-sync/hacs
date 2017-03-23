@@ -1,9 +1,18 @@
+body {
+    background: #f3f3f5;
+}
+
 h1 {
-  font-family: "Florence", cursive;
-  font-style: italic;
-  font-size: 65px;
-  text-shadow: 4px 4px 3px rgba(0,0,0,0.1);
-  text-align: center;
+    font-family: Florence, cursive;
+    font-style: italic;
+    font-size: 65px;
+    text-shadow: 4px 4px 3px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+iframe {
+    width: 100%;
+    height: 800px;
 }
 
 .create_room_container {

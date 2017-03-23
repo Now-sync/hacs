@@ -54,7 +54,7 @@ export class Room extends React.Component {
                                 Password
                             </Col>
                             <Col sm={10}>
-                                <FormControl type="password" placeholder="RoomPassword" onChange={this.handlePassword}/>
+                                <FormControl type="password" placeholder="Room Password" onChange={this.handlePassword}/>
                             </Col>
                         </FormGroup>
                         <FormGroup>
@@ -62,7 +62,7 @@ export class Room extends React.Component {
                                 VideoUrl
                             </Col>
                             <Col sm={10}>
-                                <FormControl ref="url" type="text" placeholder="VideoUrl" onChange={this.handleVideoUrl}/>
+                                <FormControl ref="url" type="text" placeholder="Video Url" onChange={this.handleVideoUrl}/>
                             </Col>
                         </FormGroup>
                         <FormGroup>

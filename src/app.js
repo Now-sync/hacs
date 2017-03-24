@@ -297,12 +297,12 @@ io.on("connection", function (client) {
                     var roomMaster = roomData.activeUsers[0];
                     if (roomMaster && roomMaster !== screenName) {
 
-                        // client.once("currentTime", function (data) {  // received response from client to requestTime
-                        //     // Destroy this lisener when a responce is recieved
-                        //     if (clientInRoom && data && data.currTime) {
-                        //         io.to(clientInRoom).emit("skipTo", {skipToTime: data.currTime});
-                        //     }
-                        // });
+                        client.once("currentTime", function (data) {  // received response from client to requestTime
+                            // Destroy this lisener when a responce is recieved
+                            if (clientInRoom && data && data.currTime) {
+                                io.to(clientInRoom).emit("skipTo", {skipToTime: data.currTime});
+                            }
+                        });
 
                         io.to(clientInRoom).to(roomMaster).emit("requestTime");
                     } // Client is room master. Do nothing.
@@ -342,11 +342,11 @@ io.on("connection", function (client) {
         if (clientInRoom) io.to(clientInRoom).emit("play", {username: screenName});
     });
 
-    client.on("currentTime", function (data) {  // received response from client to requestTime
-        if (clientInRoom && data && data.currTime) {
-            io.to(clientInRoom).emit("skipTo", {skipToTime: data.currTime});
-        }
-    });
+    // client.on("currentTime", function (data) {  // received response from client to requestTime
+    //     if (clientInRoom && data && data.currTime) {
+    //         io.to(clientInRoom).emit("skipTo", {skipToTime: data.currTime});
+    //     }
+    // });
 
     client.on("skipTo", function (data) {
         if (BLOCK_CONSOLE) console.log("Socket signal skipTo");

@@ -32,6 +32,16 @@ export class VideoPlayer extends React.Component {
         this.socket.on("videoChange", data => {
             this.props.changeVideo(data.videoUrl);
         });
+
+        this.socket.on("requestTime", () => {
+            this.socket.emit("currentTime", {
+                currTime: this.player.getCurrentTime()
+            });
+        });
+
+        this.socket.on("skipTo", data => {
+            this.player.seekTo(data.skipToTime, true);
+        });
     }
 
     handleSubmit = e => {
@@ -72,6 +82,7 @@ export class VideoPlayer extends React.Component {
 
     handleReady = e => {
         this.player = e.target;
+        this.props.setReady();
     }
 
     render() {
@@ -121,7 +132,8 @@ VideoPlayer.propTypes = {
     socket: React.PropTypes.object,
     history: React.PropTypes.object,
     room: React.PropTypes.object,
-    changeVideoThenEmit: React.PropTypes.func
+    changeVideoThenEmit: React.PropTypes.func,
+    setReady: React.PropTypes.func
 };
 
 const mapDispatchToProps = dispatch => {
@@ -130,7 +142,8 @@ const mapDispatchToProps = dispatch => {
         newURLInput: url => dispatch(actions.newURLInput(url)),
         play: () => dispatch(actions.play()),
         pause: () => dispatch(actions.pause()),
-        buffer: () => dispatch(actions.buffer())
+        buffer: () => dispatch(actions.buffer()),
+        setReady: () => dispatch(actions.setReady())
     };
 };
 

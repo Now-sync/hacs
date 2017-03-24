@@ -27,3 +27,9 @@ export function buffer() {
         dispatch({type: "buffer"});
     };
 }
+
+export function setReady() {
+    return function (dispatch) {
+        dispatch({type: "setReady"});
+    };
+}

@@ -1,6 +1,7 @@
 import React from "react";
 import Room from "./room";
 import VideoPlayer from "./videoPlayer";
+import Join from "./joinRoom";
 import ChatBox from "./chatBox";
 import { connect } from "react-redux";
 import { Col, Row } from "react-bootstrap";
@@ -11,12 +12,26 @@ import { newURLInput, changeVideo } from "../actions/videoPlayerActions";
 
 
 var socket = io();
+var result;
 
 
 class Layout extends React.Component {
 
     componentWillMount(){
-        this.props.history.push("/");
+        console.log(window.location);
+        if (window.location.search === "" ){
+            // this.props.history.push("/");
+            result =
+                <div>
+                    <Room socket={ socket }/>
+                </div>;
+
+        } else {
+            result =
+                <div>
+                    <Join />
+                </div>;
+        }
     }
 
     componentDidUpdate(){
@@ -38,11 +53,6 @@ class Layout extends React.Component {
     }
 
     render () {
-        var result =
-            <div>
-                <Room socket={ socket }/>
-            </div>;
-
         if (this.props.rooms.fetched){
             result =
                 <Col sm={12}>

@@ -12,10 +12,6 @@ export class Room extends React.Component {
         super(props);
     }
 
-    componentWillMount(){
-        socket = this.props.socket;
-    }
-
     handlePassword = e => {
         password = e.target.value;
     }

@@ -22,10 +22,9 @@ export class Join extends React.Component {
         e.target.reset();
         var roomname = window.location.search;
         this.props.rooms.room.roomname = roomname.substring(roomname.indexOf("roomname")+9, roomname.length);
-        console.log(window.location.search);
         this.props.rooms.password = password;
 
-        this.props.joinRoom2(this.props.rooms.room.roomname);
+        this.props.joinRoomActual(this.props.rooms.room.roomname);
     }
 
     render () {
@@ -50,13 +49,13 @@ export class Join extends React.Component {
 
 Join.propTypes = {
     rooms: React.PropTypes.object,
-    joinRoom2: React.PropTypes.func
+    joinRoomActual: React.PropTypes.func
 };
 const mapDispatchToProps = (dispatch) => {
     return {
         newURLInput: url => dispatch(newURLInput(url)),
         changeVideo: (url) => dispatch(changeVideo(url)),
-        joinRoom2: (roomName) => dispatch(joinRoom(roomName))
+        joinRoomActual: (roomName) => dispatch(joinRoom(roomName))
     };
 };
 

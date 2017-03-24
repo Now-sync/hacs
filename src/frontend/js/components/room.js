@@ -2,10 +2,9 @@ import React from "react";
 import { connect } from "react-redux";
 import { Button, Form, FormGroup, ControlLabel, Col, FormControl} from "react-bootstrap";
 
-import { createRoom, joinRoom } from "../actions/roomActions";
-import { newURLInput, changeVideo } from "../actions/videoPlayerActions";
+import { createRoom } from "../actions/roomActions";
 require("../../style/main.css");
-var socket, password, url;
+var password, url;
 
 export class Room extends React.Component {
     constructor(props) {
@@ -22,27 +21,6 @@ export class Room extends React.Component {
 
     onsubmit(){
         this.props.createRoom(url, password);
-    }
-
-    joinRoom = e => {
-        e.preventDefault();
-        const roomName = this.refs.getRoomName.value;
-        const pass = this.refs.getPass.value;
-        this.props.rooms.room.roomname = roomName;
-        this.props.rooms.password = pass;
-        console.log(roomName, " ",  pass, "GOT HERE!!");
-        socket.connect();
-
-        socket.on("videoChange", (data) => {
-            this.props.newURLInput(data.videoUrl);
-            this.props.changeVideo(data.videoUrl);
-        });
-
-        socket.emit("join",{
-            roomname: this.props.rooms.room.roomname,
-            roompass: this.props.rooms.password
-        });
-        this.props.joinRoom2(roomName);
     }
 
 
@@ -99,9 +77,6 @@ Room.propTypes = {
 const mapDispatchToProps = (dispatch) => {
     return {
         createRoom: (url, password) => dispatch(createRoom(url, password)),
-        newURLInput: url => dispatch(newURLInput(url)),
-        changeVideo: (url) => dispatch(changeVideo(url)),
-        joinRoom2: (roomName) => dispatch(joinRoom(roomName))
     };
 };
 

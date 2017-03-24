@@ -20,7 +20,7 @@ class Layout extends React.Component {
     componentWillMount(){
         console.log(window.location);
         if (window.location.search === "" ){
-            // this.props.history.push("/");
+            this.props.history.push("/");
             result =
                 <div>
                     <Room socket={ socket }/>
@@ -33,20 +33,25 @@ class Layout extends React.Component {
                 </div>;
         }
     }
+    componentWillReceiveProps(nextProps){
+        if (!this.props.rooms.fetched && nextProps.rooms.fetched){
+            socket.connect();
+
+            socket.emit("join",{
+                roomname: nextProps.rooms.room.roomname,
+                roompass: nextProps.rooms.password
+            });
+        }
+    }
 
     componentDidUpdate(){
         if(this.props.rooms.fetched && this.props.videoPlayerReducer.inputURL === null) {
-            socket.connect();
 
             socket.on("videoChange", (data) => {
                 this.props.newURLInput(data.videoUrl);
                 this.props.changeVideo(data.videoUrl);
             });
 
-            socket.emit("join",{
-                roomname: this.props.rooms.room.roomname,
-                roompass: this.props.rooms.password
-            });
         } else if(!this.props.rooms.fetched) {
             socket.disconnect();
         }
@@ -92,10 +97,8 @@ Layout.propTypes = {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        // createRoom: (url, password) => dispatch(createRoom(url, password)),
         newURLInput: url => dispatch(newURLInput(url)),
         changeVideo: (url) => dispatch(changeVideo(url))
-        // joinRoom2: (roomName) => dispatch(joinRoom(roomName))
     };
 };
 

@@ -296,6 +296,14 @@ io.on("connection", function (client) {
                     /* Request current video time */
                     var roomMaster = roomData.activeUsers[0];
                     if (roomMaster && roomMaster !== screenName) {
+
+                        // client.once("currentTime", function (data) {  // received response from client to requestTime
+                        //     // Destroy this lisener when a responce is recieved
+                        //     if (clientInRoom && data && data.currTime) {
+                        //         io.to(clientInRoom).emit("skipTo", {skipToTime: data.currTime});
+                        //     }
+                        // });
+
                         io.to(clientInRoom).to(roomMaster).emit("requestTime");
                     } // Client is room master. Do nothing.
                 });

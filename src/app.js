@@ -3,23 +3,12 @@ var fs = require("fs");
 var https = require("https");
 var express = require("express");
 var bodyParser = require("body-parser");
-var session = require("express-session");
 var IO = require("socket.io");
-var sharedsocses = require("express-socket.io-session");
 var expressValidator = require("express-validator");
 
 var app = express();
 
 app.use(bodyParser.json());
-
-var exprSess = session({
-    secret: "its dat boii",
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: true, sameSite: true }
-});
-
-app.use(exprSess);
 
 var privateKey = fs.readFileSync( "server.key" );
 var certificate = fs.readFileSync( "server.crt" );
@@ -148,7 +137,6 @@ app.get("/favicon.ico/", function (req, res) {
 });
 
 app.get("/", function (req, res, next) {
-    if (!req.session.group) return res.redirect("/index.html");
     return next();
 });
 
@@ -206,9 +194,6 @@ app.put("/api/createroom/", function (req, res, next) {
             res.status(500).end("Database Error");
             return next();
         }
-        var sessData = {};
-        sessData.roomname = new_room_name;
-        req.session.datum = sessData;  // Give room creator the session
 
         res.json({roomname: new_room_name});  // respond with roomname
         return next();
@@ -217,13 +202,11 @@ app.put("/api/createroom/", function (req, res, next) {
 
 /* Set Screen Name*/
 app.post("/api/screenname/", function (req, res, next) {
-    if (!req.session.datum) res.status(401).end("No Authorization");
 	return next();
 });
 
 /* Get Session */
 app.get("/api/session/", function (req, res, next) {
-    /* A socket can only be established if there is valid session */
     var roomname = req.body.roomname;
     var roompass = req.body.password;
     if (!roomname || !roompass) {
@@ -233,9 +216,6 @@ app.get("/api/session/", function (req, res, next) {
 
     verifyRoomAndPassword(roomname, roompass, function (err) {
         if (!err) {
-            var sessData = {};
-            sessData.roomname = roomname;
-            req.session.datum = sessData;
             res.json({roomname: roomname});
         } else {
             res.status(401).end("401 Unauthorized");
@@ -260,22 +240,11 @@ app.get("/room/:room_id/", function (req, res, next) {
 
 /* Sockets */
 
-io.use(sharedsocses(exprSess, {autoSave: false}));
-
-io.use(function(socket, next) {
-    if (socket.handshake.session) {
-        next();
-    } else {
-        next(new Error("No Authentic Session Error"));
-    }
-});
-
 io.on("connection", function (client) {
     if (BLOCK_CONSOLE) console.log("NEW CONNECTION");
 
     var clientInRoom = null;
     var screenName = null;
-    //var videoTimeMaster = null;  /* May be needed later */
 
     client.on("join", function (data) {
         var roomname = data.roomname;
@@ -333,12 +302,7 @@ io.on("connection", function (client) {
                     var roomMaster = roomData.activeUsers[0];
                     if (roomMaster) {
                         io.to(clientInRoom).to(roomMaster).emit("requestTime");
-                    } else {
-                        /* Client is roomMaster do nothing? */
-
-                        // client.emit("skipTo", {time:null});
-                        // pendingTimeRequest = false;
-                    }
+                    } // Client is room master. Do nothing.
                 });
                 
             });

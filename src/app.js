@@ -261,8 +261,6 @@ io.on("connection", function (client) {
                 username = "user_" + crypto.randomBytes(8).toString("base64");
             }
 
-            if (BLOCK_CONSOLE) console.log("User:", username, "has joined room:", roomname);
-
             screenName = username;
 
             if (clientInRoom) {  // If already in a room, leave it.
@@ -284,7 +282,6 @@ io.on("connection", function (client) {
                         /* Do something */
                         return;
                     }
-                    if (BLOCK_CONSOLE) console.log(roomData.activeUsers, "AFTER ADDED USER JOIN");
 
                     io.to(clientInRoom).emit("userJoined", {username: screenName});
 

@@ -287,10 +287,11 @@ io.on("connection", function (client) {
 
 
                     /* Request current video time */
-                    var roomMaster = roomData.activeUsers[0];
-                    if (roomMaster && roomMaster !== screenName) {
-                        io.to(clientInRoom).to(roomMaster).emit("requestTime");
-                    } // Client is room master. Do nothing.
+                    io.in(clientInRoom).clients(function (err, clients) {
+                        if (clients) {
+                            client.broadcast.to(clients[0]).emit("requestTime");
+                        } // Client is room master. Do nothing.
+                    });
                 });
 
             });

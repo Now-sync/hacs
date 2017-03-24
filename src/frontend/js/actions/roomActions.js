@@ -17,7 +17,7 @@ export function createRoom(url, password) {
 
 export function joinRoom(roomName) {
     return function(dispatch) {
-        axios.get("/room/"+roomName)
+        axios.get(`/api/room/${roomName}`)
         .then ((response) => {
             dispatch({type: "JoinRoom", payload:response.data});
         });

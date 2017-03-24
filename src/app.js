@@ -220,7 +220,7 @@ app.get("/api/session/", function (req, res, next) {
     });
 });
 
-app.get("/room/:room_id/", function (req, res, next) {
+app.get("/api/room/:room_id/", function (req, res) {
     var roomId = req.params.room_id;
 
     isRoom(roomId, function (roomExists) {
@@ -229,7 +229,6 @@ app.get("/room/:room_id/", function (req, res, next) {
         } else {
             res.status(404).end("404 no such room");
         }
-        return next();
     });
 });
 

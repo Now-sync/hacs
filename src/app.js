@@ -254,8 +254,6 @@ io.on("connection", function (client) {
                 return;
             }
 
-            if (BLOCK_CONSOLE) console.log(roomData.activeUsers);
-
             if (!username) {  // If joining room without given username, random name is generated.
                 username = "user_" + crypto.randomBytes(8).toString("base64");
             }

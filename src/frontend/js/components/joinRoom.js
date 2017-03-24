@@ -54,8 +54,8 @@ Join.propTypes = {
 const mapDispatchToProps = (dispatch) => {
     return {
         newURLInput: url => dispatch(newURLInput(url)),
-        changeVideo: (url) => dispatch(changeVideo(url)),
-        joinRoomActual: (roomName) => dispatch(joinRoom(roomName))
+        changeVideo: url => dispatch(changeVideo(url)),
+        joinRoomActual: roomName => dispatch(joinRoom(roomName))
     };
 };
 

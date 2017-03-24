@@ -18,7 +18,6 @@ var result;
 class Layout extends React.Component {
 
     componentWillMount(){
-        console.log(window.location);
         if (window.location.search === "" ){
             this.props.history.push("/");
             result =
@@ -98,7 +97,7 @@ Layout.propTypes = {
 const mapDispatchToProps = (dispatch) => {
     return {
         newURLInput: url => dispatch(newURLInput(url)),
-        changeVideo: (url) => dispatch(changeVideo(url))
+        changeVideo: url => dispatch(changeVideo(url))
     };
 };
 

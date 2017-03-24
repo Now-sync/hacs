@@ -22,6 +22,11 @@ export default function reducer(state={
                 error: action.payload
             });
         }
+        case "JoinRoom": {
+            return Object.assign({}, state, {
+                fetched: true
+            });
+        }
         default:
             return state;
         }

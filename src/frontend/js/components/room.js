@@ -11,23 +11,6 @@ export class Room extends React.Component {
         super(props);
     }
 
-    componentDidUpdate(){
-        var socket = this.props.socket;
-        if(this.props.rooms.fetched && this.props.videoPlayerReducer.inputURL === null) {
-            socket.connect();
-            socket.emit("join",{
-                roomname: this.props.rooms.room.roomname,
-                roompass: this.props.rooms.password
-            });
-
-            // socket.on("join", (data) => {
-            //     console.log(data, "response from join");
-            // });
-        } else if(!this.props.rooms.fetched) {
-            socket.disconnect();
-        }
-    }
-
     handlePassword = e => {
         password = e.target.value;
     }
@@ -40,11 +23,12 @@ export class Room extends React.Component {
         this.props.createRoom(url, password);
     }
 
+
     render () {
         return (
             <div>
                 <Col smOffset={4} sm={4} className="create_room_container" >
-                    <Form horizontal ref="create_room" onSubmit= {e => {
+                    <Form horizontal onSubmit= {e => {
                         e.preventDefault();
                         e.target.reset();
                         this.onsubmit();
@@ -83,12 +67,16 @@ Room.propTypes = {
     createRoom: React.PropTypes.func,
     rooms: React.PropTypes.object,
     videoPlayerReducer: React.PropTypes.object,
-    socket: React.PropTypes.object
+    changeVideo: React.PropTypes.func,
+    socket: React.PropTypes.object,
+    location: React.PropTypes.string,
+    joinRoom2: React.PropTypes.func,
+    newURLInput: React.PropTypes.func
 };
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        createRoom: (url, password) => dispatch(createRoom(url, password))
+        createRoom: (url, password) => dispatch(createRoom(url, password)),
     };
 };
 

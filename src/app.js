@@ -136,10 +136,6 @@ app.get("/favicon.ico/", function (req, res) {
     res.status(200).end();
 });
 
-app.get("/", function (req, res, next) {
-    return next();
-});
-
 /* Sanitize and Validate */
 app.use(expressValidator({
     customValidators: {
@@ -150,7 +146,7 @@ app.use(expressValidator({
             return youtubeUrlValidator(url);
         }
     }
-})); 
+}));
 
 app.use(function(req, res, next){
     Object.keys(req.body).forEach(function(arg){
@@ -224,7 +220,7 @@ app.get("/api/session/", function (req, res, next) {
     });
 });
 
-app.get("/room/:room_id/", function (req, res, next) {
+app.get("/api/room/:room_id/", function (req, res) {
     var roomId = req.params.room_id;
 
     isRoom(roomId, function (roomExists) {
@@ -233,7 +229,6 @@ app.get("/room/:room_id/", function (req, res, next) {
         } else {
             res.status(404).end("404 no such room");
         }
-        return next();
     });
 });
 
@@ -262,8 +257,6 @@ io.on("connection", function (client) {
             if (!username) {  // If joining room without given username, random name is generated.
                 username = "user_" + crypto.randomBytes(8).toString("base64");
             }
-
-            if (BLOCK_CONSOLE) console.log("User:", username, "has joined room:", roomname);
 
             screenName = username;
 
@@ -304,7 +297,7 @@ io.on("connection", function (client) {
                         io.to(clientInRoom).to(roomMaster).emit("requestTime");
                     } // Client is room master. Do nothing.
                 });
-                
+
             });
 
             if (BLOCK_CONSOLE) console.log(client.rooms);
@@ -368,11 +361,15 @@ io.on("connection", function (client) {
     });
 });
 
-app.use(express.static(__dirname + "/frontend"));
-
 app.use(function (req, res, next) {
     if (BLOCK_CONSOLE) console.log("HTTP Response", res.statusCode);
     return next();
+});
+
+app.use(express.static(__dirname + "/frontend"));
+
+app.get("*", function (req, res) {
+    res.sendFile(__dirname + "/frontend/index.html");
 });
 
 /* Expose server for testing */

@@ -14,3 +14,15 @@ export function createRoom(url, password) {
         });
     };
 }
+
+export function joinRoom(roomName) {
+    return function(dispatch) {
+        axios.get(`/api/room/${roomName}`)
+        .then ((response) => {
+            dispatch({type: "JoinRoom", payload:response.data});
+        });
+        // .catch((err) => {
+        //     // dispatch({type:})
+        // });
+    };
+}

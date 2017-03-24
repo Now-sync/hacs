@@ -311,7 +311,7 @@ io.on("connection", function (client) {
     client.on("videoChange", function (data) {
         if (BLOCK_CONSOLE) console.log("Socket signal video change");
 
-        if (clientInRoom && data && data.videoUrl) {
+        if (clientInRoom && data) {
             setRoomVideo(clientInRoom, data.videoUrl, function() {
                 io.to(clientInRoom).emit("videoChange", {
                     videoUrl: data.videoUrl,
@@ -323,7 +323,7 @@ io.on("connection", function (client) {
 
     client.on("pause", function (data) {
         if (BLOCK_CONSOLE) console.log("Socket signal pause");
-        if (clientInRoom && data && data.pausedtime) {
+        if (clientInRoom && data) {
             io.to(clientInRoom).emit("pause", {pausedtime: data.pausedtime, username: screenName});
         }
     });
@@ -335,14 +335,14 @@ io.on("connection", function (client) {
     });
 
     client.on("currentTime", function (data) {  // received response from client to requestTime
-        if (clientInRoom && data && data.currTime) {
+        if (clientInRoom && data) {
             io.to(clientInRoom).emit("skipTo", {skipToTime: data.currTime});
         }
     });
 
     client.on("skipTo", function (data) {
         if (BLOCK_CONSOLE) console.log("Socket signal skipTo");
-        if (clientInRoom && data && data.skipToTime) {
+        if (clientInRoom && data) {
             io.to(clientInRoom).emit("skipTo", data);
         }
     });

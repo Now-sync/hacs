@@ -16,24 +16,6 @@ export class Room extends React.Component {
         socket = this.props.socket;
     }
 
-    componentDidUpdate(){
-        if(this.props.rooms.fetched && this.props.videoPlayerReducer.inputURL === null) {
-            socket.connect();
-
-            socket.on("videoChange", (data) => {
-                this.props.newURLInput(data.videoUrl);
-                this.props.changeVideo(data.videoUrl);
-            });
-
-            socket.emit("join",{
-                roomname: this.props.rooms.room.roomname,
-                roompass: this.props.rooms.password
-            });
-        } else if(!this.props.rooms.fetched) {
-            socket.disconnect();
-        }
-    }
-
     handlePassword = e => {
         password = e.target.value;
     }
@@ -44,12 +26,6 @@ export class Room extends React.Component {
 
     onsubmit(){
         this.props.createRoom(url, password);
-    }
-
-    generateUrl = e => {
-        e.preventDefault();
-        var link = this.props.rooms.room.roomname;
-        this.refs.link.value = link;
     }
 
     joinRoom = e => {
@@ -78,12 +54,7 @@ export class Room extends React.Component {
         return (
             <div>
                 <Col smOffset={4} sm={4} className="create_room_container" >
-                    <form onSubmit={this.joinRoom}>
-                        <input ref="getRoomName" type="text" placeholder="Enter Roomname"/>
-                        <input ref="getPass" type="text" placeholder="Enter Password"/>
-                        <button type="submit">Join Room</button>
-                    </form>
-                    <Form horizontal ref="create_room" onSubmit= {e => {
+                    <Form horizontal onSubmit= {e => {
                         e.preventDefault();
                         e.target.reset();
                         this.onsubmit();
@@ -112,10 +83,6 @@ export class Room extends React.Component {
                           </Col>
                         </FormGroup>
                     </Form>
-                    <form onSubmit={this.generateUrl}>
-                        <input ref="link" type="text" placeholder="Roomname"/>
-                        <button type="submit">Generate Link to Share</button>
-                    </form>
                 </Col>
             </div>
         );

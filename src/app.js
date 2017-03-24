@@ -311,7 +311,7 @@ io.on("connection", function (client) {
     client.on("videoChange", function (data) {
         if (BLOCK_CONSOLE) console.log("Socket signal video change");
 
-        if (clientInRoom) {
+        if (clientInRoom && data && data.videoUrl) {
             setRoomVideo(clientInRoom, data.videoUrl, function() {
                 io.to(clientInRoom).emit("videoChange", {
                     videoUrl: data.videoUrl,

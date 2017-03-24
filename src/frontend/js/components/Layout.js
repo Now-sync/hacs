@@ -33,7 +33,7 @@ class Layout extends React.Component {
         }
     }
     componentWillReceiveProps(nextProps){
-        if (!this.props.rooms.fetched && nextProps.rooms.fetched){
+        if (!this.props.videoPlayerReducer.ready && nextProps.videoPlayerReducer.ready){
             socket.connect();
 
             socket.emit("join",{

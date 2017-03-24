@@ -92,8 +92,6 @@ var addNewRoom = function (roomname, roompass, videoUrl, callback) {
         roomPassword: roompass,
         activeUsers: [],
         videoUrl: videoUrl,
-        videoTimeMaster: null,
-        lastActive:null,
         isDead: 6
     };
 
@@ -196,11 +194,6 @@ app.put("/api/createroom/", function (req, res, next) {
     });
 });
 
-/* Set Screen Name*/
-app.post("/api/screenname/", function (req, res, next) {
-	return next();
-});
-
 /* Get Session */
 app.get("/api/session/", function (req, res, next) {
     var roomname = req.body.roomname;
@@ -246,7 +239,10 @@ io.on("connection", function (client) {
         var roompass = data.roompass;
         var username = data.username;
 
-        if (!roomname || !roompass) return; // maybe emit joinError ??
+        if (!roomname || !roompass) {
+            client.emit("joinError", {roomname:roomname, roompass:roompass});
+            return;
+        }
 
         verifyRoomAndPassword(roomname, roompass, function (err, roomData) {
             if (err) {
@@ -286,14 +282,13 @@ io.on("connection", function (client) {
                     // Note: skipTo is null until there is away to track video location.
                     client.emit("videoChange", {
                         videoUrl: roomData.videoUrl,
-                        username: null,  // null because no user emitted videoChange signal
-                        skipTo: null
+                        username: null  // null because no user emitted videoChange signal
                     });
 
 
                     /* Request current video time */
                     var roomMaster = roomData.activeUsers[0];
-                    if (roomMaster) {
+                    if (roomMaster && roomMaster !== screenName) {
                         io.to(clientInRoom).to(roomMaster).emit("requestTime");
                     } // Client is room master. Do nothing.
                 });
@@ -309,12 +304,11 @@ io.on("connection", function (client) {
     client.on("videoChange", function (data) {
         if (BLOCK_CONSOLE) console.log("Socket signal video change");
 
-        if (clientInRoom) {
+        if (clientInRoom && data) {
             setRoomVideo(clientInRoom, data.videoUrl, function() {
                 io.to(clientInRoom).emit("videoChange", {
                     videoUrl: data.videoUrl,
-                    username: screenName,
-                    skipTo: null  // A time in the video
+                    username: screenName
                 });
             });
         }
@@ -323,29 +317,37 @@ io.on("connection", function (client) {
     client.on("pause", function (data) {
         if (BLOCK_CONSOLE) console.log("Socket signal pause");
         if (!data) {
-            if (BLOCK_CONSOLE) console.log("no data given in signal pause");
-            return;
-        } else if (data && !data.pausedtime) {
-            if (BLOCK_CONSOLE) console.log("no pause time given in pause signal");
+            if (BLOCK_CONSOLE) console.log("No pause data given.");
             return;
         }
-        if (clientInRoom) io.to(clientInRoom).emit("pause", {pausedtime: data.pausedtime, username: screenName});
+        if (clientInRoom && data) {
+            io.to(clientInRoom).emit("pause", {pausedtime: data.pausedtime, username: screenName});
+        }
     });
 
     client.on("play", function () {
         if (BLOCK_CONSOLE) console.log("Socket signal play");
-
         if (clientInRoom) io.to(clientInRoom).emit("play", {username: screenName});
     });
 
     client.on("currentTime", function (data) {  // received response from client to requestTime
-        if (clientInRoom) {
+        if (BLOCK_CONSOLE) console.log("Socket signal currentTime");
+        if (!data) {
+            if (BLOCK_CONSOLE) console.log("No currentTime data given.");
+            return;
+        }
+        if (clientInRoom && data) {
             io.to(clientInRoom).emit("skipTo", {skipToTime: data.currTime});
         }
     });
 
     client.on("skipTo", function (data) {
-        if (clientInRoom) {
+        if (BLOCK_CONSOLE) console.log("Socket signal skipTo");
+        if (!data) {
+            if (BLOCK_CONSOLE) console.log("No skipTO data given.");
+            return;
+        }
+        if (clientInRoom && data) {
             io.to(clientInRoom).emit("skipTo", data);
         }
     });

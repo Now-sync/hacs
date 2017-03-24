@@ -335,6 +335,7 @@ io.on("connection", function (client) {
     });
 
     client.on("currentTime", function (data) {  // received response from client to requestTime
+        if (BLOCK_CONSOLE) console.log("Socket signal currentTime");
         if (clientInRoom && data) {
             io.to(clientInRoom).emit("skipTo", {skipToTime: data.currTime});
         }

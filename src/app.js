@@ -323,6 +323,10 @@ io.on("connection", function (client) {
 
     client.on("pause", function (data) {
         if (BLOCK_CONSOLE) console.log("Socket signal pause");
+        if (!data) {
+            if (BLOCK_CONSOLE) console.log("No pause data given.");
+            return;
+        }
         if (clientInRoom && data) {
             io.to(clientInRoom).emit("pause", {pausedtime: data.pausedtime, username: screenName});
         }
@@ -330,12 +334,15 @@ io.on("connection", function (client) {
 
     client.on("play", function () {
         if (BLOCK_CONSOLE) console.log("Socket signal play");
-
         if (clientInRoom) io.to(clientInRoom).emit("play", {username: screenName});
     });
 
     client.on("currentTime", function (data) {  // received response from client to requestTime
         if (BLOCK_CONSOLE) console.log("Socket signal currentTime");
+        if (!data) {
+            if (BLOCK_CONSOLE) console.log("No currentTime data given.");
+            return;
+        }
         if (clientInRoom && data) {
             io.to(clientInRoom).emit("skipTo", {skipToTime: data.currTime});
         }
@@ -343,6 +350,10 @@ io.on("connection", function (client) {
 
     client.on("skipTo", function (data) {
         if (BLOCK_CONSOLE) console.log("Socket signal skipTo");
+        if (!data) {
+            if (BLOCK_CONSOLE) console.log("No skipTO data given.");
+            return;
+        }
         if (clientInRoom && data) {
             io.to(clientInRoom).emit("skipTo", data);
         }

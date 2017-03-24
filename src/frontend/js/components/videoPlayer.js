@@ -8,12 +8,14 @@ import * as actions from "../actions/videoPlayerActions";
 export class VideoPlayer extends React.Component {
     constructor(props) {
         super(props);
+        // this.props.history.push("/rooms");
         // for easier unit test stubbing
         this.socket = {};
         this.player = {};
     }
 
     componentWillMount = () => {
+        this.props.history.push("/room/?roomname="+ this.props.room.roomname);
         this.socket = this.props.socket;
     }
 
@@ -117,6 +119,8 @@ VideoPlayer.propTypes = {
     pause: React.PropTypes.func,
     buffer: React.PropTypes.func,
     socket: React.PropTypes.object,
+    history: React.PropTypes.object,
+    room: React.PropTypes.object,
     changeVideoThenEmit: React.PropTypes.func
 };
 

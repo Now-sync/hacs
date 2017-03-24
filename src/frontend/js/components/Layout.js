@@ -12,6 +12,10 @@ var socket = io();
 
 class Layout extends React.Component {
 
+    componentWillMount(){
+        this.props.history.push("/");
+    }
+
     render () {
         var result =
             <div>
@@ -24,7 +28,7 @@ class Layout extends React.Component {
                     <Row>
                         <Col sm={10}>
                             <div className="video_container">
-                                <VideoPlayer socket={ socket }/>
+                                <VideoPlayer history={this.props.history} socket={ socket } room={this.props.rooms.room}/>
                             </div>
                         </Col>
                         <Col sm={2}>
@@ -47,7 +51,9 @@ class Layout extends React.Component {
 
 Layout.propTypes = {
     rooms: React.PropTypes.object,
-    videoPlayerReducer: React.PropTypes.object
+    videoPlayerReducer: React.PropTypes.object,
+    history: React.PropTypes.object,
+    location: React.PropTypes.object
 };
 
 const mapStateToProps = (state) => {

@@ -16,11 +16,24 @@ gulp.task("build", function () {
         .pipe(gulp.dest("src/frontend/"));
 });
 
-gulp.task("nodemon", ["build"], function () {
+// https://gist.github.com/dstroot/22525ae6e26109d3fc9d
+gulp.task("nodemon", ["build"], function (cb) {
+    var called = false;
     return nodemon({
         script: "src/app.js",
         ignore: ["test/*"],
         watch: ["src/app.js"]
+    })
+    .on("start", function () {
+        if (!called) {
+            called = true;
+            cb();
+        }
+    })
+    .on("restart", function () {
+        setTimeout(function () {
+            browsersync.reload({ stream: false });
+        }, 1000);
     });
 });
 
@@ -38,7 +51,7 @@ gulp.task("browsersync", ["nodemon"], function () {
             target: "https://localhost:3000/",
             ws: true
         },
-        files: ["src/app.js", "src/frontend/**/*.html", "src/frontend/**/*.css"]
+        files: ["src/frontend/**/*.html", "src/frontend/**/*.css"]
     });
 });
 

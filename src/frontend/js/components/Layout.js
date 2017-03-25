@@ -38,7 +38,8 @@ class Layout extends React.Component {
 
             socket.emit("join",{
                 roomname: nextProps.rooms.room.roomname,
-                roompass: nextProps.rooms.password
+                roompass: nextProps.rooms.password,
+                username: nextProps.rooms.username
             });
         }
     }

@@ -17,7 +17,7 @@ export default function reducer(state=defaultState, action){
                 content: action.payload
             });
         case "updateChatBox":
-            var newList = state.messages.slice(); // copy the array
+            var newList = state.messages.slice();
             newList.push(action.payload);
             return Object.assign({}, state, {
                 messages: newList

@@ -16,12 +16,15 @@ export class ChatBox extends React.Component {
         this.socket = this.props.socket;
     }
 
-    // componentWillReceiveProps = () => {
-    //     result.push(
-    //         <div className="bubble me">
-    //             { this.props.enterMessage(content) }
-    //         </div>);
-    // }
+    componentDidMount = () => {
+        this.socket.on("receivedMessage", data => {
+            this.props.updateChatBox(
+                <div className="bubble you">
+                    { data.content }
+                </div>
+            );
+        });
+    }
 
     handleSubmit = e => {
         e.preventDefault();

@@ -22,12 +22,6 @@ export function pause() {
     };
 }
 
-export function buffer() {
-    return function (dispatch) {
-        dispatch({type: "buffer"});
-    };
-}
-
 export function setReady() {
     return function (dispatch) {
         dispatch({type: "setReady"});

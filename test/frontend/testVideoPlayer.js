@@ -176,18 +176,6 @@ describe("<VideoPlayer />", () => {
                 skipTo: 0
             });
         });
-
-        it("should fire a pause event when handleStateChange() has a buffer action", done => {
-            // mockServer.on("pause", data => {
-            //     if (data.pausedtime === 5) done();
-            // });
-            mockServer.on("pause", done);
-            wrapper = shallow(<VideoPlayer socket={socket}
-                                buffer={() => null}
-                                />);
-            wrapper.instance().player.getCurrentTime = () => 5;
-            wrapper.instance().handleStateChange({data: 3});
-        });
     });
 
     describe("actions", () => {
@@ -230,12 +218,6 @@ describe("<VideoPlayer />", () => {
             store.dispatch(actions.pause());
             store.getActions().should.deep.equal(expected);
         });
-
-        it("dispatches a buffer action", () => {
-            expected = [{type: "buffer"}];
-            store.dispatch(actions.buffer());
-            store.getActions().should.deep.equal(expected);
-        });
     });
 
     describe("reducer", () => {
@@ -249,7 +231,6 @@ describe("<VideoPlayer />", () => {
                 url: null,
                 videoId: null,
                 playing: false,
-                buffering: false,
                 ready: false
             };
 
@@ -258,7 +239,6 @@ describe("<VideoPlayer />", () => {
                 url: null,
                 videoId: null,
                 playing: false,
-                buffering: false,
                 ready: false
             };
         });
@@ -313,21 +293,6 @@ describe("<VideoPlayer />", () => {
             expected.url = url;
             expected.videoId = "NGY1gmVZVlo";
             expected.playing = false;
-            reducer(state, action).should.deep.equal(expected);
-        });
-
-        it("should handle a buffer action", () => {
-            var url = "https://www.youtube.com/watch?v=2Z4m4lnjxkY";
-            action = {
-                type: "buffer"
-            };
-            state.url = url;
-            state.videoId = "2Z4m4lnjxkY";
-            state.playing = true;
-            expected.url = url;
-            expected.videoId = "2Z4m4lnjxkY";
-            expected.playing = false;
-            expected.buffering = true;
             reducer(state, action).should.deep.equal(expected);
         });
     });

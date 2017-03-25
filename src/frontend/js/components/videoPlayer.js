@@ -124,12 +124,10 @@ VideoPlayer.propTypes = {
     videoId: React.PropTypes.string,
     playing: React.PropTypes.bool,
     paused: React.PropTypes.bool,
-    buffering: React.PropTypes.bool,
     changeVideo: React.PropTypes.func,
     newURLInput: React.PropTypes.func,
     play: React.PropTypes.func,
     pause: React.PropTypes.func,
-    buffer: React.PropTypes.func,
     socket: React.PropTypes.object,
     history: React.PropTypes.object,
     room: React.PropTypes.object,
@@ -143,7 +141,6 @@ const mapDispatchToProps = dispatch => {
         newURLInput: url => dispatch(actions.newURLInput(url)),
         play: () => dispatch(actions.play()),
         pause: () => dispatch(actions.pause()),
-        buffer: () => dispatch(actions.buffer()),
         setReady: () => dispatch(actions.setReady())
     };
 };

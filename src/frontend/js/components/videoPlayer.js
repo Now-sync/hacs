@@ -5,6 +5,8 @@ import { Form, FormGroup, ControlLabel, Col, FormControl} from "react-bootstrap"
 
 import * as actions from "../actions/videoPlayerActions";
 
+var dontpause = false;
+
 export class VideoPlayer extends React.Component {
     constructor(props) {
         super(props);
@@ -27,6 +29,7 @@ export class VideoPlayer extends React.Component {
         this.socket.on("pause", data => {
             this.player.pauseVideo();
             this.player.seekTo(data.pausedtime, true);
+            dontpause = true;
         });
 
         this.socket.on("videoChange", data => {
@@ -64,10 +67,14 @@ export class VideoPlayer extends React.Component {
                 this.props.play();
                 break;
             case YouTube.PlayerState.PAUSED:
-                this.socket.emit("pause", {
-                    pausedtime: this.player.getCurrentTime()
-                });
-                this.props.pause();
+                if (!dontpause) {
+                    this.socket.emit("pause", {
+                        pausedtime: this.player.getCurrentTime()
+                    });
+                    this.props.pause();
+                } else {
+                    dontpause = false;
+                }
                 break;
             // case YouTube.PlayerState.BUFFERING:
             //     this.socket.emit("pause", {

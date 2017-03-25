@@ -33,6 +33,7 @@ if (process.env.NODE_ENV === "test") {
 /* -----------  -------------*/
 
 var ROOM_NAME_LENGTH = 16;
+var USERNAME_CHARACTER_LIMIT = 16;
 /* Use dictionary for now until more research is done on databases */
 var activeRooms = {};
 var verifyRoomAndPassword = function (roomname, roompass, callback) {
@@ -109,6 +110,14 @@ var setRoomVideo = function (roomname, videoUrl, callback) {
 
 var isRoom = function (roomname, callback) {
     if (activeRooms[roomname]) {
+        callback(true);
+    } else {
+        callback(false);
+    }
+};
+
+var isUsernameUnique = function (roomname, username, callback) {
+    if (activeRooms[roomname].activeUsers.indexOf(username) < 0) {
         callback(true);
     } else {
         callback(false);
@@ -250,54 +259,69 @@ io.on("connection", function (client) {
                 return;
             }
 
-            if (!username) {  // If joining room without given username, random name is generated.
-                username = "user_" + crypto.randomBytes(8).toString("base64");
-            }
-
-            screenName = username;
-
-            if (clientInRoom) {  // If already in a room, leave it.
-                client.leave(clientInRoom, function () {
-                    removeUser(clientInRoom, screenName);
-                    io.to(clientInRoom).emit("userLeft", {username: screenName});
-                    clientInRoom = null;
-                });
-            }
-
-            client.join(roomname, function (err) {
-                if (err) {
-                    client.emit("joinError", {roomname:roomname, roompass:roompass});
-                    return;
+            /* This function is for readability. Simply used after username correction. */
+            var __privateCall = function () {
+                if (clientInRoom) {  // If already in a room, leave it.
+                    client.leave(clientInRoom, function () {
+                        removeUser(clientInRoom, screenName);
+                        io.to(clientInRoom).emit("userLeft", {username: screenName});
+                        clientInRoom = null;
+                    });
                 }
-                clientInRoom = roomname;
-                addUserToRoom(clientInRoom, screenName, function (err) {
+
+                client.join(roomname, function (err) {
                     if (err) {
-                        /* Do something */
+                        client.emit("joinError", {roomname:roomname, roompass:roompass});
                         return;
                     }
+                    clientInRoom = roomname;
+                    addUserToRoom(clientInRoom, screenName, function (err) {
+                        if (err) {
+                            /* Do something */
+                            return;
+                        }
 
-                    io.to(clientInRoom).emit("userJoined", {username: screenName});
+                        io.to(clientInRoom).emit("userJoined", {username: screenName});
 
-                    /* When user has joined the room. Send the Url of the video in the room */
-                    // Note: skipTo is null until there is away to track video location.
-                    client.emit("videoChange", {
-                        videoUrl: roomData.videoUrl,
-                        username: null  // null because no user emitted videoChange signal
+                        /* When user has joined the room. Send the Url of the video in the room */
+                        // Note: skipTo is null until there is away to track video location.
+                        client.emit("videoChange", {
+                            videoUrl: roomData.videoUrl,
+                            username: null  // null because no user emitted videoChange signal
+                        });
+
+
+                        /* Request current video time */
+                        io.in(clientInRoom).clients(function (err, clients) {
+                            if (clients) {
+                                client.broadcast.to(clients[0]).emit("requestTime");
+                            } // Client is room master. Do nothing.
+                        });
                     });
 
-
-                    /* Request current video time */
-                    io.in(clientInRoom).clients(function (err, clients) {
-                        if (clients) {
-                            client.broadcast.to(clients[0]).emit("requestTime");
-                        } // Client is room master. Do nothing.
-                    });
                 });
 
-            });
+                if (BLOCK_CONSOLE) console.log(client.rooms);
+            }  // END __privateCall function
 
-            if (BLOCK_CONSOLE) console.log(client.rooms);
+            if (!username) {  // If joining room without given username, random name is generated.
+                screenName = "user_" + crypto.randomBytes(8).toString("base64");
+                __privateCall();
+            } else {
+                username = "" + username;  // Make sure username is string.
+                if (username.length > USERNAME_CHARACTER_LIMIT) {
+                    username = username.slice(0, USERNAME_CHARACTER_LIMIT);
+                }
 
+                isUsernameUnique(roomname, username, function (isUnique) {
+                    if (isUnique) {
+                        screenName = username;
+                    } else {
+                        screenName = username + "_" + crypto.randomBytes(6).toString("base64");
+                    }
+                    __privateCall();
+                }); 
+            }
         });
 
     });

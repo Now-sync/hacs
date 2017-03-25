@@ -994,7 +994,7 @@ describe("All server testing", function () {
             personA.emit("sendMessage", {content:message, videoTime:videoTime});
         });
 
-        it("should broadcast with timeStamp correct timestamp", function (done) {
+        it("should broadcast with timeStamp correct time", function (done) {
             var message = "a;kljghfnflpawyehfb;lnbkljhasdfjnblsaghde";
             var videoTime = 95654;
             var millsecTolerance = 100;

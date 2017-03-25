@@ -26,7 +26,6 @@ export class VideoPlayer extends React.Component {
 
         this.socket.on("pause", data => {
             this.player.pauseVideo();
-            console.log(data.skipToTime);
             this.player.seekTo(data.pausedtime, true);
         });
 

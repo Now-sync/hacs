@@ -47,7 +47,10 @@ var verifyRoomAndPassword = function (roomname, roompass, callback) {
 
     if (found) {
         var roomData = activeRooms[roomname];
-        if (roomData.roomPassword === roompass) {
+        var hash = crypto.createHmac("sha512", roomData.salt);
+        hash.update(roompass);
+        var saltedHashPass = hash.digest("base64");
+        if (roomData.saltedHashPass === saltedHashPass) {
             callback(null, roomData);
         } else {
             callback("Password Does Not match", null);
@@ -88,8 +91,15 @@ var addUserToRoom = function (roomname, username, callback) {
 };
 
 var addNewRoom = function (roomname, roompass, videoUrl, callback) {
+    var salt = crypto.randomBytes(16).toString("base64");
+    var hash = crypto.createHmac("sha512", salt);
+    hash.update(roompass);
+
+    var saltedHashPass = hash.digest("base64");
+
     activeRooms[roomname] = {
-        roomPassword: roompass,
+        salt: salt,
+        saltedHashPass: saltedHashPass,
         activeUsers: [],
         videoUrl: videoUrl,
         isDead: 6

@@ -24,9 +24,10 @@ export class VideoPlayer extends React.Component {
             this.player.playVideo();
         });
 
-        this.socket.on("pause", () => {
-            // TODO: might have to change video location to the timestamp inside this event
+        this.socket.on("pause", data => {
             this.player.pauseVideo();
+            console.log(data.skipToTime);
+            this.player.seekTo(data.pausedtime, true);
         });
 
         this.socket.on("videoChange", data => {
@@ -69,12 +70,12 @@ export class VideoPlayer extends React.Component {
                 });
                 this.props.pause();
                 break;
-            case YouTube.PlayerState.BUFFERING:
-                this.socket.emit("pause", {
-                    pausedtime: this.player.getCurrentTime()
-                });
-                this.props.buffer();
-                break;
+            // case YouTube.PlayerState.BUFFERING:
+            //     this.socket.emit("pause", {
+            //         pausedtime: this.player.getCurrentTime()
+            //     });
+            //     this.props.buffer();
+            //     break;
             default:
                 return;
         }

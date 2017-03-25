@@ -76,12 +76,6 @@ export class VideoPlayer extends React.Component {
                     dontpause = false;
                 }
                 break;
-            // case YouTube.PlayerState.BUFFERING:
-            //     this.socket.emit("pause", {
-            //         pausedtime: this.player.getCurrentTime()
-            //     });
-            //     this.props.buffer();
-            //     break;
             default:
                 return;
         }

@@ -353,13 +353,6 @@ io.on("connection", function (client) {
         }
     });
 
-    // client.on("buffer", function (data) {
-    //     if (BLOCK_CONSOLE) console.log("Socket signal skipTo");
-    //     if (clientInRoom && data) {
-    //         client.broadcast.to(clientInRoom).emit("pause", {pausedtime: data.pausedtime, username: screenName});
-    //     }
-    // });
-
     client.on("disconnect", function () {
         if (BLOCK_CONSOLE) console.log("DISCONNECTED");
         client.leave(clientInRoom, function () {

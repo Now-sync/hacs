@@ -322,7 +322,7 @@ io.on("connection", function (client) {
             return;
         }
         if (clientInRoom && data) {
-            io.to(clientInRoom).emit("pause", {pausedtime: data.pausedtime, username: screenName});
+            client.broadcast.to(clientInRoom).emit("pause", {pausedtime: data.pausedtime, username: screenName});
         }
     });
 

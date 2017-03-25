@@ -16,7 +16,6 @@ const defaultState = {
     url: null,
     videoId: null,
     playing: false,
-    buffering: false,
     ready: false
 };
 
@@ -34,17 +33,10 @@ export default function reducer(state=defaultState, action) {
         case "play":
             return Object.assign({}, state, {
                 playing: true,
-                buffering: false
             });
         case "pause":
             return Object.assign({}, state, {
                 playing: false,
-                buffering: false
-            });
-        case "buffer":
-            return Object.assign({}, state, {
-                playing: false,
-                buffering: true
             });
         case "setReady":
             return Object.assign({}, state, {

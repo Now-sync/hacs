@@ -5,6 +5,8 @@ import { Form, FormGroup, ControlLabel, Col, FormControl} from "react-bootstrap"
 
 import * as actions from "../actions/videoPlayerActions";
 
+var dontpause = false;
+
 export class VideoPlayer extends React.Component {
     constructor(props) {
         super(props);
@@ -24,9 +26,10 @@ export class VideoPlayer extends React.Component {
             this.player.playVideo();
         });
 
-        this.socket.on("pause", () => {
-            // TODO: might have to change video location to the timestamp inside this event
+        this.socket.on("pause", data => {
             this.player.pauseVideo();
+            this.player.seekTo(data.pausedtime, true);
+            dontpause = true;
         });
 
         this.socket.on("videoChange", data => {
@@ -64,16 +67,14 @@ export class VideoPlayer extends React.Component {
                 this.props.play();
                 break;
             case YouTube.PlayerState.PAUSED:
-                this.socket.emit("pause", {
-                    pausedtime: this.player.getCurrentTime()
-                });
-                this.props.pause();
-                break;
-            case YouTube.PlayerState.BUFFERING:
-                this.socket.emit("pause", {
-                    pausedtime: this.player.getCurrentTime()
-                });
-                this.props.buffer();
+                if (!dontpause) {
+                    this.socket.emit("pause", {
+                        pausedtime: this.player.getCurrentTime()
+                    });
+                    this.props.pause();
+                } else {
+                    dontpause = false;
+                }
                 break;
             default:
                 return;
@@ -123,12 +124,10 @@ VideoPlayer.propTypes = {
     videoId: React.PropTypes.string,
     playing: React.PropTypes.bool,
     paused: React.PropTypes.bool,
-    buffering: React.PropTypes.bool,
     changeVideo: React.PropTypes.func,
     newURLInput: React.PropTypes.func,
     play: React.PropTypes.func,
     pause: React.PropTypes.func,
-    buffer: React.PropTypes.func,
     socket: React.PropTypes.object,
     history: React.PropTypes.object,
     room: React.PropTypes.object,
@@ -142,7 +141,6 @@ const mapDispatchToProps = dispatch => {
         newURLInput: url => dispatch(actions.newURLInput(url)),
         play: () => dispatch(actions.play()),
         pause: () => dispatch(actions.pause()),
-        buffer: () => dispatch(actions.buffer()),
         setReady: () => dispatch(actions.setReady())
     };
 };

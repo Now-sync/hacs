@@ -260,7 +260,7 @@ io.on("connection", function (client) {
             }
 
             /* This function is for readability. Simply used after username correction. */
-            var __privateCall = function () {
+            var _joinRoom = function () {
                 if (clientInRoom) {  // If already in a room, leave it.
                     client.leave(clientInRoom, function () {
                         removeUser(clientInRoom, screenName);
@@ -306,7 +306,7 @@ io.on("connection", function (client) {
 
             if (!username) {  // If joining room without given username, random name is generated.
                 screenName = "user_" + crypto.randomBytes(8).toString("base64");
-                __privateCall();
+                _joinRoom();
             } else {
                 username = "" + username;  // Make sure username is string.
                 if (username.length > USERNAME_CHARACTER_LIMIT) {
@@ -319,7 +319,7 @@ io.on("connection", function (client) {
                     } else {
                         screenName = username + "_" + crypto.randomBytes(6).toString("base64");
                     }
-                    __privateCall();
+                    _joinRoom();
                 }); 
             }
         });

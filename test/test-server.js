@@ -886,4 +886,148 @@ describe("All server testing", function () {
             });
         });
     });
+
+    describe("Test sendMessage and receivedMessage signal", function() {
+        var personA, personB, personC;
+        var roomname;
+        var videoUrl = "https://www.youtube.com/watch?v=kfVsfOSbJY0";
+        var password = "password";
+
+        beforeEach(function (done){
+            var createRoom = function () {
+                return new Promise(function (acc) {
+                    chai.request(server)
+                        .put("/api/createroom/")
+                        .send({roomPassword: "password", videoUrl: videoUrl})
+                        .end(function (res) {
+                            acc(res.body.roomname);
+                        });
+                });
+            };
+
+            var connectPersonA = function (roomname){
+                return new Promise(function (acc) {
+                    personA = io.connect(socketUrl, options);
+                    personA.on("connect", function () {
+                        personA.once("requestTime", function() {
+                            personA.once("requestTime", function() {
+                                acc();
+                            });
+                        });
+                        personA.emit("join", {roomname: roomname, roompass: password, username: "personA"});
+                    });
+                });
+            };
+
+            var connectPersonB = function (roomname){
+                return new Promise(function (acc) {
+                    personB = io.connect(socketUrl, options);
+                    personB.on("connect", function () {
+                        personB.emit("join", {roomname: roomname, roompass: password, username: "personB"});
+                        acc();
+                    });
+                });
+            };
+
+            var connectPersonC = function (roomname){
+                return new Promise(function (acc) {
+                    personC = io.connect(socketUrl, options);
+                    personC.on("connect", function () {
+                        personC.emit("join", {roomname: roomname, roompass: password, username: "personC"});
+                        acc();
+                    });
+                });
+            };
+
+            createRoom().then(function (roomname2) {
+                roomname = roomname2;
+                var p = [connectPersonA(roomname), connectPersonB(roomname), connectPersonC(roomname)];
+                Promise.all(p).then(function () { done(); });
+            });
+        });
+
+        afterEach(function (done){
+            try{
+                personA.disconnect();
+            } finally {
+                try{
+                    personB.disconnect();
+                } finally {
+                    try{
+                        personC.disconnect();
+                    } finally {
+                        done();
+                    }
+                }
+            }
+        });
+
+        it("should broadcast receivedMessage to all other users", function (done) {
+            var message = "a;kljghfnflpawyehfb;lnbkljhasdfjnblsaghde";
+            var videoTime = 95654;
+
+            var personBListen = function() {
+                return new Promise(function (acc) {
+                    personB.on("receivedMessage", function (data) {
+                        if (data.content === message && data.videoTime === videoTime){
+                            acc();
+                        }
+                    });
+                });
+            };
+
+            var personCListen = function() {
+                return new Promise(function (acc) {
+                    personC.on("receivedMessage", function (data) {
+                        if (data.content === message && data.videoTime === videoTime){
+                            acc();
+                        }
+                    });
+                });
+            };
+
+            var p = [personBListen(), personCListen()];
+            Promise.all(p).then(function () {
+                done();
+            });
+
+            personA.emit("sendMessage", {content:message, videoTime:videoTime});
+        });
+
+        it("should broadcast with timeStamp correct time", function (done) {
+            var message = "a;kljghfnflpawyehfb;lnbkljhasdfjnblsaghde";
+            var videoTime = 95654;
+            var millsecTolerance = 100;
+
+            var personBListen = function() {
+                return new Promise(function (acc) {
+                    personB.on("receivedMessage", function (data) {
+                        var now = new Date();
+                        if (Math.abs((new Date(data.timeStamp)) - now.getTime()) < millsecTolerance) {
+                            acc();
+                        }
+                    });
+                });
+            };
+
+            var personCListen = function() {
+                return new Promise(function (acc) {
+                    personC.on("receivedMessage", function (data) {
+                        var now = new Date();
+                        if (Math.abs((new Date(data.timeStamp)) - now.getTime()) < millsecTolerance) {
+                            acc();
+                        }
+                    });
+                });
+            };
+
+            var p = [personBListen(), personCListen()];
+            Promise.all(p).then(function () {
+                done();
+            });
+
+            personA.emit("sendMessage", {content:message, videoTime:videoTime});
+        });
+
+    });
 });

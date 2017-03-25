@@ -345,11 +345,24 @@ io.on("connection", function (client) {
     client.on("skipTo", function (data) {
         if (BLOCK_CONSOLE) console.log("Socket signal skipTo");
         if (!data) {
-            if (BLOCK_CONSOLE) console.log("No skipTO data given.");
+            if (BLOCK_CONSOLE) console.log("No skipTo data given.");
             return;
         }
         if (clientInRoom && data) {
             io.to(clientInRoom).emit("skipTo", data);
+        }
+    });
+
+    client.on("sendMessage", function (data) {
+        if (BLOCK_CONSOLE) console.log("Socket signal sendMessage");
+        if (!data) {
+            if (BLOCK_CONSOLE) console.log("No sendMessage data given.");
+            return;
+        }
+        if (clientInRoom && data) {
+            data.username = screenName;
+            data.timeStamp = new Date();
+            client.broadcast.to(clientInRoom).emit("receivedMessage", data);
         }
     });
 

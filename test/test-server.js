@@ -364,53 +364,53 @@ describe("All server testing", function () {
             personA.emit("pause", {pausedtime: "not_empty"});
         });
 
-        // it("should not broadcast in other rooms", function (done) {
-        //     /* Create new room */
-        //     var password2 = "password2";
-        //     var token1 = "token1_adgjnd";
-        //     var token2 = "token2_dajyhm";
-        //     var personOther;
-        //     var createRoomOther = function () {
-        //         return new Promise(function (acc) {
-        //             chai.request(server)
-        //                 .put("/api/createroom/")
-        //                 .send({roomPassword: password2, videoUrl: videoUrl})
-        //                 .end(function (res) {
-        //                     acc(res.body.roomname);
-        //                 });
-        //         });
-        //     };
+        xit("should not broadcast in other rooms", function (done) {
+            /* Create new room */
+            var password2 = "password2";
+            var token1 = "token1_adgjnd";
+            var token2 = "token2_dajyhm";
+            var personOther;
+            var createRoomOther = function () {
+                return new Promise(function (acc) {
+                    chai.request(server)
+                        .put("/api/createroom/")
+                        .send({roomPassword: password2, videoUrl: videoUrl})
+                        .end(function (res) {
+                            acc(res.body.roomname);
+                        });
+                });
+            };
 
-        //     var connectPersonOther = function (roomname){
-        //         return new Promise(function (acc) {
-        //             personOther = io.connect(socketUrl, options);
-        //             personOther.on("connect", function () {
-        //                 personOther.once("videoChange", function() {acc();})
-        //                     .emit("join", {roomname: roomname, roompass: password2, username: "personOther"});
-        //             });
-        //         });
-        //     };
+            var connectPersonOther = function (roomname){
+                return new Promise(function (acc) {
+                    personOther = io.connect(socketUrl, options);
+                    personOther.on("connect", function () {
+                        personOther.once("videoChange", function() {acc();})
+                            .emit("join", {roomname: roomname, roompass: password2, username: "personOther"});
+                    });
+                });
+            };
 
-        //     var personAListen = function() {
-        //         return new Promise(function (acc) {
-        //             personA.on("pause", function (data) {
-        //                 expect(token1).to.equal(data.pausedtime);
-        //                 done();
-        //             });
+            var personAListen = function() {
+                return new Promise(function (acc) {
+                    personA.on("pause", function (data) {
+                        expect(token1).to.equal(data.pausedtime);
+                        done();
+                    });
 
-        //             acc();
-        //         });
-        //     };
+                    acc();
+                });
+            };
 
-        //     createRoomOther().then(function (roomname) {
-        //         return connectPersonOther(roomname);
-        //     }).then(function () {
-        //         return personAListen();
-        //     }).then(function () {
-        //         personOther.emit("pause", {pausedtime: token2});
-        //         personA.emit("pause", {pausedtime: token1});
-        //     });
-        // });
+            createRoomOther().then(function (roomname) {
+                return connectPersonOther(roomname);
+            }).then(function () {
+                return personAListen();
+            }).then(function () {
+                personOther.emit("pause", {pausedtime: token2});
+                personA.emit("pause", {pausedtime: token1});
+            });
+        });
 
         it("should transmit time paused", function (done) {
             var pausedtime = "59:59";

@@ -68,7 +68,7 @@ class Layout extends React.Component {
                         </Col>
                         <Col sm={2}>
                             <div className="chat_container">
-                                <ChatBox />
+                                <ChatBox  socket={ socket } />
                             </div>
                         </Col>
                     </Row>

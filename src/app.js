@@ -34,7 +34,9 @@ if (process.env.NODE_ENV === "test") {
 
 var ROOM_NAME_LENGTH = 16;
 var USERNAME_CHARACTER_LIMIT = 16;
-/* Use dictionary for now until more research is done on databases */
+
+
+/* -----------  -------------*/
 var activeRooms = {};
 var verifyRoomAndPassword = function (roomname, roompass, callback) {
 
@@ -66,7 +68,7 @@ setInterval(function () {
     var key, currRoom;
     for (key in activeRooms) {
         currRoom = activeRooms[key];
-        if (currRoom.activeUsers !== []) {
+        if (currRoom.activeUsers.length !== 0) {
             activeRooms[key].isDead = 6;
         } else if (currRoom.isDead <= 0) {
             delete activeRooms[key];
@@ -134,6 +136,8 @@ var isUsernameUnique = function (roomname, username, callback) {
     }
 };
 
+/* -----------  -------------*/
+
 var youtubeUrlValidator = function(url) {
     /* regex taken from
     http://stackoverflow.com/questions/28735459/how-to-validate-youtube-url-in-client-side-in-text-box */
@@ -199,7 +203,10 @@ app.put("/api/createroom/", function (req, res, next) {
     }
 
     var new_room_name = crypto.randomBytes(ROOM_NAME_LENGTH)
-                        .toString("base64").replace(/\//g,'_').replace(/\+/g,'-');
+                        .toString("base64")
+                        .replace(/\//g,"_")
+                        .replace(/\+/g,"-")
+                        .replace(/\=/g,"");
 
     /* Add new room to db and set room password HERE*/
     addNewRoom(new_room_name, roomPassword, videoUrl, function (err) {
@@ -209,25 +216,6 @@ app.put("/api/createroom/", function (req, res, next) {
         }
 
         res.json({roomname: new_room_name});  // respond with roomname
-        return next();
-    });
-});
-
-/* Get Session */
-app.get("/api/session/", function (req, res, next) {
-    var roomname = req.body.roomname;
-    var roompass = req.body.password;
-    if (!roomname || !roompass) {
-        res.status(400).end("400 No room name or room password");
-        return next();
-    }
-
-    verifyRoomAndPassword(roomname, roompass, function (err) {
-        if (!err) {
-            res.json({roomname: roomname});
-        } else {
-            res.status(401).end("401 Unauthorized");
-        }
         return next();
     });
 });
@@ -312,8 +300,7 @@ io.on("connection", function (client) {
 
                 });
 
-                if (BLOCK_CONSOLE) console.log(client.rooms);
-            };  // END __privateCall function
+            };  // END _joinRoom function
 
             if (!username) {  // If joining room without given username, random name is generated.
                 screenName = "user_" + crypto.randomBytes(8).toString("base64");

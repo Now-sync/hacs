@@ -37,25 +37,6 @@ describe("All server testing", function () {
                     done();
                 });
         });
-
-        /* Comprehensive test */
-        it("should return a string as room name and room should exist", function (done) {
-            chai.request(server)
-                .put("/api/createroom/")
-                .send({roomPassword: "password", videoUrl: videoUrl})
-                .end(function (res) {
-                    chai.request(server)
-                        .get("/api/session/")
-                        .send({roomname: res.body.roomname, password: "password"})
-                        .end(function (res2) {
-                            res2.should.have.status(200);
-                            res2.body.roomname.should.equal(res.body.roomname);
-                            done();
-                    });
-            });
-        });
-
-
     });
 
     describe("Test Validator", function() {
@@ -871,10 +852,10 @@ describe("All server testing", function () {
 
         it("should receive skipTo after joining the room", function (done) {
             var personOther = io.connect(socketUrl, options);
-            var token = "kkfudnsm8g6b4dh"
+            var token = "kkfudnsm8g6b4dh";
             personA.on("requestTime", function () {
                 /* PersonA responds to requestTime */
-                personA.emit("currentTime", {currTime: token})
+                personA.emit("currentTime", {currTime: token});
             });
 
             personOther.on("connect", function () {

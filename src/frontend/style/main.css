@@ -59,8 +59,13 @@ iframe {
     color: orange;
 }
 
+.userChatOther {
+    color: red;
+}
+
 .timeStamp {
     color: grey;
+    font-size: 11px;
 }
 
 .me {

@@ -18,7 +18,7 @@ export class ChatBox extends React.Component {
         this.socket.on("receivedMessage", data => {
             this.props.updateChatBox(
                 <div className="bubble you">
-                    <div className="userChat">{ data.username + ": " }</div>
+                    <div className="userChatOther">{ data.username + ": " }</div>
                     <div className="contentChat">
                         { data.content }
                     </div>
@@ -40,7 +40,6 @@ export class ChatBox extends React.Component {
                     <div className="contentChat">
                         { this.props.content }
                     </div>
-                    <div className="timeStamp"></div>
                 </div>);
 
             this.socket.emit("sendMessage", {

@@ -870,10 +870,10 @@ describe("All server testing", function () {
 
         it("should receive skipTo after joining the room", function (done) {
             var personOther = io.connect(socketUrl, options);
-            var token = "kkfudnsm8g6b4dh"
+            var token = "kkfudnsm8g6b4dh";
             personA.on("requestTime", function () {
                 /* PersonA responds to requestTime */
-                personA.emit("currentTime", {currTime: token})
+                personA.emit("currentTime", {currTime: token});
             });
 
             personOther.on("connect", function () {

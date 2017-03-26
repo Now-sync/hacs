@@ -4,7 +4,7 @@ import VideoPlayer from "./videoPlayer";
 import Join from "./joinRoom";
 import ChatBox from "./chatBox";
 import { connect } from "react-redux";
-import { Col, Row } from "react-bootstrap";
+import { Col, Row} from "react-bootstrap";
 import io from "socket.io-client";
 require("../../style/main.css");
 
@@ -78,6 +78,9 @@ class Layout extends React.Component {
             <div>
                 <h1>NOW-SYNC</h1>
                 { result }
+                <footer>
+                    <a href='/credits.html'>credits</a>
+                </footer>
             </div>
         );
     }

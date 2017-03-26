@@ -29,13 +29,15 @@
 
     List of current possible signals the server might send
         - "joinError" -> Attemping to join a room has failed
-            Returns {roomname: <name of room attemped to join>, roompass: <password attempted to join with>}
+            Returns {roomname: <name of room attemped to join>,
+                     roompass: <password attempted to join with>}
         - "userLeft" -> A user has left the room you are in.
             Returns {username: <name of user that left>}
         - "userJoined" -> A user has joined the room you are in.
             Returns {username: <name of user that joined>}
         - "pause" -> A user in the room has signalled pause into the room.
-            Returns {pausedtime: <paused time>, username: <name of user that signalled pause>}
+            Returns {pausedtime: <paused time>, 
+                     username: <name of user that signalled pause>}
         - "play" -> A user in the room has signalled play into the room.
             Returns {username: <name of user that signalled the play>}
         - "videoChange" -> A user has changed the video of the room
@@ -46,6 +48,11 @@
             Requires a "currentTime" signal response
         - "skipTo" -> A user in the room has changed the video time position in the room.
             Returns {skipToTime: <time location to skipTo>} 
+        - "receivedMessage" -> A user in the room as made a comment/message
+            Returns {content: <the comment/message>,
+                     videoTime: <the video time where the message was made>,
+                     timeStamp: <the time date where the comment was made (a Date object parsible string)>,
+                     username: <the name of the user that made the message>}
 
     Note: [optional] sending no data will not cause problems.
 
@@ -64,6 +71,9 @@
             Send: {currTime: <time location of current video>}
         - "skipTo"
             Send: {skipToTime: <time location of current video>}
+        - "sendMessage"
+            Send: {content: <message content>,
+                   videoTime: <the time location of when the comment was made.>}
 
     JOIN ROOM
         - my_socket.emit("join", {roomname: "pjifpadfj", roompass: "hunter2"});
@@ -94,5 +104,9 @@
 
     Signal skipTo into Room
         - my_socket.emit("skipTo", {skipToTime: some_time});
-        Expect no response
+        Expect one response
             - "skipTo"
+
+    Signal sendMessage into Room
+        - my_socket.emit("sendMessage", {content: "Hello World!", videoTime: 123});
+        Expect no Response

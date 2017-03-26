@@ -20,6 +20,6 @@ iframe {
     transform: translateY(50%);
 }
 
-#invalid_room {
+h2 {
     text-align: center;
 }

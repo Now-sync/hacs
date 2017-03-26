@@ -231,7 +231,8 @@ describe("<VideoPlayer />", () => {
                 url: null,
                 videoId: null,
                 playing: false,
-                ready: false
+                ready: false,
+                badPassword: false
             };
 
             expected = {
@@ -239,7 +240,8 @@ describe("<VideoPlayer />", () => {
                 url: null,
                 videoId: null,
                 playing: false,
-                ready: false
+                ready: false,
+                badPassword: false
             };
         });
 

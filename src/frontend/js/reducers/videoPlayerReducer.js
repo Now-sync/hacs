@@ -16,7 +16,8 @@ const defaultState = {
     url: null,
     videoId: null,
     playing: false,
-    ready: false
+    ready: false,
+    badPassword: false
 };
 
 export default function reducer(state=defaultState, action) {
@@ -41,6 +42,10 @@ export default function reducer(state=defaultState, action) {
         case "setReady":
             return Object.assign({}, state, {
                 ready: true
+            });
+        case "wrongCredentials":
+            return Object.assign({}, state, {
+                badPassword: true
             });
         default:
             return state;

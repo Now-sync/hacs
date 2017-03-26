@@ -57,23 +57,27 @@ class Layout extends React.Component {
         }
     }
 
-    render () {
-        if (this.props.rooms.fetched){
-            result =
-                <Col sm={12}>
-                    <Row>
-                        <Col sm={10}>
-                            <div className="video_container">
-                                <VideoPlayer history={this.props.history} socket={ socket } room={this.props.rooms.room}/>
-                            </div>
-                        </Col>
-                        <Col sm={2}>
-                            <div className="chat_container">
-                                <ChatBox />
-                            </div>
-                        </Col>
-                    </Row>
-                </Col>;
+    render() {
+        if (this.props.rooms.fetched) {
+            if (!this.props.videoPlayerReducer.badPassword) {
+                result =
+                    <Col sm={12}>
+                        <Row>
+                            <Col sm={10}>
+                                <div className="video_container">
+                                    <VideoPlayer history={this.props.history} socket={ socket } room={this.props.rooms.room}/>
+                                </div>
+                            </Col>
+                            <Col sm={2}>
+                                <div className="chat_container">
+                                    <ChatBox />
+                                </div>
+                            </Col>
+                        </Row>
+                    </Col>;
+            } else {
+                result = <h2>Bad password</h2>;
+            }
         }
         return (
             <div>

@@ -27,3 +27,9 @@ export function setReady() {
         dispatch({type: "setReady"});
     };
 }
+
+export function wrongCredentials() {
+    return function (dispatch) {
+        dispatch({type: "wrongCredentials"});
+    }
+}

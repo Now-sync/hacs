@@ -45,7 +45,7 @@ export class Join extends React.Component {
 
     render () {
         if (this.props.rooms.roomStatus === "INVALID") {
-            return <h2 id="invalid_room">Invalid Room!</h2>;
+            return <h2>Invalid Room!</h2>;
         } else if (this.props.rooms.roomStatus === "VALID") {
             return (
                 <div>

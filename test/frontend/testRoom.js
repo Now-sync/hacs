@@ -19,7 +19,7 @@ describe("Room", () => {
         var wrapper;
 
         before(() => {
-            wrapper = shallow(<Room />);
+            wrapper = shallow(<Room rooms={{error: null}} />);
         });
 
         it("a form with two inputs and a button", () => {

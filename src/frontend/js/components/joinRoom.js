@@ -1,12 +1,12 @@
 import React from "react";
 import { connect } from "react-redux";
-import { Form, FormGroup, ControlLabel, Col, FormControl} from "react-bootstrap";
+import { Form, FormGroup, ControlLabel, Col, FormControl, Button } from "react-bootstrap";
 
 import {  joinRoom } from "../actions/roomActions";
 import { newURLInput, changeVideo } from "../actions/videoPlayerActions";
 require("../../style/main.css");
 
-var password;
+var username, password;
 
 export class Join extends React.Component {
     constructor(props) {
@@ -23,8 +23,12 @@ export class Join extends React.Component {
         var roomname = window.location.search;
         this.props.rooms.room.roomname = roomname.substring(roomname.indexOf("roomname")+9, roomname.length);
         this.props.rooms.password = password;
-
+        this.props.rooms.username = username;
         this.props.joinRoomActual(this.props.rooms.room.roomname);
+    }
+
+    changeUsername = e => {
+        username = e.target.value;
     }
 
     render () {
@@ -32,13 +36,28 @@ export class Join extends React.Component {
             <div>
                 <Col smOffset={4} sm={4} className="create_room_container" >
                     <Form horizontal onSubmit={this.joinRoom}>
-                        <FormGroup controlId="formHorizontalVideoChange">
+                        <FormGroup>
                             <Col componentClass={ControlLabel} sm={2}>
-                                Password
+                                Custom Username
                             </Col>
                             <Col sm={10}>
-                                <FormControl type="password" placeholder="Press Enter To Join Room" onChange={this.handlePassword}/>
+                                <FormControl type="text" placeholder="Username" onChange={this.changeUsername}/>
                             </Col>
+                        </FormGroup>
+                        <FormGroup controlId="formHorizontalVideoChange">
+                            <Col componentClass={ControlLabel} sm={2}>
+                                Room Password
+                            </Col>
+                            <Col sm={10}>
+                                <FormControl type="password" placeholder="Password" onChange={this.handlePassword}/>
+                            </Col>
+                        </FormGroup>
+                        <FormGroup>
+                          <Col smOffset={2} sm={10}>
+                            <Button bsStyle="primary" type="submit">
+                              Create Room
+                            </Button>
+                          </Col>
                         </FormGroup>
                     </Form>
                 </Col>

@@ -299,7 +299,7 @@ io.on("connection", function (client) {
 
                 });
 
-            }  // END __privateCall function
+            }  // END _joinRoom function
 
             if (!username) {  // If joining room without given username, random name is generated.
                 screenName = "user_" + crypto.randomBytes(8).toString("base64");

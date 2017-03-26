@@ -55,6 +55,14 @@ iframe {
     width:  20px;
 }
 
+.userChat {
+    color: orange;
+}
+
+.timeStamp {
+    color: grey;
+}
+
 .me {
     background-color: #AFEEEE;
     float: left;

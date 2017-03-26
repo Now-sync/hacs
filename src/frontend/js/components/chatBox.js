@@ -18,7 +18,11 @@ export class ChatBox extends React.Component {
         this.socket.on("receivedMessage", data => {
             this.props.updateChatBox(
                 <div className="bubble you">
-                    { data.content }
+                    <div className="userChat">{ data.username + ": " }</div>
+                    <div className="contentChat">
+                        { data.content }
+                    </div>
+                    <div className="timeStamp">{ data.timeStamp }</div>
                 </div>
             );
         });
@@ -27,14 +31,22 @@ export class ChatBox extends React.Component {
     handleSubmit = e => {
         e.preventDefault();
         e.target.reset();
+
         if (this.props.content.length !== 0){
             this.props.updateChatBox(
                 <div className="bubble me">
-                    { this.props.content }
+                    <div className="userChat">Me: </div>
+                    <div className="videoTime"></div>
+                    <div className="contentChat">
+                        { this.props.content }
+                    </div>
+                    <div className="timeStamp"></div>
                 </div>);
+
             this.socket.emit("sendMessage", {
                 content: this.props.content
             });
+
             this.props.enterMessage("");
         }
 

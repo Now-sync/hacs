@@ -312,7 +312,7 @@ io.on("connection", function (client) {
                 });
 
                 if (BLOCK_CONSOLE) console.log(client.rooms);
-            }  // END __privateCall function
+            };  // END __privateCall function
 
             if (!username) {  // If joining room without given username, random name is generated.
                 screenName = "user_" + crypto.randomBytes(8).toString("base64");
@@ -330,7 +330,7 @@ io.on("connection", function (client) {
                         screenName = username + "_" + crypto.randomBytes(6).toString("base64");
                     }
                     _joinRoom();
-                }); 
+                });
             }
         });
 

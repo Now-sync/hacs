@@ -31,5 +31,5 @@ export function setReady() {
 export function wrongCredentials() {
     return function (dispatch) {
         dispatch({type: "wrongCredentials"});
-    }
+    };
 }

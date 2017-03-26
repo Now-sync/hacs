@@ -22,7 +22,7 @@ export class ChatBox extends React.Component {
                     <div className="contentChat">
                         { data.content }
                     </div>
-                    <div className="timeStamp">{ data.timeStamp }</div>
+                    <div className="timeStamp">{ new Date(data.timeStamp).toLocaleString() }</div>
                 </div>
             );
         });
@@ -36,7 +36,6 @@ export class ChatBox extends React.Component {
             this.props.updateChatBox(
                 <div className="bubble me">
                     <div className="userChat">Me: </div>
-                    <div className="videoTime"></div>
                     <div className="contentChat">
                         { this.props.content }
                     </div>

@@ -311,7 +311,6 @@ io.on("connection", function (client) {
 
                 });
 
-                if (BLOCK_CONSOLE) console.log(client.rooms);
             }  // END __privateCall function
 
             if (!username) {  // If joining room without given username, random name is generated.

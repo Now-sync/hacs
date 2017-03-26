@@ -45,11 +45,6 @@ export class VideoPlayer extends React.Component {
         this.socket.on("skipTo", data => {
             this.player.seekTo(data.skipToTime, true);
         });
-
-        this.socket.on("joinError", () => {
-            console.log('join error');
-            this.props.wrongCredentials();
-        });
     }
 
     handleSubmit = e => {
@@ -137,8 +132,7 @@ VideoPlayer.propTypes = {
     history: React.PropTypes.object,
     room: React.PropTypes.object,
     changeVideoThenEmit: React.PropTypes.func,
-    setReady: React.PropTypes.func,
-    wrongCredentials: React.PropTypes.func
+    setReady: React.PropTypes.func
 };
 
 const mapDispatchToProps = dispatch => {
@@ -147,8 +141,7 @@ const mapDispatchToProps = dispatch => {
         newURLInput: url => dispatch(actions.newURLInput(url)),
         play: () => dispatch(actions.play()),
         pause: () => dispatch(actions.pause()),
-        setReady: () => dispatch(actions.setReady()),
-        wrongCredentials: () => dispatch(actions.wrongCredentials())
+        setReady: () => dispatch(actions.setReady())
     };
 };
 

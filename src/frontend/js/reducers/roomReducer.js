@@ -6,7 +6,8 @@ export default function reducer(state={
     password: null,
     fetched: false,
     error: null,
-    roomStatus: "FETCHING"
+    roomStatus: "FETCHING",
+    badPassword: false
     }, action) {
 
     switch (action.type) {
@@ -31,6 +32,11 @@ export default function reducer(state={
         case "UpdateRoomStatus": {
             return Object.assign({}, state, {
                 roomStatus: action.status
+            });
+        }
+        case "wrongCredentials": {
+            return Object.assign({}, state, {
+                badPassword: true
             });
         }
         default:

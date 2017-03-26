@@ -8,6 +8,7 @@ import { Col, Row } from "react-bootstrap";
 import io from "socket.io-client";
 require("../../style/main.css");
 
+import { wrongCredentials } from "../actions/roomActions";
 import { newURLInput, changeVideo } from "../actions/videoPlayerActions";
 
 
@@ -32,6 +33,13 @@ class Layout extends React.Component {
                 </div>;
         }
     }
+
+    componentDidMount() {
+        socket.on("joinError", () => {
+            this.props.wrongCredentials();
+        })
+    }
+
     componentWillReceiveProps(nextProps){
         if (!this.props.videoPlayerReducer.ready && nextProps.videoPlayerReducer.ready){
             socket.connect();
@@ -59,7 +67,7 @@ class Layout extends React.Component {
 
     render() {
         if (this.props.rooms.fetched) {
-            if (!this.props.videoPlayerReducer.badPassword) {
+            if (!this.props.rooms.badPassword) {
                 result =
                     <Col sm={12}>
                         <Row>
@@ -76,7 +84,11 @@ class Layout extends React.Component {
                         </Row>
                     </Col>;
             } else {
-                result = <h2>Bad password</h2>;
+                result = (
+                    <div>
+                        <Join />
+                    </div>
+                );
             }
         }
         return (
@@ -95,14 +107,16 @@ Layout.propTypes = {
     history: React.PropTypes.object,
     location: React.PropTypes.object,
     newURLInput: React.PropTypes.func,
-    changeVideo: React.PropTypes.func
+    changeVideo: React.PropTypes.func,
+    wrongCredentials: React.PropTypes.func
 };
 
 
 const mapDispatchToProps = (dispatch) => {
     return {
         newURLInput: url => dispatch(newURLInput(url)),
-        changeVideo: url => dispatch(changeVideo(url))
+        changeVideo: url => dispatch(changeVideo(url)),
+        wrongCredentials: () => dispatch(wrongCredentials())
     };
 };
 

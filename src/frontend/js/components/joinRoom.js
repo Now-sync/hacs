@@ -36,7 +36,9 @@ export class Join extends React.Component {
         this.props.rooms.room.roomname = roomname.substring(roomname.indexOf("roomname")+9, roomname.length);
         this.props.rooms.password = password;
         this.props.rooms.username = username;
+        this.props.rooms.badPassword = false;
         this.props.joinRoomActual(this.props.rooms.room.roomname);
+        // TODO: CAN PROBABLY GET RID OF ALL THE JANKNESS WITH ROOM JOINING BY EMITTING JOIN IN HERE...
     }
 
     changeUsername = e => {
@@ -44,6 +46,7 @@ export class Join extends React.Component {
     }
 
     render () {
+        var badPassword = this.props.rooms.badPassword ? <h2>Bad Password!</h2> : null;
         if (this.props.rooms.roomStatus === "INVALID") {
             return <h2>Invalid Room!</h2>;
         } else if (this.props.rooms.roomStatus === "VALID") {
@@ -75,6 +78,7 @@ export class Join extends React.Component {
                             </Col>
                             </FormGroup>
                         </Form>
+                        { badPassword }
                     </Col>
                 </div>
             );
@@ -87,7 +91,8 @@ export class Join extends React.Component {
 Join.propTypes = {
     rooms: React.PropTypes.object,
     joinRoomActual: React.PropTypes.func,
-    checkRoomExistence: React.PropTypes.func
+    checkRoomExistence: React.PropTypes.func,
+    badPassword: React.PropTypes.bool
 };
 const mapDispatchToProps = (dispatch) => {
     return {

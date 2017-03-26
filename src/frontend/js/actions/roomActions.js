@@ -40,3 +40,9 @@ export function checkRoomExistence(roomName) {
         });
     };
 }
+
+export function wrongCredentials() {
+    return function (dispatch) {
+        dispatch({type: "wrongCredentials"});
+    };
+}

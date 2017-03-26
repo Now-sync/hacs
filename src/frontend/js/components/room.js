@@ -26,7 +26,7 @@ export class Room extends React.Component {
 
     render () {
         // the server only sends back "Validation Error", and no other errors will happen here anyway
-        var error = this.props.rooms.error ? <h2>Invalid URL</h2> : null;
+        var error = this.props.rooms.error ? <h2>Invalid YouTube URL</h2> : null;
         return (
             <div>
                 <Col smOffset={4} sm={4} className="create_room_container" >

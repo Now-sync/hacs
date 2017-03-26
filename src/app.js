@@ -68,7 +68,7 @@ setInterval(function () {
     var key, currRoom;
     for (key in activeRooms) {
         currRoom = activeRooms[key];
-        if (currRoom.activeUsers !== []) {
+        if (currRoom.activeUsers.length !== 0) {
             activeRooms[key].isDead = 6;
         } else if (currRoom.isDead <= 0) {
             delete activeRooms[key];

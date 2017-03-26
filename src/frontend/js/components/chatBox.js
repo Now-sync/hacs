@@ -4,8 +4,6 @@ import { Form, FormGroup, Col, FormControl} from "react-bootstrap";
 
 import * as actions from "../actions/chatBoxActions";
 
-var result = [];
-
 export class ChatBox extends React.Component {
     constructor(props) {
         super(props);
@@ -37,7 +35,9 @@ export class ChatBox extends React.Component {
             this.socket.emit("sendMessage", {
                 content: this.props.content
             });
+            this.props.enterMessage("");
         }
+
     }
 
 

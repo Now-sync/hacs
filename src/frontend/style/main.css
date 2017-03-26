@@ -26,6 +26,7 @@ iframe {
     border:1px solid black;
     display: flex;
     flex-direction: column;
+    height: 70vmin;
 
 }
 
@@ -55,11 +56,13 @@ iframe {
 }
 
 .me {
+    background-color: #AFEEEE;
     float: left;
     margin: 5px 45px 5px 20px;
 }
 
 .me::before {
+    background-color: #AFEEEE;
     box-shadow: -2px 2px 2px 0 rgba( 178, 178, 178, .4 );
     left: -9px;
 }

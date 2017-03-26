@@ -291,6 +291,7 @@ io.on("connection", function (client) {
                             return;
                         }
 
+                        client.emit("joinSuccess");
                         io.to(clientInRoom).emit("userJoined", {username: screenName});
 
                         /* When user has joined the room. Send the Url of the video in the room */

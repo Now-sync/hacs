@@ -68,7 +68,7 @@ setInterval(function () {
     var key, currRoom;
     for (key in activeRooms) {
         currRoom = activeRooms[key];
-        if (currRoom.activeUsers !== []) {
+        if (currRoom.activeUsers.length !== 0) {
             activeRooms[key].isDead = 6;
         } else if (currRoom.isDead <= 0) {
             delete activeRooms[key];
@@ -299,7 +299,7 @@ io.on("connection", function (client) {
 
                 });
 
-            }  // END __privateCall function
+            }  // END _joinRoom function
 
             if (!username) {  // If joining room without given username, random name is generated.
                 screenName = "user_" + crypto.randomBytes(8).toString("base64");

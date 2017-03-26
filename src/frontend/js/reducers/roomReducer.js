@@ -3,6 +3,7 @@ export default function reducer(state={
         roomname: null,
         users: null,
     },
+    username: null,
     password: null,
     fetched: false,
     error: null,
@@ -44,6 +45,11 @@ export default function reducer(state={
         case "joined": {
             return Object.assign({}, state, {
                 joined: true
+            });
+        }
+        case "changeUsername": {
+            return Object.assign({}, state, {
+                username: action.username
             });
         }
         default:

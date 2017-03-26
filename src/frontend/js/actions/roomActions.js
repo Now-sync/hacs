@@ -52,3 +52,9 @@ export function joined() {
         dispatch({type: "joined"});
     };
 }
+
+export function changeUsername(username) {
+    return function (dispatch) {
+        dispatch({type: "changeUsername", username: username});
+    };
+}

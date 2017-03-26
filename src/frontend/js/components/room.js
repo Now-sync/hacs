@@ -23,7 +23,6 @@ export class Room extends React.Component {
         this.props.createRoom(url, password);
     }
 
-
     render () {
         // the server only sends back "Validation Error", and no other errors will happen here anyway
         var error = this.props.rooms.error ? <h2>Invalid YouTube URL</h2> : null;

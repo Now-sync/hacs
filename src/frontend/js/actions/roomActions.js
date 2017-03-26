@@ -46,3 +46,9 @@ export function wrongCredentials() {
         dispatch({type: "wrongCredentials"});
     };
 }
+
+export function joined() {
+    return function (dispatch) {
+        dispatch({type: "joined"});
+    };
+}

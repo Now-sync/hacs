@@ -38,7 +38,7 @@ export class Join extends React.Component {
         this.props.rooms.username = username;
         this.props.rooms.badPassword = false;
         this.props.joinRoomActual(this.props.rooms.room.roomname);
-        // TODO: CAN PROBABLY GET RID OF ALL THE JANKNESS WITH ROOM JOINING BY EMITTING JOIN IN HERE...
+        this.props.connectSocket();
     }
 
     changeUsername = e => {
@@ -92,7 +92,8 @@ Join.propTypes = {
     rooms: React.PropTypes.object,
     joinRoomActual: React.PropTypes.func,
     checkRoomExistence: React.PropTypes.func,
-    badPassword: React.PropTypes.bool
+    badPassword: React.PropTypes.bool,
+    connectSocket: React.PropTypes.func
 };
 const mapDispatchToProps = (dispatch) => {
     return {

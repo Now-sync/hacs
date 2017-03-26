@@ -7,7 +7,8 @@ export default function reducer(state={
     fetched: false,
     error: null,
     roomStatus: "FETCHING",
-    badPassword: false
+    badPassword: false,
+    joined: false
     }, action) {
 
     switch (action.type) {
@@ -15,7 +16,8 @@ export default function reducer(state={
             return Object.assign({}, state, {
                 fetched: true,
                 room: action.payload,
-                password: action.pass
+                password: action.pass,
+                roomStatus: "FETCHED"
             });
         }
         case "CreateRoomError": {
@@ -37,6 +39,11 @@ export default function reducer(state={
         case "wrongCredentials": {
             return Object.assign({}, state, {
                 badPassword: true
+            });
+        }
+        case "joined": {
+            return Object.assign({}, state, {
+                joined: true
             });
         }
         default:

@@ -213,25 +213,6 @@ app.put("/api/createroom/", function (req, res, next) {
     });
 });
 
-/* Get Session */
-app.get("/api/session/", function (req, res, next) {
-    var roomname = req.body.roomname;
-    var roompass = req.body.password;
-    if (!roomname || !roompass) {
-        res.status(400).end("400 No room name or room password");
-        return next();
-    }
-
-    verifyRoomAndPassword(roomname, roompass, function (err) {
-        if (!err) {
-            res.json({roomname: roomname});
-        } else {
-            res.status(401).end("401 Unauthorized");
-        }
-        return next();
-    });
-});
-
 app.get("/api/room/:room_id/", function (req, res) {
     var roomId = req.params.room_id;
 

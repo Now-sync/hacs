@@ -41,7 +41,6 @@ class Layout extends React.Component {
         });
 
         socket.on("joinSuccess", () => {
-            alert("I AM IN");
             this.props.joined();
         });
     }

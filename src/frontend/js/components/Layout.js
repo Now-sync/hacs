@@ -8,7 +8,7 @@ import { Col, Row} from "react-bootstrap";
 import io from "socket.io-client";
 require("../../style/main.css");
 
-import { newURLInput, changeVideo, requested } from "../actions/videoPlayerActions";
+import { newURLInput, changeVideo } from "../actions/videoPlayerActions";
 
 
 var socket = io();
@@ -93,16 +93,14 @@ Layout.propTypes = {
     history: React.PropTypes.object,
     location: React.PropTypes.object,
     newURLInput: React.PropTypes.func,
-    changeVideo: React.PropTypes.func,
-    requested: React.PropTypes.func
+    changeVideo: React.PropTypes.func
 };
 
 
 const mapDispatchToProps = (dispatch) => {
     return {
         newURLInput: url => dispatch(newURLInput(url)),
-        changeVideo: url => dispatch(changeVideo(url)),
-        requested: value => dispatch(requested(value))
+        changeVideo: url => dispatch(changeVideo(url))
     };
 };
 

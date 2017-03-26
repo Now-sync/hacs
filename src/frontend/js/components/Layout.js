@@ -8,7 +8,7 @@ import { Col, Row } from "react-bootstrap";
 import io from "socket.io-client";
 require("../../style/main.css");
 
-import { newURLInput, changeVideo } from "../actions/videoPlayerActions";
+import { newURLInput, changeVideo, requested } from "../actions/videoPlayerActions";
 
 
 var socket = io();
@@ -17,7 +17,7 @@ var result;
 
 class Layout extends React.Component {
 
-    componentWillMount(){
+    componentWillMount = () => {
         if (window.location.search === "" ){
             this.props.history.push("/");
             result =
@@ -32,7 +32,7 @@ class Layout extends React.Component {
                 </div>;
         }
     }
-    componentWillReceiveProps(nextProps){
+    componentWillReceiveProps = (nextProps) => {
         if (!this.props.videoPlayerReducer.ready && nextProps.videoPlayerReducer.ready){
             socket.connect();
 
@@ -43,7 +43,7 @@ class Layout extends React.Component {
         }
     }
 
-    componentDidUpdate(){
+    componentDidUpdate = () => {
         if(this.props.rooms.fetched && this.props.videoPlayerReducer.inputURL === null) {
 
             socket.on("videoChange", (data) => {
@@ -63,12 +63,12 @@ class Layout extends React.Component {
                     <Row>
                         <Col sm={10}>
                             <div className="video_container">
-                                <VideoPlayer history={this.props.history} socket={ socket } room={this.props.rooms.room}/>
+                                <VideoPlayer ref={(video) => { this.video = video; }} history={ this.props.history } socket={ socket } room={ this.props.rooms.room }/>
                             </div>
                         </Col>
                         <Col sm={2}>
                             <div className="chat_container">
-                                <ChatBox  socket={ socket } />
+                                <ChatBox  socket={ socket } video={ this.props.videoPlayerReducer }/>
                             </div>
                         </Col>
                     </Row>
@@ -90,14 +90,16 @@ Layout.propTypes = {
     history: React.PropTypes.object,
     location: React.PropTypes.object,
     newURLInput: React.PropTypes.func,
-    changeVideo: React.PropTypes.func
+    changeVideo: React.PropTypes.func,
+    requested: React.PropTypes.func
 };
 
 
 const mapDispatchToProps = (dispatch) => {
     return {
         newURLInput: url => dispatch(newURLInput(url)),
-        changeVideo: url => dispatch(changeVideo(url))
+        changeVideo: url => dispatch(changeVideo(url)),
+        requested: value => dispatch(requested(value))
     };
 };
 

@@ -16,7 +16,6 @@ export class ChatBox extends React.Component {
 
     componentDidMount = () => {
         this.socket.on("receivedMessage", data => {
-            this.props.username = data.username;
             this.props.updateChatBox(
                 <div className="bubble you">
                     <div className="userChatOther">{ data.username + ": " }</div>
@@ -85,8 +84,7 @@ ChatBox.propTypes = {
     enterMessage: React.PropTypes.func,
     content: React.PropTypes.string,
     updateChatBox: React.PropTypes.func,
-    messages: React.PropTypes.array,
-    username: React.PropTypes.string
+    messages: React.PropTypes.array
 };
 
 const mapDispatchToProps = dispatch => {

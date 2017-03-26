@@ -44,6 +44,7 @@ export class VideoPlayer extends React.Component {
         this.socket.on("skipTo", data => {
             this.player.seekTo(data.skipToTime, true);
         });
+
     }
 
     handleSubmit = e => {

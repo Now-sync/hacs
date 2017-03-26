@@ -55,7 +55,7 @@ export class Join extends React.Component {
                         <FormGroup>
                           <Col smOffset={2} sm={10}>
                             <Button bsStyle="primary" type="submit">
-                              Create Room
+                              Join Room
                             </Button>
                           </Col>
                         </FormGroup>

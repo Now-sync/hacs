@@ -10,7 +10,6 @@ var dontpause = false;
 export class VideoPlayer extends React.Component {
     constructor(props) {
         super(props);
-        // this.props.history.push("/rooms");
         // for easier unit test stubbing
         this.socket = {};
         this.player = {};
@@ -45,6 +44,7 @@ export class VideoPlayer extends React.Component {
         this.socket.on("skipTo", data => {
             this.player.seekTo(data.skipToTime, true);
         });
+
     }
 
     handleSubmit = e => {

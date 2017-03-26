@@ -4,7 +4,7 @@ import VideoPlayer from "./videoPlayer";
 import Join from "./joinRoom";
 import ChatBox from "./chatBox";
 import { connect } from "react-redux";
-import { Col, Row } from "react-bootstrap";
+import { Col, Row} from "react-bootstrap";
 import io from "socket.io-client";
 require("../../style/main.css");
 
@@ -17,7 +17,7 @@ var result;
 
 class Layout extends React.Component {
 
-    componentWillMount(){
+    componentWillMount = () => {
         if (window.location.search === "" ){
             this.props.history.push("/");
             result =
@@ -32,7 +32,7 @@ class Layout extends React.Component {
                 </div>;
         }
     }
-    componentWillReceiveProps(nextProps){
+    componentWillReceiveProps = (nextProps) => {
         if (!this.props.videoPlayerReducer.ready && nextProps.videoPlayerReducer.ready){
             socket.connect();
 
@@ -44,7 +44,7 @@ class Layout extends React.Component {
         }
     }
 
-    componentDidUpdate(){
+    componentDidUpdate = () => {
         if(this.props.rooms.fetched && this.props.videoPlayerReducer.inputURL === null) {
 
             socket.on("videoChange", (data) => {
@@ -64,12 +64,12 @@ class Layout extends React.Component {
                     <Row>
                         <Col sm={10}>
                             <div className="video_container">
-                                <VideoPlayer history={this.props.history} socket={ socket } room={this.props.rooms.room}/>
+                                <VideoPlayer ref={(video) => { this.video = video; }} history={ this.props.history } socket={ socket } room={ this.props.rooms.room }/>
                             </div>
                         </Col>
                         <Col sm={2}>
                             <div className="chat_container">
-                                <ChatBox />
+                                <ChatBox  socket={ socket } video={ this.props.videoPlayerReducer }/>
                             </div>
                         </Col>
                     </Row>
@@ -79,6 +79,9 @@ class Layout extends React.Component {
             <div>
                 <h1>NOW-SYNC</h1>
                 { result }
+                <footer>
+                    <a href='/credits.html'>credits</a>
+                </footer>
             </div>
         );
     }

@@ -34,7 +34,9 @@ if (process.env.NODE_ENV === "test") {
 
 var ROOM_NAME_LENGTH = 16;
 var USERNAME_CHARACTER_LIMIT = 16;
-/* Use dictionary for now until more research is done on databases */
+
+
+/* -----------  -------------*/
 var activeRooms = {};
 var verifyRoomAndPassword = function (roomname, roompass, callback) {
 
@@ -134,6 +136,8 @@ var isUsernameUnique = function (roomname, username, callback) {
     }
 };
 
+/* -----------  -------------*/
+
 var youtubeUrlValidator = function(url) {
     /* regex taken from
     http://stackoverflow.com/questions/28735459/how-to-validate-youtube-url-in-client-side-in-text-box */
@@ -199,7 +203,10 @@ app.put("/api/createroom/", function (req, res, next) {
     }
 
     var new_room_name = crypto.randomBytes(ROOM_NAME_LENGTH)
-                        .toString("base64").replace(/\//g,'_').replace(/\+/g,'-');
+                        .toString("base64")
+                        .replace(/\//g,"_")
+                        .replace(/\+/g,"-")
+                        .replace(/\=/g,"");
 
     /* Add new room to db and set room password HERE*/
     addNewRoom(new_room_name, roomPassword, videoUrl, function (err) {

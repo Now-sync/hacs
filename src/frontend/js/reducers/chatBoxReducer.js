@@ -1,6 +1,6 @@
 const defaultState = {
     content: null,
-    username: null,
+    username: "",
     videoTime: null,
     timeStamp: null,
     messages: []

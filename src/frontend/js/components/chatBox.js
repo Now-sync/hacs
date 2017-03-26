@@ -16,6 +16,7 @@ export class ChatBox extends React.Component {
 
     componentDidMount = () => {
         this.socket.on("receivedMessage", data => {
+            this.props.username = data.username;
             this.props.updateChatBox(
                 <div className="bubble you">
                     <div className="userChatOther">{ data.username + ": " }</div>
@@ -27,6 +28,7 @@ export class ChatBox extends React.Component {
             );
         });
     }
+
 
     handleSubmit = e => {
         e.preventDefault();
@@ -55,10 +57,15 @@ export class ChatBox extends React.Component {
         this.props.enterMessage(e.target.value);
     }
     render() {
+
+        const listMessages = this.props.messages.map(message =>
+            <div key= {this.props.messages.indexOf(message)}>{ message }</div>
+        );
+
         return (
             <div className="chatBox">
                 <div className="message_display">
-                    { this.props.messages }
+                    { listMessages }
                 </div>
                 <div className="enterMessage">
                     <Form horizontal onSubmit={ this.handleSubmit }>
@@ -78,7 +85,8 @@ ChatBox.propTypes = {
     enterMessage: React.PropTypes.func,
     content: React.PropTypes.string,
     updateChatBox: React.PropTypes.func,
-    messages: React.PropTypes.array
+    messages: React.PropTypes.array,
+    username: React.PropTypes.string
 };
 
 const mapDispatchToProps = dispatch => {

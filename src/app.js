@@ -361,7 +361,7 @@ io.on("connection", function (client) {
         }
         if (clientInRoom && data) {
             data.username = screenName;
-            data.timeStamp = new Date(Date.now()).toLocaleString();
+            data.timeStamp = new Date();
             client.broadcast.to(clientInRoom).emit("receivedMessage", data);
         }
     });

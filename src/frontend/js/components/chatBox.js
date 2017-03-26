@@ -22,7 +22,7 @@ export class ChatBox extends React.Component {
                     <div className="contentChat">
                         { data.content }
                     </div>
-                    <div className="timeStamp">{ data.timeStamp }</div>
+                    <div className="timeStamp">{ new Date(data.timeStamp).toLocaleString() }</div>
                 </div>
             );
         });
@@ -31,6 +31,10 @@ export class ChatBox extends React.Component {
     handleSubmit = e => {
         e.preventDefault();
         e.target.reset();
+
+        this.props.video.requested = true;
+        var currentTime = this.props.video.playingTime;
+        console.log(currentTime, " current Time is ");
 
         if (this.props.content.length !== 0){
             this.props.updateChatBox(
@@ -79,7 +83,8 @@ ChatBox.propTypes = {
     enterMessage: React.PropTypes.func,
     content: React.PropTypes.string,
     updateChatBox: React.PropTypes.func,
-    messages: React.PropTypes.array
+    messages: React.PropTypes.array,
+    video: React.PropTypes.object
 };
 
 const mapDispatchToProps = dispatch => {

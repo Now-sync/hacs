@@ -16,7 +16,9 @@ const defaultState = {
     url: null,
     videoId: null,
     playing: false,
-    ready: false
+    ready: false,
+    requested: false,
+    playingTime: null
 };
 
 export default function reducer(state=defaultState, action) {
@@ -41,6 +43,14 @@ export default function reducer(state=defaultState, action) {
         case "setReady":
             return Object.assign({}, state, {
                 ready: true
+            });
+        case "playingTime":
+            return Object.assign({}, state, {
+                playingTime: action.payload
+            });
+        case "requested":
+            return Object.assign({}, state, {
+                requested: action.payload
             });
         default:
             return state;

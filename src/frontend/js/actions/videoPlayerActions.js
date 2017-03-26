@@ -27,3 +27,15 @@ export function setReady() {
         dispatch({type: "setReady"});
     };
 }
+
+export function playingTime(currentTime) {
+    return function (dispatch) {
+        dispatch({type: "playingTime", payload: currentTime});
+    };
+}
+
+export function requested(value) {
+    return function (dispatch) {
+        dispatch({type: "requested", payload: value});
+    };
+}

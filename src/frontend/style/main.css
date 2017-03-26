@@ -19,3 +19,7 @@ iframe {
 .create_room_container {
     transform: translateY(50%);
 }
+
+#invalid_room {
+    text-align: center;
+}

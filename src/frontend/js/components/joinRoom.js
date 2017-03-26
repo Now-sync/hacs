@@ -2,15 +2,27 @@ import React from "react";
 import { connect } from "react-redux";
 import { Form, FormGroup, ControlLabel, Col, FormControl, Button } from "react-bootstrap";
 
-import {  joinRoom } from "../actions/roomActions";
+import { joinRoom, checkRoomExistence } from "../actions/roomActions";
 import { newURLInput, changeVideo } from "../actions/videoPlayerActions";
 require("../../style/main.css");
 
 var username, password;
 
+// http://stackoverflow.com/questions/9870512/how-to-obtaining-the-querystring-from-the-current-url-with-javascript
+function getQueryStringValue(key) {
+    return decodeURIComponent(window.location.search.replace(new RegExp("^(?:.*[&\\?]" +
+    encodeURIComponent(key).replace(/[\.\+\*]/g, "\\$&") +
+    "(?:\\=([^&]*))?)?.*$", "i"), "$1"));
+}
+
 export class Join extends React.Component {
     constructor(props) {
         super(props);
+    }
+
+    componentWillMount() {
+        var roomName = getQueryStringValue("roomname");
+        this.props.checkRoomExistence(roomName);
     }
 
     handlePassword = e => {
@@ -32,49 +44,57 @@ export class Join extends React.Component {
     }
 
     render () {
-        return (
-            <div>
-                <Col smOffset={4} sm={4} className="create_room_container" >
-                    <Form horizontal onSubmit={this.joinRoom}>
-                        <FormGroup>
-                            <Col componentClass={ControlLabel} sm={2}>
-                                Custom Username
+        if (this.props.rooms.roomStatus === "INVALID") {
+            return <h2 id="invalid_room">Invalid Room!</h2>;
+        } else if (this.props.rooms.roomStatus === "VALID") {
+            return (
+                <div>
+                    <Col smOffset={4} sm={4} className="create_room_container" >
+                        <Form horizontal onSubmit={this.joinRoom}>
+                            <FormGroup>
+                                <Col componentClass={ControlLabel} sm={2}>
+                                    Custom Username
+                                </Col>
+                                <Col sm={10}>
+                                    <FormControl type="text" placeholder="Username" onChange={this.changeUsername}/>
+                                </Col>
+                            </FormGroup>
+                            <FormGroup controlId="formHorizontalVideoChange">
+                                <Col componentClass={ControlLabel} sm={2}>
+                                    Room Password
+                                </Col>
+                                <Col sm={10}>
+                                    <FormControl type="password" placeholder="Password" onChange={this.handlePassword}/>
+                                </Col>
+                            </FormGroup>
+                            <FormGroup>
+                            <Col smOffset={2} sm={10}>
+                                <Button bsStyle="primary" type="submit">
+                                Create Room
+                                </Button>
                             </Col>
-                            <Col sm={10}>
-                                <FormControl type="text" placeholder="Username" onChange={this.changeUsername}/>
-                            </Col>
-                        </FormGroup>
-                        <FormGroup controlId="formHorizontalVideoChange">
-                            <Col componentClass={ControlLabel} sm={2}>
-                                Room Password
-                            </Col>
-                            <Col sm={10}>
-                                <FormControl type="password" placeholder="Password" onChange={this.handlePassword}/>
-                            </Col>
-                        </FormGroup>
-                        <FormGroup>
-                          <Col smOffset={2} sm={10}>
-                            <Button bsStyle="primary" type="submit">
-                              Create Room
-                            </Button>
-                          </Col>
-                        </FormGroup>
-                    </Form>
-                </Col>
-            </div>
-        );
+                            </FormGroup>
+                        </Form>
+                    </Col>
+                </div>
+            );
+        } else {
+            return <div></div>;
+        }
     }
 }
 
 Join.propTypes = {
     rooms: React.PropTypes.object,
-    joinRoomActual: React.PropTypes.func
+    joinRoomActual: React.PropTypes.func,
+    checkRoomExistence: React.PropTypes.func
 };
 const mapDispatchToProps = (dispatch) => {
     return {
         newURLInput: url => dispatch(newURLInput(url)),
         changeVideo: url => dispatch(changeVideo(url)),
-        joinRoomActual: roomName => dispatch(joinRoom(roomName))
+        joinRoomActual: roomName => dispatch(joinRoom(roomName)),
+        checkRoomExistence: roomName => dispatch(checkRoomExistence(roomName))
     };
 };
 

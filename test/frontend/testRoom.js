@@ -81,6 +81,7 @@ describe("Room", () => {
                 password: null,
                 fetched: false,
                 error: null,
+                roomStatus: "FETCHING"
             };
 
             expected = {
@@ -91,6 +92,7 @@ describe("Room", () => {
                 password: null,
                 fetched: false,
                 error: null,
+                roomStatus: "FETCHING"
             };
         });
 

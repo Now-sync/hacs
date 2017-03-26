@@ -26,3 +26,17 @@ export function joinRoom(roomName) {
         // });
     };
 }
+
+export function checkRoomExistence(roomName) {
+    return function(dispatch) {
+        axios.get(`/api/room/${roomName}`)
+        .then(response => {
+            if (response.status === 200) {
+                dispatch({type: "UpdateRoomStatus", status: "VALID"});
+            }
+        })
+        .catch(() => {
+            dispatch({type: "UpdateRoomStatus", status: "INVALID"});
+        });
+    };
+}

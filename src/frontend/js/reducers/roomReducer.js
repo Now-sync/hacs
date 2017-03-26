@@ -6,10 +6,11 @@ export default function reducer(state={
     password: null,
     fetched: false,
     error: null,
+    roomStatus: "FETCHING"
     }, action) {
 
-        switch (action.type) {
-            case "CreateRoom": {
+    switch (action.type) {
+        case "CreateRoom": {
             return Object.assign({}, state, {
                 fetched: true,
                 room: action.payload,
@@ -27,7 +28,12 @@ export default function reducer(state={
                 fetched: true
             });
         }
+        case "UpdateRoomStatus": {
+            return Object.assign({}, state, {
+                roomStatus: action.status
+            });
+        }
         default:
             return state;
-        }
+    }
 }

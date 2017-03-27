@@ -283,6 +283,11 @@ io.on("connection", function (client) {
                         client.emit("joinSuccess");
                         io.to(clientInRoom).emit("userJoined", {username: screenName});
 
+                        /* When user has joined the room. Send the Url of the video in the room */
+                        client.emit("videoChange", {
+                            videoUrl: roomData.videoUrl,
+                            username: null  // null because no user emitted videoChange signal
+                        });
                     });
 
                 });
@@ -312,12 +317,6 @@ io.on("connection", function (client) {
     });
 
     client.on("requestVideoInfo", function() {
-        /* When user has joined the room. Send the Url of the video in the room */
-        client.emit("videoChange", {
-            videoUrl: roomData.videoUrl,
-            username: null  // null because no user emitted videoChange signal
-        });
-
 
         /* Request current video time */
         io.in(clientInRoom).clients(function (err, clients) {

@@ -13,7 +13,6 @@
 
 
 # Final features:
-- More support for different video stream formats (e.g putlocker, vimeo)
 - Sync Scrubbing
 - Detect buffering and pause everyone else.
 - Realtime timestamped chat
@@ -33,4 +32,3 @@
 # Challenges:
 - learning all of those frameworks and tools
 - Web Sockets for realtime synchronization
-- Integrate multiple video platform APIs

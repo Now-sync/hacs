@@ -46,15 +46,6 @@ class Layout extends React.Component {
     }
 
     componentWillReceiveProps(nextProps){
-        // if (!this.props.videoPlayerReducer.ready && nextProps.videoPlayerReducer.ready){
-        //     socket.connect();
-
-        //     socket.emit("join",{
-        //         roomname: nextProps.rooms.room.roomname,
-        //         roompass: nextProps.rooms.password,
-        //         username: nextProps.rooms.username
-        //     });
-        // }
         if (!this.props.rooms.fetched && nextProps.rooms.fetched && !this.props.rooms.joiner) {
             tryToJoin = true;
         }

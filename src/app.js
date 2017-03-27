@@ -242,6 +242,7 @@ io.on("connection", function (client) {
     var screenName = null;
 
     client.on("join", function (data) {
+        if (BLOCK_CONSOLE) console.log("Socket signal join");
         var roomname = data.roomname;
         var roompass = data.roompass;
         var username = data.username;
@@ -259,7 +260,7 @@ io.on("connection", function (client) {
 
             /* This function is for readability. Simply used after username correction. */
             var _joinRoom = function () {
-                if (clientInRoom) {  // If already in a room, leave it.
+                if (clientInRoom && clientInRoom !== roomname) {  // If already in a room, leave it.
                     client.leave(clientInRoom, function () {
                         removeUser(clientInRoom, screenName);
                         io.to(clientInRoom).emit("userLeft", {username: screenName});
@@ -279,27 +280,19 @@ io.on("connection", function (client) {
                             return;
                         }
 
+                        client.emit("joinSuccess");
                         io.to(clientInRoom).emit("userJoined", {username: screenName});
 
                         /* When user has joined the room. Send the Url of the video in the room */
-                        // Note: skipTo is null until there is away to track video location.
                         client.emit("videoChange", {
                             videoUrl: roomData.videoUrl,
                             username: null  // null because no user emitted videoChange signal
-                        });
-
-
-                        /* Request current video time */
-                        io.in(clientInRoom).clients(function (err, clients) {
-                            if (clients) {
-                                client.broadcast.to(clients[0]).emit("requestTime");
-                            } // Client is room master. Do nothing.
                         });
                     });
 
                 });
 
-            }  // END _joinRoom function
+            };  // END _joinRoom function
 
             if (!username) {  // If joining room without given username, random name is generated.
                 screenName = "user_" + crypto.randomBytes(8).toString("base64");
@@ -317,10 +310,20 @@ io.on("connection", function (client) {
                         screenName = username + "_" + crypto.randomBytes(6).toString("base64");
                     }
                     _joinRoom();
-                }); 
+                });
             }
         });
 
+    });
+
+    client.on("requestVideoInfo", function() {
+
+        /* Request current video time */
+        io.in(clientInRoom).clients(function (err, clients) {
+            if (clients) {
+                client.broadcast.to(clients[0]).emit("requestTime");
+            } // Client is room master. Do nothing.
+        });
     });
 
     client.on("videoChange", function (data) {

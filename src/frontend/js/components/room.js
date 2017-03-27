@@ -2,7 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { Button, Form, FormGroup, ControlLabel, Col, FormControl} from "react-bootstrap";
 
-import { createRoom } from "../actions/roomActions";
+import { createRoom, changeUsername } from "../actions/roomActions";
 require("../../style/main.css");
 var password, url;
 
@@ -19,12 +19,17 @@ export class Room extends React.Component {
         url = e.target.value;
     }
 
+    handleUsername = e => {
+        this.props.changeUsername(e.target.value);
+    }
+
     onsubmit(){
         this.props.createRoom(url, password);
     }
 
-
     render () {
+        // the server only sends back "Validation Error", and no other errors will happen here anyway
+        var error = this.props.rooms.error ? <h2>Invalid YouTube URL</h2> : null;
         return (
             <div>
                 <Col smOffset={4} sm={4} className="create_room_container" >
@@ -32,7 +37,15 @@ export class Room extends React.Component {
                         e.preventDefault();
                         e.target.reset();
                         this.onsubmit();
-                        }}>
+                    }}>
+                        <FormGroup>
+                            <Col componentClass={ControlLabel} sm={2}>
+                                Custom Username
+                            </Col>
+                            <Col sm={10}>
+                                <FormControl type="text" placeholder="Username" onChange={this.handleUsername}/>
+                            </Col>
+                        </FormGroup>
                         <FormGroup controlId="formHorizontalPassword">
                             <Col componentClass={ControlLabel} sm={2}>
                                 Password
@@ -57,6 +70,7 @@ export class Room extends React.Component {
                           </Col>
                         </FormGroup>
                     </Form>
+                    { error }
                 </Col>
             </div>
         );
@@ -71,12 +85,14 @@ Room.propTypes = {
     socket: React.PropTypes.object,
     location: React.PropTypes.string,
     joinRoom2: React.PropTypes.func,
-    newURLInput: React.PropTypes.func
+    newURLInput: React.PropTypes.func,
+    changeUsername: React.PropTypes.func
 };
 
 const mapDispatchToProps = (dispatch) => {
     return {
         createRoom: (url, password) => dispatch(createRoom(url, password)),
+        changeUsername: username => dispatch(changeUsername(username))
     };
 };
 

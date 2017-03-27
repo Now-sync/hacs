@@ -3,17 +3,23 @@ export default function reducer(state={
         roomname: null,
         users: null,
     },
+    username: null,
     password: null,
     fetched: false,
     error: null,
+    roomStatus: "FETCHING",
+    badPassword: false,
+    joined: false,
+    joiner: false
     }, action) {
 
-        switch (action.type) {
-            case "CreateRoom": {
+    switch (action.type) {
+        case "CreateRoom": {
             return Object.assign({}, state, {
                 fetched: true,
                 room: action.payload,
-                password: action.pass
+                password: action.pass,
+                roomStatus: "FETCHED"
             });
         }
         case "CreateRoomError": {
@@ -27,7 +33,32 @@ export default function reducer(state={
                 fetched: true
             });
         }
+        case "UpdateRoomStatus": {
+            return Object.assign({}, state, {
+                roomStatus: action.status
+            });
+        }
+        case "wrongCredentials": {
+            return Object.assign({}, state, {
+                badPassword: true
+            });
+        }
+        case "joined": {
+            return Object.assign({}, state, {
+                joined: true
+            });
+        }
+        case "changeUsername": {
+            return Object.assign({}, state, {
+                username: action.username
+            });
+        }
+        case "setJoiner": {
+            return Object.assign({}, state, {
+                joiner: true
+            });
+        }
         default:
             return state;
-        }
+    }
 }

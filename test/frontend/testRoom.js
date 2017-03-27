@@ -19,12 +19,12 @@ describe("Room", () => {
         var wrapper;
 
         before(() => {
-            wrapper = shallow(<Room />);
+            wrapper = shallow(<Room rooms={{error: null}} />);
         });
 
-        it("a form with two inputs and a button", () => {
+        it("a form with three inputs and a button", () => {
             wrapper.find("Form").should.have.length(1);
-            wrapper.find("FormControl").should.have.length(2);
+            wrapper.find("FormControl").should.have.length(3);
             wrapper.find("Button").should.have.length(1);
         });
     });
@@ -78,9 +78,14 @@ describe("Room", () => {
                     roomname: null,
                     users: null,
                 },
+                username: null,
                 password: null,
                 fetched: false,
                 error: null,
+                roomStatus: "FETCHING",
+                badPassword: false,
+                joined: false,
+                joiner: false
             };
 
             expected = {
@@ -88,9 +93,14 @@ describe("Room", () => {
                     roomname: null,
                     users: null,
                 },
+                username: null,
                 password: null,
                 fetched: false,
                 error: null,
+                roomStatus: "FETCHING",
+                badPassword: false,
+                joined: false,
+                joiner: false
             };
         });
 
@@ -115,6 +125,7 @@ describe("Room", () => {
              };
              expected.fetched = true;
              expected.password = "hi";
+             expected.roomStatus = "FETCHED";
 
              reducer(state, action).should.deep.equal(expected);
         });

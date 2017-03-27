@@ -26,3 +26,41 @@ export function joinRoom(roomName) {
         // });
     };
 }
+
+export function checkRoomExistence(roomName) {
+    return function(dispatch) {
+        axios.get(`/api/room/${roomName}`)
+        .then(response => {
+            if (response.status === 200) {
+                dispatch({type: "UpdateRoomStatus", status: "VALID"});
+            }
+        })
+        .catch(() => {
+            dispatch({type: "UpdateRoomStatus", status: "INVALID"});
+        });
+    };
+}
+
+export function wrongCredentials() {
+    return function (dispatch) {
+        dispatch({type: "wrongCredentials"});
+    };
+}
+
+export function joined() {
+    return function (dispatch) {
+        dispatch({type: "joined"});
+    };
+}
+
+export function changeUsername(username) {
+    return function (dispatch) {
+        dispatch({type: "changeUsername", username: username});
+    };
+}
+
+export function setJoiner() {
+    return function (dispatch) {
+        dispatch({type: "setJoiner"});
+    };
+}

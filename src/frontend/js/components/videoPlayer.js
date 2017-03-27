@@ -20,33 +20,6 @@ export class VideoPlayer extends React.Component {
         this.socket = this.props.socket;
     }
 
-    componentDidMount = () => {
-        this.socket.on("play", () => {
-            this.player.playVideo();
-        });
-
-        this.socket.on("pause", data => {
-            this.player.pauseVideo();
-            this.player.seekTo(data.pausedtime, true);
-            dontpause = true;
-        });
-
-        this.socket.on("videoChange", data => {
-            this.props.changeVideo(data.videoUrl);
-        });
-
-        this.socket.on("requestTime", () => {
-            this.socket.emit("currentTime", {
-                currTime: this.player.getCurrentTime()
-            });
-        });
-
-        this.socket.on("skipTo", data => {
-            this.player.seekTo(data.skipToTime, true);
-        });
-
-    }
-
     handleSubmit = e => {
         e.preventDefault();
         e.target.reset();
@@ -84,6 +57,32 @@ export class VideoPlayer extends React.Component {
     handleReady = e => {
         this.player = e.target;
         this.props.setReady();
+
+        this.socket.on("play", () => {
+            this.player.playVideo();
+        });
+
+        this.socket.on("pause", data => {
+            this.player.pauseVideo();
+            this.player.seekTo(data.pausedtime, true);
+            dontpause = true;
+        });
+
+        this.socket.on("videoChange", data => {
+            this.props.changeVideo(data.videoUrl);
+        });
+
+        this.socket.on("requestTime", () => {
+            this.socket.emit("currentTime", {
+                currTime: this.player.getCurrentTime()
+            });
+        });
+
+        this.socket.on("skipTo", data => {
+            this.player.seekTo(data.skipToTime, true);
+        });
+
+        this.socket.emit("requestVideoInfo");
     }
 
     render() {

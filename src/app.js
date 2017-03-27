@@ -242,6 +242,7 @@ io.on("connection", function (client) {
     var screenName = null;
 
     client.on("join", function (data) {
+        if (BLOCK_CONSOLE) console.log("Socket signal join");
         var roomname = data.roomname;
         var roompass = data.roompass;
         var username = data.username;
@@ -259,7 +260,7 @@ io.on("connection", function (client) {
 
             /* This function is for readability. Simply used after username correction. */
             var _joinRoom = function () {
-                if (clientInRoom) {  // If already in a room, leave it.
+                if (clientInRoom && clientInRoom !== roomname) {  // If already in a room, leave it.
                     client.leave(clientInRoom, function () {
                         removeUser(clientInRoom, screenName);
                         io.to(clientInRoom).emit("userLeft", {username: screenName});

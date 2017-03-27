@@ -317,12 +317,11 @@ io.on("connection", function (client) {
     });
 
     client.on("requestVideoInfo", function() {
-
         /* Request current video time */
         io.in(clientInRoom).clients(function (err, clients) {
             if (clients) {
                 client.broadcast.to(clients[0]).emit("requestTime");
-            } // Client is room master. Do nothing.
+            }
         });
     });
 

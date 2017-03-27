@@ -356,7 +356,7 @@ io.on("connection", function (client) {
             data = {};
         }
         data.username = screenName;
-        if (clientInRoom) io.to(clientInRoom).emit("play", data);
+        if (clientInRoom) client.broadcast.to(clientInRoom).emit("play", data);
     });
 
     client.on("currentTime", function (data) {  // received response from client to requestTime

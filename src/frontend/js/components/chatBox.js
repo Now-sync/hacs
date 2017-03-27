@@ -1,4 +1,5 @@
 import React from "react";
+import ReactDOM from "react-dom";
 import { connect } from "react-redux";
 import { Form, FormGroup, Col, FormControl} from "react-bootstrap";
 
@@ -51,10 +52,14 @@ export class ChatBox extends React.Component {
 
     }
 
-
     handleUserMessage = e => {
         this.props.enterMessage(e.target.value);
     }
+
+    componentDidUpdate() {
+        ReactDOM.findDOMNode(this.bottom).scrollIntoView();
+    }
+
     render() {
 
         const listMessages = this.props.messages.map(message =>
@@ -65,6 +70,7 @@ export class ChatBox extends React.Component {
             <div className="chatBox">
                 <div className="message_display">
                     { listMessages }
+                    <div ref={bottom => {this.bottom = bottom;}}></div>
                 </div>
                 <div className="enterMessage">
                     <Form horizontal onSubmit={ this.handleSubmit }>

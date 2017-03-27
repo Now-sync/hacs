@@ -350,9 +350,13 @@ io.on("connection", function (client) {
         }
     });
 
-    client.on("play", function () {
+    client.on("play", function (data) {
         if (BLOCK_CONSOLE) console.log("Socket signal play");
-        if (clientInRoom) io.to(clientInRoom).emit("play", {username: screenName});
+        if (!data) {
+            data = {};
+        }
+        data.username = screenName;
+        if (clientInRoom) client.broadcast.to(clientInRoom).emit("play", data);
     });
 
     client.on("currentTime", function (data) {  // received response from client to requestTime

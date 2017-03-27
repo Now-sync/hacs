@@ -5,6 +5,7 @@ import { Form, FormGroup, ControlLabel, Col, FormControl} from "react-bootstrap"
 
 import * as actions from "../actions/videoPlayerActions";
 
+var dontEmitPlay = false;
 var dontpause = false;
 
 export class VideoPlayer extends React.Component {
@@ -36,8 +37,14 @@ export class VideoPlayer extends React.Component {
         // state codes here https://developers.google.com/youtube/iframe_api_reference#Events
         switch (e.data) {
             case YouTube.PlayerState.PLAYING:
-                this.socket.emit("play");
-                this.props.play();
+                if (!dontEmitPlay) {
+                    this.socket.emit("play", {
+                        playtime: this.player.getCurrentTime()
+                    });
+                    this.props.play();
+                } else {
+                    dontEmitPlay = false;
+                }
                 break;
             case YouTube.PlayerState.PAUSED:
                 if (!dontpause) {
@@ -58,8 +65,10 @@ export class VideoPlayer extends React.Component {
         this.player = e.target;
         this.props.setReady();
 
-        this.socket.on("play", () => {
+        this.socket.on("play", data => {
+            this.player.seekTo(data.playtime, true);
             this.player.playVideo();
+            dontEmitPlay = true;
         });
 
         this.socket.on("pause", data => {

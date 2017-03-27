@@ -36,7 +36,9 @@ export class VideoPlayer extends React.Component {
         // state codes here https://developers.google.com/youtube/iframe_api_reference#Events
         switch (e.data) {
             case YouTube.PlayerState.PLAYING:
-                this.socket.emit("play");
+                this.socket.emit("play", {
+                    playtime: this.player.getCurrentTime()
+                });
                 this.props.play();
                 break;
             case YouTube.PlayerState.PAUSED:
@@ -58,7 +60,8 @@ export class VideoPlayer extends React.Component {
         this.player = e.target;
         this.props.setReady();
 
-        this.socket.on("play", () => {
+        this.socket.on("play", data => {
+            this.player.seekTo(data.playtime, true);
             this.player.playVideo();
         });
 

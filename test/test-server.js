@@ -97,7 +97,7 @@ describe("All server testing", function () {
         });
     });
 
-    describe("Test emit play", function() {
+    xdescribe("Test emit play", function() {
         var personA, personB, personC;
         var roomname;
         var videoUrl = "https://www.youtube.com/watch?v=7PCkvCPvDXk";

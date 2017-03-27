@@ -27,6 +27,7 @@
         "valid-typeof": "warn",
         "semi": "warn",
         "no-console": "off",
-        "eqeqeq": "error"
+        "eqeqeq": "error",
+        "react/no-find-dom-node": "off"
     }
 }

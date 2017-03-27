@@ -58,3 +58,9 @@ export function changeUsername(username) {
         dispatch({type: "changeUsername", username: username});
     };
 }
+
+export function setJoiner() {
+    return function (dispatch) {
+        dispatch({type: "setJoiner"});
+    };
+}

@@ -2,7 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { Form, FormGroup, ControlLabel, Col, FormControl, Button } from "react-bootstrap";
 
-import { joinRoom, checkRoomExistence } from "../actions/roomActions";
+import { joinRoom, checkRoomExistence, setJoiner } from "../actions/roomActions";
 import { newURLInput, changeVideo } from "../actions/videoPlayerActions";
 require("../../style/main.css");
 
@@ -23,6 +23,7 @@ export class Join extends React.Component {
     componentWillMount() {
         var roomName = getQueryStringValue("roomname");
         this.props.checkRoomExistence(roomName);
+        this.props.setJoiner();
     }
 
     handlePassword = e => {
@@ -93,14 +94,16 @@ Join.propTypes = {
     joinRoomActual: React.PropTypes.func,
     checkRoomExistence: React.PropTypes.func,
     badPassword: React.PropTypes.bool,
-    connectSocket: React.PropTypes.func
+    connectSocket: React.PropTypes.func,
+    setJoiner: React.PropTypes.func
 };
 const mapDispatchToProps = (dispatch) => {
     return {
         newURLInput: url => dispatch(newURLInput(url)),
         changeVideo: url => dispatch(changeVideo(url)),
         joinRoomActual: roomName => dispatch(joinRoom(roomName)),
-        checkRoomExistence: roomName => dispatch(checkRoomExistence(roomName))
+        checkRoomExistence: roomName => dispatch(checkRoomExistence(roomName)),
+        setJoiner: () => dispatch(setJoiner())
     };
 };
 

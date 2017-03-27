@@ -23,7 +23,7 @@ class Layout extends React.Component {
             this.props.history.push("/");
             result =
                 <div>
-                    <Room socket={ socket } connectSocket={this.joinRoom}/>
+                    <Room socket={ socket }/>
                 </div>;
 
         } else {
@@ -55,7 +55,7 @@ class Layout extends React.Component {
         //         username: nextProps.rooms.username
         //     });
         // }
-        if (!this.props.rooms.fetched && nextProps.rooms.fetched) {
+        if (!this.props.rooms.fetched && nextProps.rooms.fetched && !this.props.rooms.joiner) {
             tryToJoin = true;
         }
     }

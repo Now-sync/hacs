@@ -84,7 +84,8 @@ describe("Room", () => {
                 error: null,
                 roomStatus: "FETCHING",
                 badPassword: false,
-                joined: false
+                joined: false,
+                joiner: false
             };
 
             expected = {
@@ -98,7 +99,8 @@ describe("Room", () => {
                 error: null,
                 roomStatus: "FETCHING",
                 badPassword: false,
-                joined: false
+                joined: false,
+                joiner: false
             };
         });
 

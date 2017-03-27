@@ -9,7 +9,8 @@ export default function reducer(state={
     error: null,
     roomStatus: "FETCHING",
     badPassword: false,
-    joined: false
+    joined: false,
+    joiner: false
     }, action) {
 
     switch (action.type) {
@@ -50,6 +51,11 @@ export default function reducer(state={
         case "changeUsername": {
             return Object.assign({}, state, {
                 username: action.username
+            });
+        }
+        case "setJoiner": {
+            return Object.assign({}, state, {
+                joiner: true
             });
         }
         default:

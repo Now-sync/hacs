@@ -1,5 +1,7 @@
 http://nowsync.herokuapp.com/
 
+Demo: https://www.youtube.com/watch?v=cmIv44RNxSs
+
 # Team HAC
 - Project Title: NowSync
 - Members: Terrence Hung, Victor Cao, Zain Amir
